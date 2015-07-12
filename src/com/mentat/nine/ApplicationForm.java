@@ -11,7 +11,6 @@ import java.util.Date;
  */
 public class ApplicationForm extends Person {
 
-	private String post;
 	private int salary;
 	private String requirements;
 	private String responsibilities;
@@ -26,17 +25,6 @@ public class ApplicationForm extends Person {
 
 	public ApplicationForm(String post) {
 		super();
-		this.post = post;
-	}
-
-	public String getPost() {
-		return post;
-	}
-
-	public void setPost(String post) {
-		if (null == post || post.equals("")) {
-			throw new IllegalArgumentException();
-		}
 		this.post = post;
 	}
 

@@ -6,6 +6,8 @@ package com.mentat.nine;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.mentat.nine.exceptions.NoSuchEmployeeException;
+
 /**
  * @author Ruslan
  *

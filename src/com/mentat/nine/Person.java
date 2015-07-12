@@ -15,7 +15,9 @@ public class Person {
 	protected String skills;
 	protected String phone;
 	protected String email;
-	
+	protected String post;
+
+
 	/**
 	 * 
 	 */
@@ -23,6 +25,15 @@ public class Person {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	public String getPost() {
+		return post;
+	}
+
+	public void setPost(String post) {
+		this.post = post;
+	}
+	
 	public String getName() {
 		return name;
 	}

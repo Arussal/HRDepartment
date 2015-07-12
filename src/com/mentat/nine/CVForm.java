@@ -11,6 +11,7 @@ public class CVForm extends Person{
 
 	private int desiredSalary;
 	private String additionalInfo;
+	
 	/**
 	 * 
 	 */
