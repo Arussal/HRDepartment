@@ -37,9 +37,6 @@ public class Department {
 		if (null == employee) {
 			throw new IllegalArgumentException();
 		}
-		if (employees == null) {
-			throw new NullPointerException();
-		}
 		employees.add(employee);
 		
 	}

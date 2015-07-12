@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.mentat.nine.exceptions.NoAcceptableCandidateException;
+
 /**
  * @author Ruslan
  *
@@ -28,30 +30,6 @@ public class HRDepartment implements HRManager{
 		cvs = new ArrayList<CVForm>();
 	}
 	
-	public Set<Employee> getStaff() {
-		return staff;
-	}
-
-	public void setStaff(Set<Employee> staff) {
-		this.staff = staff;
-	}
-
-	public Set<Employee> getFiredEmployees() {
-		return firedEmployees;
-	}
-
-	public void setFiredEmployees(Set<Employee> firedEmployees) {
-		this.firedEmployees = firedEmployees;
-	}
-
-	public List<CVForm> getCvs() {
-		return cvs;
-	}
-
-	public void setCvs(List<CVForm> cvs) {
-		this.cvs = cvs;
-	}
-	
 	@Override
 	public void addCVForm(CVForm form) {
 		if (null == form) {
@@ -61,9 +39,13 @@ public class HRDepartment implements HRManager{
 	}
 
 	@Override
-	public Candidate findCandidate(int age, String education, String skills, String post, int salary) {
+	public Candidate findCandidate(int age, int workExperience, String education, String skills, 
+			String post, int salary) throws NoAcceptableCandidateException {
+		
+		Candidate candidate = null;
 		
 		boolean acceptAge = false;
+		boolean acceptWorkExperience = false;
 		boolean acceptEducation = false;
 		boolean acceptSkills = false;
 		boolean acceptResponsibilities = false;
@@ -73,6 +55,7 @@ public class HRDepartment implements HRManager{
 
 		Set<Boolean> conditions = new HashSet<Boolean>();
 		conditions.add(acceptAge);
+		conditions.add(acceptWorkExperience);
 		conditions.add(acceptEducation);
 		conditions.add(acceptSkills);
 		conditions.add(acceptResponsibilities);
@@ -80,9 +63,17 @@ public class HRDepartment implements HRManager{
 		conditions.add(acceptPost);
 		conditions.add(acceptSalary);
 	
-		for (CVForm cv : cvs) {
+		outer: for (CVForm cv : cvs) {
+			
+			for (Boolean condition : conditions) {
+				condition = false;
+			}
+			
 			if (Math.abs(cv.getAge() - age) < 2) {
 				acceptAge = true;
+			}
+			if (cv.getWorkExpirience() >= workExperience) {
+				acceptWorkExperience = true;
 			}
 			if (cv.getEducation().equals(education)) {
 				acceptEducation = true;
@@ -92,11 +83,25 @@ public class HRDepartment implements HRManager{
 			}
 			if (cv.getPost().equals(post)) {
 				acceptPost = true;
-				dafda
+			}
+			if (cv.getDesiredSalary() >= salary) {
+				acceptSalary = true;
+			}
+			
+			for (Boolean condition : conditions) {
+				if (condition == false) {
+					continue outer;
+				}
+			candidate = new Candidate();
+			break;
 			}
 		}
+			
+		if (null == candidate) {
+			throw new NoAcceptableCandidateException();
+		}
 		
-		return null;
+		return candidate;
 	}
 
 	@Override
@@ -163,6 +168,29 @@ public class HRDepartment implements HRManager{
 		app.setSalary(salary);
 		app.setSkills(skills);
 		return app;
-		
+	}
+	
+	public Set<Employee> getStaff() {
+		return staff;
+	}
+
+	public void setStaff(Set<Employee> staff) {
+		this.staff = staff;
+	}
+
+	public Set<Employee> getFiredEmployees() {
+		return firedEmployees;
+	}
+
+	public void setFiredEmployees(Set<Employee> firedEmployees) {
+		this.firedEmployees = firedEmployees;
+	}
+
+	public List<CVForm> getCvs() {
+		return cvs;
+	}
+
+	public void setCvs(List<CVForm> cvs) {
+		this.cvs = cvs;
 	}
 }

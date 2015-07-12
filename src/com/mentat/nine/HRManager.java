@@ -5,6 +5,7 @@ package com.mentat.nine;
 
 import java.util.Date;
 
+import com.mentat.nine.exceptions.NoAcceptableCandidateException;
 import com.mentat.nine.exceptions.NoSuchEmployeeException;
 
 /**
@@ -16,7 +17,8 @@ public interface HRManager {
 	public ApplicationForm createApplicationForm(int age, String education, String skills, 
 			String responsibilities, String requirements, String post, int salary, Date date); 
 	
-	public Candidate findCandidate(int age, String education, String skills, String post, int salary);
+	public Candidate findCandidate(int age, int workExperience, String education, String skills, 
+			String post, int salary) throws NoAcceptableCandidateException;
 	
 	public Employee hireEmployee(Candidate candidate, int salary, String post, Date date, 
 			Department department);

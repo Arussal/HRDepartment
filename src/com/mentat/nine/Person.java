@@ -11,12 +11,12 @@ public class Person {
 
 	protected String name;
 	protected int age;
+	protected int workExpirience;
 	protected String education;
 	protected String skills;
 	protected String phone;
 	protected String email;
 	protected String post;
-
 
 	/**
 	 * 
@@ -49,6 +49,16 @@ public class Person {
 	public void setAge(int age) {
 		this.age = age;
 	}
+
+	public int getWorkExpirience() {
+		return workExpirience;
+	}
+
+
+	public void setWorkExpirience(int workExpirience) {
+		this.workExpirience = workExpirience;
+	}
+
 
 	public String getEducation() {
 		return education;
