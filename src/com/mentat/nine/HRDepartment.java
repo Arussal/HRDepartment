@@ -3,10 +3,17 @@
  */
 package com.mentat.nine;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.mentat.nine.exceptions.NoSuchEmployeeException;
@@ -43,52 +50,54 @@ public class HRDepartment extends Department implements HRManager{
 	public Candidate findCandidate(ApplicationForm app) throws NoSuitableCandidateException {
 		
 		Candidate candidate = null;
-		
-		boolean acceptAge = false;
-		boolean acceptWorkExperience = false;
-		boolean acceptEducation = false;
-		boolean acceptSkills = false;
-		boolean acceptPost = false;
-		boolean acceptSalary = false;
 
-		Set<Boolean> conditions = new HashSet<Boolean>();
-		conditions.add(acceptAge);
-		conditions.add(acceptWorkExperience);
-		conditions.add(acceptEducation);
-		conditions.add(acceptSkills);
-		conditions.add(acceptPost);
-		conditions.add(acceptSalary);
-	
+		Map<String, Boolean> conditions = new HashMap<String, Boolean>();
+		conditions.put("acceptAge", new Boolean(false));
+		conditions.put("acceptWorkExperience", new Boolean(false));
+		conditions.put("acceptEducation", new Boolean(false));
+		conditions.put("acceptSkills", new Boolean(false));
+		conditions.put("acceptPost", new Boolean(false));
+		conditions.put("acceptSalary", new Boolean(false));
+		
 		outer: for (CVForm cv : cvs) {
 			
-			for (Boolean condition : conditions) {
-				condition = false;
+			for (Entry<String, Boolean> condition : conditions.entrySet()) {
+				condition.setValue(new Boolean(false));
 			}
 			
 			if (Math.abs(cv.getAge() - app.getAge()) < 2) {
-				acceptAge = true;
+				conditions.put("acceptAge", new Boolean(true));								
 			}
 			if (cv.getWorkExpirience() >= app.getWorkExpirience()) {
-				acceptWorkExperience = true;
+				conditions.put("acceptWorkExperience", new Boolean(true));								
 			}
 			if (cv.getEducation().equals(app.getEducation())) {
-				acceptEducation = true;
+				conditions.put("acceptEducation", new Boolean(true)); 									
 			}
 			if (cv.getSkills().containsAll(app.getRequirements())) {
-				acceptSkills = true;
+				conditions.put("acceptSkills", new Boolean(true));									
 			}
 			if (cv.getPost().equals(app.getPost())) {
-				acceptPost = true;
+				conditions.put("acceptPost", new Boolean(true)); 									
 			}
 			if (cv.getDesiredSalary() <= app.getSalary()) {
-				acceptSalary = true;
+				conditions.put("acceptSalary", new Boolean(true));									
 			}
 			
-			for (Boolean condition : conditions) {
-				if (condition == false) {
-					continue outer;
+			for (Entry<String, Boolean> condition : conditions.entrySet()) {
+				if (condition.getValue() == false) {
+				continue outer;
 				}
+				
 			candidate = new Candidate();
+			candidate.setName(cv.getName());
+			candidate.setAge(cv.getAge());
+			candidate.setEducation(cv.getEducation());
+			candidate.setEmail(cv.getEmail());
+			candidate.setPhone(cv.getPhone());
+			candidate.setPost(cv.getPost());
+			candidate.setSkills(cv.getSkills());
+			candidate.setWorkExpirience(cv.getWorkExpirience());
 			break;
 			}
 		}
