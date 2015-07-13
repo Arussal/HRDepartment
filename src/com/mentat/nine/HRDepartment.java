@@ -60,7 +60,7 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptSalary", new Boolean(false));
 		
 		outer: for (CVForm cv : cvs) {
-			
+
 			for (Entry<String, Boolean> condition : conditions.entrySet()) {
 				condition.setValue(new Boolean(false));
 			}
@@ -71,7 +71,7 @@ public class HRDepartment extends Department implements HRManager{
 			if (cv.getWorkExpirience() >= app.getWorkExpirience()) {
 				conditions.put("acceptWorkExperience", new Boolean(true));								
 			}
-			if (cv.getEducation().equals(app.getEducation())) {
+			if (cv.getEducation().equals(app.getEducation())) {		
 				conditions.put("acceptEducation", new Boolean(true)); 									
 			}
 			if (cv.getSkills().containsAll(app.getRequirements())) {
@@ -83,12 +83,13 @@ public class HRDepartment extends Department implements HRManager{
 			if (cv.getDesiredSalary() <= app.getSalary()) {
 				conditions.put("acceptSalary", new Boolean(true));									
 			}
-			
-			for (Entry<String, Boolean> condition : conditions.entrySet()) {
-				if (condition.getValue() == false) {
+ 
+			for (String condition : conditions.keySet()) {
+				if (conditions.get(condition) == false) {
 				continue outer;
 				}
-				
+			}
+			
 			candidate = new Candidate();
 			candidate.setName(cv.getName());
 			candidate.setAge(cv.getAge());
@@ -99,7 +100,7 @@ public class HRDepartment extends Department implements HRManager{
 			candidate.setSkills(cv.getSkills());
 			candidate.setWorkExpirience(cv.getWorkExpirience());
 			break;
-			}
+			
 		}
 			
 		if (null == candidate) {
