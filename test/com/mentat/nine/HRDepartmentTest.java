@@ -13,6 +13,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.mentat.nine.exceptions.NoSuchEmployeeException;
+import com.mentat.nine.exceptions.NoSuitableCandidateException;
 
 /**
  * @author Ruslan
@@ -33,15 +34,17 @@ public class HRDepartmentTest {
 
 	/**
 	 * Test method for {@link com.mentat.nine.HRDepartment#findCandidate(com.mentat.nine.ApplicationForm)}.
+	 * @throws NoSuitableCandidateException 
 	 */
 	@Test
-	public void testFindCandidate() {
+	public void testFindCandidate() throws NoSuitableCandidateException {
+		
 		HRDepartment hrDep = new HRDepartment();
 		ApplicationForm af = new ApplicationForm();
 		Set<String> requirements = new HashSet<String>();
-		requirements.add("Java");
-		requirements.add("Hibernate");
-		requirements.add("Spring");
+		requirements.add("Skill1_1");
+		requirements.add("Skill2_1");
+		requirements.add("Skill3_1");
 		af.setAge(25);
 		af.setDate(Calendar.getInstance().getTime());
 		af.setEducation("IT");
@@ -53,8 +56,28 @@ public class HRDepartmentTest {
 		af.setSalary(10000);
 		af.setWorkExpirience(5);
 		
-		CVFor
+		Set<String> skills = new HashSet<String>();
+		for (int i = 0; i < 5; i++) {
+			CVForm form = new CVForm();
+			form.setAge(24);
+			form.setWorkExpirience(5 + i);
+			form.setEducation("IT");
+			form.setEmail("email" + i);
+			form.setName("Name" + i);
+			form.setPhone("phone" + i);
+			form.setPost("head");
+			skills.add("Skill1_" + i);
+			skills.add("Skill2_" + i);
+			skills.add("Skill3_" + i);
+			form.setSkills(skills);
+			form.setDesiredSalary(9900 + i);
+			
+			hrDep.getCvs().add(form);
+		}
 		
+		Candidate candidate = hrDep.findCandidate(af);	
+		assertNotNull(candidate);
+		assertEquals("Name1", candidate.getName());
 	}
 
 	/**
