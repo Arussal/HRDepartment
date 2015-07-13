@@ -56,7 +56,7 @@ public class HRDepartmentTest {
 		af.setSalary(10000);
 		af.setWorkExpirience(5);
 		
-		Set<String> skills = new HashSet<String>();
+		
 		for (int i = 0; i < 5; i++) {
 			CVForm form = new CVForm();
 			form.setAge(24);
@@ -66,6 +66,7 @@ public class HRDepartmentTest {
 			form.setName("Name" + i);
 			form.setPhone("phone" + i);
 			form.setPost("head");
+			Set<String> skills = new HashSet<String>();
 			skills.add("Skill1_" + i);
 			skills.add("Skill2_" + i);
 			skills.add("Skill3_" + i);
