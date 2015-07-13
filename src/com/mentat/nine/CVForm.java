@@ -31,6 +31,4 @@ public class CVForm extends Person{
 	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
 	}
-	
-
 }

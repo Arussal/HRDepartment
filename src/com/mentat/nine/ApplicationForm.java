@@ -4,6 +4,7 @@
 package com.mentat.nine;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * @author Ruslan
@@ -12,8 +13,7 @@ import java.util.Date;
 public class ApplicationForm extends Person {
 
 	private int salary;
-	private String requirements;
-	private String responsibilities;
+	private Set<String> requirements;
 	private Date date;
 	
 	/**
@@ -39,20 +39,12 @@ public class ApplicationForm extends Person {
 		this.salary = salary;
 	}
 
-	public String getRequirements() {
+	public Set<String> getRequirements() {
 		return requirements;
 	}
 
-	public void setRequirements(String requirements) {
+	public void setRequirements(Set<String> requirements) {
 		this.requirements = requirements;
-	}
-
-	public String getResponsibilities() {
-		return responsibilities;
-	}
-
-	public void setResponsibilities(String responsibilities) {
-		this.responsibilities = responsibilities;
 	}
 
 	public Date getDate() {

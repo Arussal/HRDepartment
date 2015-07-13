@@ -22,6 +22,7 @@ public class Department {
 	 * 
 	 */
 	public Department() {
+		employees = new HashSet<Employee>();
 	}
 	
 	/**

@@ -7,7 +7,7 @@ package com.mentat.nine.exceptions;
  * @author Ruslan
  *
  */
-public class NoAcceptableCandidateException extends Exception {
+public class NoSuitableCandidateException extends Exception {
 
 	/**
 	 * 
@@ -17,14 +17,14 @@ public class NoAcceptableCandidateException extends Exception {
 	/**
 	 * 
 	 */
-	public NoAcceptableCandidateException() {
+	public NoSuitableCandidateException() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public NoAcceptableCandidateException(String arg0) {
+	public NoSuitableCandidateException(String arg0) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}

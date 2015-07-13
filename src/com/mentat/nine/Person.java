@@ -3,6 +3,8 @@
  */
 package com.mentat.nine;
 
+import java.util.Set;
+
 /**
  * @author Ruslan
  *
@@ -12,8 +14,8 @@ public class Person {
 	protected String name;
 	protected int age;
 	protected int workExpirience;
+	protected Set<String> skills;
 	protected String education;
-	protected String skills;
 	protected String phone;
 	protected String email;
 	protected String post;
@@ -60,20 +62,20 @@ public class Person {
 	}
 
 
+	public Set<String> getSkills() {
+		return skills;
+	}
+
+	public void setSkills(Set<String> skills) {
+		this.skills = skills;
+	}
+
 	public String getEducation() {
 		return education;
 	}
 
 	public void setEducation(String education) {
 		this.education = education;
-	}
-
-	public String getSkills() {
-		return skills;
-	}
-
-	public void setSkills(String skills) {
-		this.skills = skills;
 	}
 
 	public String getPhone() {

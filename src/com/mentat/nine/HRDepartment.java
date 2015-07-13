@@ -5,19 +5,18 @@ package com.mentat.nine;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.mentat.nine.exceptions.NoAcceptableCandidateException;
+import com.mentat.nine.exceptions.NoSuchEmployeeException;
+import com.mentat.nine.exceptions.NoSuitableCandidateException;
 
 /**
  * @author Ruslan
  *
  */
-public class HRDepartment implements HRManager{
+public class HRDepartment extends Department implements HRManager{
 
 	private Set<Employee> staff;
 	private Set<Employee> firedEmployees;
@@ -28,6 +27,8 @@ public class HRDepartment implements HRManager{
 	 */
 	public HRDepartment() {
 		cvs = new ArrayList<CVForm>();
+		staff = new HashSet<Employee>();
+		firedEmployees = new HashSet<Employee>();
 	}
 	
 	@Override
@@ -39,8 +40,7 @@ public class HRDepartment implements HRManager{
 	}
 
 	@Override
-	public Candidate findCandidate(int age, int workExperience, String education, String skills, 
-			String post, int salary) throws NoAcceptableCandidateException {
+	public Candidate findCandidate(ApplicationForm app) throws NoSuitableCandidateException {
 		
 		Candidate candidate = null;
 		
@@ -48,8 +48,6 @@ public class HRDepartment implements HRManager{
 		boolean acceptWorkExperience = false;
 		boolean acceptEducation = false;
 		boolean acceptSkills = false;
-		boolean acceptResponsibilities = false;
-		boolean acceptRequirements = false;
 		boolean acceptPost = false;
 		boolean acceptSalary = false;
 
@@ -58,8 +56,6 @@ public class HRDepartment implements HRManager{
 		conditions.add(acceptWorkExperience);
 		conditions.add(acceptEducation);
 		conditions.add(acceptSkills);
-		conditions.add(acceptResponsibilities);
-		conditions.add(acceptRequirements);
 		conditions.add(acceptPost);
 		conditions.add(acceptSalary);
 	
@@ -69,22 +65,22 @@ public class HRDepartment implements HRManager{
 				condition = false;
 			}
 			
-			if (Math.abs(cv.getAge() - age) < 2) {
+			if (Math.abs(cv.getAge() - app.getAge()) < 2) {
 				acceptAge = true;
 			}
-			if (cv.getWorkExpirience() >= workExperience) {
+			if (cv.getWorkExpirience() >= app.getWorkExpirience()) {
 				acceptWorkExperience = true;
 			}
-			if (cv.getEducation().equals(education)) {
+			if (cv.getEducation().equals(app.getEducation())) {
 				acceptEducation = true;
 			}
-			if (cv.getSkills().equals(skills)) {
+			if (cv.getSkills().containsAll(app.getRequirements())) {
 				acceptSkills = true;
 			}
-			if (cv.getPost().equals(post)) {
+			if (cv.getPost().equals(app.getPost())) {
 				acceptPost = true;
 			}
-			if (cv.getDesiredSalary() >= salary) {
+			if (cv.getDesiredSalary() <= app.getSalary()) {
 				acceptSalary = true;
 			}
 			
@@ -98,7 +94,7 @@ public class HRDepartment implements HRManager{
 		}
 			
 		if (null == candidate) {
-			throw new NoAcceptableCandidateException();
+			throw new NoSuitableCandidateException();
 		}
 		
 		return candidate;
@@ -136,7 +132,10 @@ public class HRDepartment implements HRManager{
 	}
 
 	@Override
-	public void changeSalary(Employee employee, int salary) {
+	public void changeSalary(Employee employee, int salary) throws NoSuchEmployeeException {
+		if (!staff.contains(employee)) {
+			throw new NoSuchEmployeeException();
+		}
 		for (Employee emp : staff) {
 			if (emp.equals(employee)) {
 				employee.setSalary(salary);
@@ -145,7 +144,10 @@ public class HRDepartment implements HRManager{
 	}
 
 	@Override
-	public void changePost(Employee employee, String post) {
+	public void changePost(Employee employee, String post) throws NoSuchEmployeeException {
+		if (!staff.contains(employee)) {
+			throw new NoSuchEmployeeException();
+		}
 		for (Employee emp : staff) {
 			if (emp.equals(employee)) {
 				employee.setPost(post);
@@ -154,9 +156,8 @@ public class HRDepartment implements HRManager{
 	}
 
 	@Override
-	public ApplicationForm createApplicationForm(int age,
-			String education, String skills, String responsibilities,
-			String requirements, String post, int salary, Date date) {
+	public ApplicationForm createApplicationForm(int age, String education, Set<String> requirements, 
+			String post, int salary, Date date) {
 		
 		ApplicationForm app = new ApplicationForm();
 		app.setDate(date);
@@ -164,9 +165,7 @@ public class HRDepartment implements HRManager{
 		app.setEducation(education);
 		app.setPost(post);
 		app.setRequirements(requirements);
-		app.setResponsibilities(responsibilities);
 		app.setSalary(salary);
-		app.setSkills(skills);
 		return app;
 	}
 	
