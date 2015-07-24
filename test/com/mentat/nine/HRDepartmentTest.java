@@ -12,8 +12,14 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.mentat.nine.exceptions.NoSuchEmployeeException;
-import com.mentat.nine.exceptions.NoSuitableCandidateException;
+import com.mentat.nine.domain.ApplicationForm;
+import com.mentat.nine.domain.CVForm;
+import com.mentat.nine.domain.Candidate;
+import com.mentat.nine.domain.Department;
+import com.mentat.nine.domain.Employee;
+import com.mentat.nine.domain.HRDepartment;
+import com.mentat.nine.domain.exceptions.NoSuchEmployeeException;
+import com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
 
 /**
  * @author Ruslan
@@ -22,7 +28,7 @@ import com.mentat.nine.exceptions.NoSuitableCandidateException;
 public class HRDepartmentTest {
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#addCVForm(com.mentat.nine.CVForm)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#addCVForm(com.mentat.nine.domain.CVForm)}.
 	 */
 	@Test
 	public void testAddCVForm() {
@@ -33,7 +39,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#findCandidate(com.mentat.nine.ApplicationForm)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#findCandidate(com.mentat.nine.domain.ApplicationForm)}.
 	 * @throws NoSuitableCandidateException 
 	 */
 	@Test
@@ -82,8 +88,8 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#hireEmployee(com.mentat.nine.Candidate, 
-	 * int, java.lang.String, java.util.Date, com.mentat.nine.Department)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#hireEmployee(com.mentat.nine.domain.Candidate, 
+	 * int, java.lang.String, java.util.Date, com.mentat.nine.domain.Department)}.
 	 */
 	@Test
 	public void testHireEmployee() {
@@ -94,7 +100,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#fireEmployee(com.mentat.nine.Employee, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#fireEmployee(com.mentat.nine.domain.Employee, 
 	 * java.util.Date)}.
 	 * @throws NoSuchEmployeeException 
 	 */
@@ -111,7 +117,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#changeSalary(com.mentat.nine.Employee, int)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changeSalary(com.mentat.nine.domain.Employee, int)}.
 	 * @throws NoSuchEmployeeException 
 	 */
 	@Test (expected = NoSuchEmployeeException.class)
@@ -123,7 +129,7 @@ public class HRDepartmentTest {
 	}
 	
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#changeSalary(com.mentat.nine.Employee, int)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changeSalary(com.mentat.nine.domain.Employee, int)}.
 	 * @throws NoSuchEmployeeException 
 	 */
 	@Test 
@@ -137,7 +143,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#changePost(com.mentat.nine.Employee, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changePost(com.mentat.nine.domain.Employee, 
 	 * java.lang.String)}.
 	 * @throws NoSuchEmployeeException 
 	 */
@@ -149,7 +155,7 @@ public class HRDepartmentTest {
 	}
 	
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#changePost(com.mentat.nine.Employee, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changePost(com.mentat.nine.domain.Employee, 
 	 * java.lang.String)}.
 	 * @throws NoSuchEmployeeException 
 	 */
@@ -164,7 +170,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.HRDepartment#createApplicationForm(int, java.lang.String, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#createApplicationForm(int, java.lang.String, 
 	 * java.util.Set, java.lang.String, int, java.util.Date)}.
 	 */
 	@Test
@@ -183,7 +189,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.Department#addEmployee(com.mentat.nine.Employee)}.
+	 * Test method for {@link com.mentat.nine.domain.Department#addEmployee(com.mentat.nine.domain.Employee)}.
 	 */
 	@Test
 	public void testAddEmployee() {
@@ -195,7 +201,7 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.Department#removeEmployee(com.mentat.nine.Employee)}.
+	 * Test method for {@link com.mentat.nine.domain.Department#removeEmployee(com.mentat.nine.domain.Employee)}.
 	 * @throws NoSuchEmployeeException 
 	 */
 	@Test
@@ -210,7 +216,7 @@ public class HRDepartmentTest {
 	}
 	
 	/**
-	 * Test method for {@link com.mentat.nine.Department#removeEmployee(com.mentat.nine.Employee)}.
+	 * Test method for {@link com.mentat.nine.domain.Department#removeEmployee(com.mentat.nine.domain.Employee)}.
 	 * @throws NoSuchEmployeeException 
 	 */
 	@Test (expected = NoSuchEmployeeException.class)

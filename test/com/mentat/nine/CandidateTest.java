@@ -10,6 +10,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.mentat.nine.domain.CVForm;
+import com.mentat.nine.domain.Candidate;
+import com.mentat.nine.domain.HRDepartment;
+
 /**
  * @author Ruslan
  *
@@ -17,7 +21,7 @@ import org.junit.Test;
 public class CandidateTest {
 
 	/**
-	 * Test method for {@link com.mentat.nine.Candidate#createCVForm(java.lang.String, int, 
+	 * Test method for {@link com.mentat.nine.domain.Candidate#createCVForm(java.lang.String, int, 
 	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String)}.
 	 */
 	@Test
@@ -38,8 +42,8 @@ public class CandidateTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.Candidate#sendCVForm(com.mentat.nine.CVForm, 
-	 * com.mentat.nine.HRDepartment)}.
+	 * Test method for {@link com.mentat.nine.domain.Candidate#sendCVForm(com.mentat.nine.domain.CVForm, 
+	 * com.mentat.nine.domain.HRDepartment)}.
 	 */
 	@Test
 	public void testSendCVForm() {

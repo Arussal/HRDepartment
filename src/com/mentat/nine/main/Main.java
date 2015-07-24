@@ -11,8 +11,8 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.mentat.nine.Employee;
-import com.mentat.nine.dbase.DBConnectMaker;
+import com.mentat.nine.dao.util.DBConnectMaker;
+import com.mentat.nine.domain.Employee;
 
 /**
  * @author Ruslan
