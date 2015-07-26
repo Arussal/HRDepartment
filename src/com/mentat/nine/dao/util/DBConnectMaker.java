@@ -3,8 +3,11 @@
  */
 package com.mentat.nine.dao.util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.Properties;
 
 /**
  * @author Ruslan
@@ -12,23 +15,27 @@ import java.sql.DriverManager;
  */
 public class DBConnectMaker {
 
-	
 	private String user;
 	private String password;
 	private String url;
 	private String driverName;
 	private Connection connection;
 	
-	
-	public DBConnectMaker(String user, String password, String url, String driverName) {
-		super();
-		this.user = user;
-		this.password = password;
-		this.url = url;
-		this.driverName = driverName;
+	public void loadConnectProperties(String propertyPath) {
+		Properties properties = new Properties();
+		
+		try(FileInputStream fis = new FileInputStream(propertyPath)) {
+			properties.load(fis);
+			
+			user = properties.getProperty("db.user");
+			password = properties.getProperty("db.password");
+			url = properties.getProperty("db.host");
+			driverName = properties.getProperty("db.driver");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
-
+	
 	public void doConnect() {
 		
 		try {
