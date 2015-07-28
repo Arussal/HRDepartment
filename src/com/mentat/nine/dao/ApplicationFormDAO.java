@@ -3,7 +3,6 @@
  */
 package com.mentat.nine.dao;
 
-import java.util.Date;
 
 import com.mentat.nine.dao.exceptions.DAOException;
 import com.mentat.nine.domain.ApplicationForm;
@@ -14,11 +13,11 @@ import com.mentat.nine.domain.ApplicationForm;
  */
 public interface ApplicationFormDAO {
 	
-	public ApplicationForm createApplicitionForm(Date date, int age, String education, String post, 
-			String requirements,  int salary) throws DAOException;
+	public ApplicationForm createApplicitionForm() throws DAOException;
 	
-	public ApplicationForm updateApplicationForm(Date date, int age, String education, String post, 
-			String requirements, int salary) throws DAOException;
+	public ApplicationForm readApplicationForm(int id);
 	
-	public void deleteApplicationForm(String post) throws DAOException;;
+	public void updateApplicationForm(ApplicationForm af) throws DAOException;
+	
+	public void deleteApplicationForm(ApplicationForm af) throws DAOException;;
 }
