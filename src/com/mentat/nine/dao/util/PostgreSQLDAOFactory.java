@@ -14,6 +14,7 @@ import com.mentat.nine.dao.CVFormDAO;
 import com.mentat.nine.dao.CandidateDAO;
 import com.mentat.nine.dao.DepartmentDAO;
 import com.mentat.nine.dao.EmployeeDAO;
+import com.mentat.nine.dao.exceptions.NoSuitDAOFactoryException;
 import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import com.mentat.nine.dao.postgres.PostgreSQLApplicationFormDAO;
 import com.mentat.nine.dao.postgres.PostgreSQLCVFormDAO;
