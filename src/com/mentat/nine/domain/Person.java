@@ -11,6 +11,7 @@ import java.util.Set;
  */
 public class Person {
 
+	protected Integer id;
 	protected String name;
 	protected int age;
 	protected int workExpirience;
@@ -24,10 +25,19 @@ public class Person {
 	 * 
 	 */
 	public Person() {
-		// TODO Auto-generated constructor stub
 	}
 
 	
+	public Integer getId() {
+		return id;
+	}
+
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+
 	public String getPost() {
 		return post;
 	}

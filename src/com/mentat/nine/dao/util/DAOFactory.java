@@ -7,11 +7,13 @@ package com.mentat.nine.dao.util;
 import java.sql.Connection;
 
 
+
 import com.mentat.nine.dao.ApplicationFormDAO;
 import com.mentat.nine.dao.CVFormDAO;
 import com.mentat.nine.dao.CandidateDAO;
 import com.mentat.nine.dao.DepartmentDAO;
 import com.mentat.nine.dao.EmployeeDAO;
+import com.mentat.nine.dao.exceptions.NoSuitDAOFactoryException;
 import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 
 
@@ -37,7 +39,7 @@ public abstract class DAOFactory {
 	public abstract Connection createConnection();
 
 	public static DAOFactory getDAOFactory(String factory) throws NoSuitDAOFactoryException {
-		if (factory.equals("postgres")) { 
+		if (factory.equalsIgnoreCase("postgres")) { 
 			return new PostgreSQLDAOFactory();
 		} else {
 			throw new NoSuitDAOFactoryException();

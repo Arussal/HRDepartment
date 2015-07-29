@@ -14,14 +14,15 @@ import com.mentat.nine.domain.Candidate;
  */
 public interface CandidateDAO {
 	
-	public Candidate createCandidate(String name, int age, String education, String email, 
-			String phone, String post, String skills, int workExpirience) throws DAOException;
+	public Candidate createCandidate() throws DAOException;
  
-	public Candidate selectCandidateByPost(String post) throws DAOException;
+	public Candidate readCandidateByPost(String post) throws DAOException;
 	
-	public Candidate selectCandidateByWorkExpirience(int workExpirience) throws DAOException;
+	public Candidate readCandidateByWorkExpirience(int workExpirience) throws DAOException;
 	
-	public Set<Candidate> selectAllCandidatesToThePost(String post) throws DAOException;
+	public void updateCandidate(Candidate candidate) throws DAOException;
+		
+	public void deleteCandidate(Candidate candidate) throws DAOException;
 	
-	public void deleteCandidate(String name) throws DAOException;
+	public Set<Candidate> getAllCandidates() throws DAOException;
 }

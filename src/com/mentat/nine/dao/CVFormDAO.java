@@ -14,23 +14,19 @@ import com.mentat.nine.domain.CVForm;
  */
 public interface CVFormDAO {
 	
-	public CVForm createCVForm(String name, int age, int workExpirience, String skills, 
-			String education, String phone, String email, String post, int desiredSalary, 
-			String additionalInfo) throws DAOException;
+	public CVForm createCVForm() throws DAOException;
 	
-	public CVForm updateCVForm(int age, int workExpirience, String skills, 
-			String education, String phone, String email, String post, int desiredSalary, 
-			String additionalInfo) throws DAOException;
+	public CVForm readCVFormByPost(String post) throws DAOException;
 	
-	public CVForm selectCVFormByPost(String post) throws DAOException;
+	public CVForm readCVFormByWorkExpirience(int workExpirience) throws DAOException;
 	
-	public CVForm selectCVFormByWorkExpirience(int workExpirience) throws DAOException;
+	public CVForm readCVFormByEducation(String education) throws DAOException;
 	
-	public CVForm selectCVFormByEducation(String education) throws DAOException;
+	public CVForm readCVFormByDesiredSalary(int desiredSalary) throws DAOException;
 	
-	public CVForm selectCVFormByDesiredSalary(int desiredSalary) throws DAOException;
+	public CVForm updateCVForm(CVForm cv) throws DAOException;
+	
+	public void deleteCVForm(CVForm cv) throws DAOException;
 	
 	public List<CVForm> getAllCVForms() throws DAOException;
-	
-	public void deleteCVForm(String name) throws DAOException;
 }

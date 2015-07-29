@@ -1,26 +1,26 @@
 /**
  * 
  */
-package com.mentat.nine.dao.util;
+package com.mentat.nine.dao.exceptions;
 
 /**
  * @author Ruslan
  *
  */
-public class NoSuitDAOFactoryException extends Exception {
+public class PersistException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public NoSuitDAOFactoryException() {
+	public PersistException() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public NoSuitDAOFactoryException(String arg0) {
-		super(arg0);
+	public PersistException(String message) {
+		super(message);
 		// TODO Auto-generated constructor stub
 	}
 
