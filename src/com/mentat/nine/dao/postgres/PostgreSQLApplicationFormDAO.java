@@ -27,32 +27,43 @@ import com.mentat.nine.domain.ApplicationForm;
  */
 public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 
-	private Connection connection;
+
+	private DAOFactory postgreSQLFactory;
 	
 	public PostgreSQLApplicationFormDAO() throws NoSuitDAOFactoryException, NoSuitableDBPropertiesException {
 		DAOFactory postgreSQLFactory = DAOFactory.getDAOFactory("POSTGRES");
 		postgreSQLFactory.loadConnectProperties();
-		connection = postgreSQLFactory.createConnection();
 	}
 
-//TODO close all resultsets
 	@Override
 	public ApplicationForm createApplicationForm(ApplicationForm af) throws PersistException {
-		String sqlSelect = getSelectQuery() + "WHERE id = " + af.getId();
-		try (Statement statement = connection.createStatement()) {
+		
+		//check if this ApplicationForm does not persist
+		String sqlSelect = getSelectQuery() + " WHERE id = " + af.getId();
+		try (Connection connection = postgreSQLFactory.createConnection();
+				Statement statement = connection.createStatement()) {
 			ResultSet rs = statement.executeQuery(sqlSelect);
 			List<ApplicationForm> list = parseResultSet(rs);
-			if (null != list || list.size() != 0) {
+			if (list.size() != 0) {
 				throw new PersistException("Object is already persist");
+			}
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException e) {
+				throw new PersistException();
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
-		}
+		} 
 		
+		//	create new ApplicationForm persist
 		ApplicationForm appForm = null;
 		int id = 0;
 		String sqlCreate = getCreateQuery();
-		try (PreparedStatement statement = 
+		try (Connection connection = postgreSQLFactory.createConnection();
+				PreparedStatement statement = 
 				connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS)) {
 			prepareStatementForInsert(statement, af);
 			statement.execute();
@@ -60,21 +71,38 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 			if (rs.next()) {
 				id = rs.getInt("id"); 
 			}
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException e) {
+				throw new PersistException();
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		}
+		
 		//return the last entity
-		sqlSelect = getSelectQuery() + "WHERE id = " + id;
-		try (Statement statement = connection.createStatement()) {
+		sqlSelect = getSelectQuery() + " WHERE id = " + id;
+		try (Connection connection = postgreSQLFactory.createConnection();
+				Statement statement = connection.createStatement()) {
 			ResultSet rs = statement.executeQuery(sqlSelect);
 			List<ApplicationForm> list = parseResultSet(rs);
 			if (null == list || list.size() != 1) {
 				throw new PersistException();
 			}
 			appForm = list.get(0);
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException e) {
+				throw new PersistException();
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		}
+
 		return appForm;
 	}
 
@@ -82,7 +110,8 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 	public ApplicationForm readApplicationForm(int id) throws PersistException {
 		ApplicationForm appForm = new ApplicationForm();
 		String sqlSelect = getSelectQuery() + "WHERE id = " + id;
-		try (Statement statement = connection.createStatement()) {
+		try (Connection connection = postgreSQLFactory.createConnection();
+				Statement statement = connection.createStatement()) {
 			ResultSet rs = statement.executeQuery(sqlSelect);
 			String require = "";
 			while (rs.next()) {
@@ -96,6 +125,13 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 			String[] requirementArray = require.split(";");
 			Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
 			appForm.setRequirements(requirements);
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} catch (SQLException e) {
+				throw new PersistException();
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		}
@@ -104,11 +140,16 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 
 	@Override
 	public void updateApplicationForm(ApplicationForm af) throws PersistException {
+		 
+		// check if there is ApplicationForm entity
 		if (null == af.getId()) {
 			throw new PersistException("Object is not persist yet");
 		}
+		
+		// update it
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + af.getId();
-		try (PreparedStatement statement = 
+		try (Connection connection = postgreSQLFactory.createConnection();
+				PreparedStatement statement = 
 				connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS)) {
 			prepareStatementForInsert(statement, af);
 			int count = statement.executeUpdate();
@@ -123,14 +164,42 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 
 	@Override
 	public void deleteApplicationForm(ApplicationForm af) throws PersistException {
-		// TODO Auto-generated method stub
 		
+		// check if there is ApplicationForm entity
+		if (null == af.getId()) {
+			throw new PersistException("Object is not persist yet");
+		}
+		
+		// delete it
+		String sqlDelete = getDeleteQuery() + " WHERE id = " + af.getId();
+		try (Connection connection = postgreSQLFactory.createConnection();
+				Statement statement = connection.createStatement()) {
+			int count = statement.executeUpdate(sqlDelete);
+			if (count != 1) {
+				throw new PersistException("On delete modify more then 1 record: " + count);
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
 	}
+
 
 	@Override
 	public List<ApplicationForm> getAllApplicationForms() throws PersistException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<ApplicationForm> list = null;
+		String sqlSelect = getSelectQuery();
+		try (Connection connection = postgreSQLFactory.createConnection();
+				Statement statement = connection.createStatement()) {
+			ResultSet rs = statement.executeQuery(sqlSelect);
+			list = parseResultSet(rs);
+			if (null == list) {
+				throw new PersistException();
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
+		return list;
 	}
 
 	@Override
@@ -140,7 +209,8 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 		return sql;
 	}
 
-	private String getUpdateQuery() {
+	@Override
+	public String getUpdateQuery() {
 		String sql = "UPDATE hrdepartment.application_form SET date = ?, age = ?, education = ?, \n"
 				+ "requirements = ?, post = ?, salary = ?";
 		return sql;
@@ -149,6 +219,12 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 	@Override
 	public String getSelectQuery() {
 		String sql = "SELECT * FROM hrdepartment.application_form";
+		return sql;
+	}
+	
+	@Override
+	public String getDeleteQuery() {
+		String sql = "DELETE FROM hrdepartment.application_form";
 		return sql;
 	}
 		

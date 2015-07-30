@@ -26,10 +26,13 @@ public interface ApplicationFormDAO {
 	
 	public List<ApplicationForm> getAllApplicationForms() throws PersistException;
 
+	public void prepareStatementForInsert(PreparedStatement statement, ApplicationForm af) throws PersistException;
+	
 	public String getCreateQuery();
 	
 	public String getSelectQuery();
-	
-	public void prepareStatementForInsert(PreparedStatement statement, ApplicationForm af) throws PersistException;
 
+	public String getUpdateQuery();
+	
+	public String getDeleteQuery();
 }
