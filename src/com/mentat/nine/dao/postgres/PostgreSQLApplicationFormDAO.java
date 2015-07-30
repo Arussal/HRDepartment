@@ -35,16 +35,25 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 		connection = postgreSQLFactory.createConnection();
 	}
 
-
+//TODO close all resultsets
 	@Override
 	public ApplicationForm createApplicationForm(ApplicationForm af) throws PersistException {
-		ApplicationForm appForm = null;
-		if (af.getId() != null) {
-			throw new PersistException("Object is already persist");
+		String sqlSelect = getSelectQuery() + "WHERE id = " + af.getId();
+		try (Statement statement = connection.createStatement()) {
+			ResultSet rs = statement.executeQuery(sqlSelect);
+			List<ApplicationForm> list = parseResultSet(rs);
+			if (null != list || list.size() != 0) {
+				throw new PersistException("Object is already persist");
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
 		}
+		
+		ApplicationForm appForm = null;
 		int id = 0;
 		String sqlCreate = getCreateQuery();
-		try (PreparedStatement statement = connection.prepareStatement(sqlCreate)) {
+		try (PreparedStatement statement = 
+				connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS)) {
 			prepareStatementForInsert(statement, af);
 			statement.execute();
 			ResultSet rs = statement.getGeneratedKeys();
@@ -55,7 +64,7 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 			throw new PersistException();
 		}
 		//return the last entity
-		String sqlSelect = getSelectQuery() + "WHERE id = " + id;
+		sqlSelect = getSelectQuery() + "WHERE id = " + id;
 		try (Statement statement = connection.createStatement()) {
 			ResultSet rs = statement.executeQuery(sqlSelect);
 			List<ApplicationForm> list = parseResultSet(rs);
@@ -69,18 +78,46 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 		return appForm;
 	}
 
-
-
-
 	@Override
 	public ApplicationForm readApplicationForm(int id) throws PersistException {
-		// TODO Auto-generated method stub
-		return null;
+		ApplicationForm appForm = new ApplicationForm();
+		String sqlSelect = getSelectQuery() + "WHERE id = " + id;
+		try (Statement statement = connection.createStatement()) {
+			ResultSet rs = statement.executeQuery(sqlSelect);
+			String require = "";
+			while (rs.next()) {
+				appForm.setAge(rs.getInt("age"));
+				appForm.setDate(rs.getDate("date"));
+				appForm.setEducation(rs.getString("education"));
+				require = rs.getString("requirements");
+				appForm.setPost(rs.getString("post"));
+				appForm.setSalary(rs.getInt("salary"));
+			}
+			String[] requirementArray = require.split(";");
+			Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
+			appForm.setRequirements(requirements);
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
+		return appForm;
 	}
 
 	@Override
 	public void updateApplicationForm(ApplicationForm af) throws PersistException {
-		// TODO Auto-generated method stub
+		if (null == af.getId()) {
+			throw new PersistException("Object is not persist yet");
+		}
+		String sqlUpdate = getUpdateQuery() + "WHERE id = " + af.getId();
+		try (PreparedStatement statement = 
+				connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS)) {
+			prepareStatementForInsert(statement, af);
+			int count = statement.executeUpdate();
+			if (1 != count) {
+				throw new PersistException("It was updated more than one persist");
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
 		
 	}
 
@@ -103,14 +140,18 @@ public class PostgreSQLApplicationFormDAO implements ApplicationFormDAO {
 		return sql;
 	}
 
+	private String getUpdateQuery() {
+		String sql = "UPDATE hrdepartment.application_form SET date = ?, age = ?, education = ?, \n"
+				+ "requirements = ?, post = ?, salary = ?";
+		return sql;
+	}
 	
 	@Override
 	public String getSelectQuery() {
 		String sql = "SELECT * FROM hrdepartment.application_form";
 		return sql;
 	}
-	
-	
+		
 	@Override
 	public void prepareStatementForInsert(PreparedStatement statement,
 			ApplicationForm af) throws PersistException {
