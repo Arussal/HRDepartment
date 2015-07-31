@@ -16,7 +16,7 @@ import com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
 public interface HRManager {
 	
 	public ApplicationForm createApplicationForm(int age, String education, Set<String> requirements, 
-			String post, int salary, Date date); 
+			String post, int salary, int workExpirience, Date date); 
 	
 	public Candidate findCandidate(ApplicationForm app) throws NoSuitableCandidateException;
 	

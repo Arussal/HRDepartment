@@ -167,7 +167,7 @@ public class HRDepartment extends Department implements HRManager{
 
 	@Override
 	public ApplicationForm createApplicationForm(int age, String education, Set<String> requirements, 
-			String post, int salary, Date date) {
+			String post, int salary, int workExpirience, Date date) {
 		
 		ApplicationForm app = new ApplicationForm();
 		app.setDate(date);
@@ -176,6 +176,7 @@ public class HRDepartment extends Department implements HRManager{
 		app.setPost(post);
 		app.setRequirements(requirements);
 		app.setSalary(salary);
+		app.setWorkExpirience(workExpirience);
 		return app;
 	}
 	

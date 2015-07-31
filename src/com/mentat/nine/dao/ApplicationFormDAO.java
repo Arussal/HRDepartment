@@ -27,10 +27,9 @@ import com.mentat.nine.domain.ApplicationForm;
 public class ApplicationFormDAO {
 
 
-	private DAOFactory postgreSQLFactory;
+	private DAOFactory postgreSQLFactory = null;
 	
 	public ApplicationFormDAO() throws PersistException{
-		DAOFactory postgreSQLFactory = null;
 		try {
 			postgreSQLFactory = DAOFactory.getDAOFactory("POSTGRES");
 		} catch (NoSuitDAOFactoryException e) {
@@ -63,7 +62,7 @@ public class ApplicationFormDAO {
 				rs = statement.executeQuery(sqlSelect);
 				List<ApplicationForm> list = parseResultSet(rs);
 				if (list.size() != 0) {
-					throw new PersistException("Object is already persist");
+					throw new PersistException("ApplicationForm is already persist, id " + af.getId());
 				} 
 			}finally {
 				try {
@@ -92,7 +91,7 @@ public class ApplicationFormDAO {
 				if (rs.next()) {
 					id = rs.getInt("id"); 
 				} else {
-					throw new PersistException("Object hasn't been created");
+					throw new PersistException("ApplicationForm hasn't been created");
 				}
 			} finally {
 				try {
@@ -174,11 +173,10 @@ public class ApplicationFormDAO {
 				require = rs.getString("requirements");
 				appForm.setPost(rs.getString("post"));
 				appForm.setSalary(rs.getInt("salary"));
+				String[] requirementArray = require.split(";");
+				Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
+				appForm.setRequirements(requirements);
 			}
-			String[] requirementArray = require.split(";");
-			Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
-			appForm.setRequirements(requirements);
-
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -264,10 +262,10 @@ public class ApplicationFormDAO {
 		
 		// check if there is ApplicationForm entity
 		if (null == af.getId()) {
-			throw new PersistException("Object is not persist yet");
+			throw new PersistException("ApplicationForm does not persist yet");
 		}
 		
-		// delete it
+		// delete ApplicationForm entity
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + af.getId();
 		try {
 			connection = postgreSQLFactory.createConnection();
@@ -310,7 +308,7 @@ public class ApplicationFormDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			list = parseResultSet(rs);
-			if (null == list) {
+			if (null == list || 0 == list.size()) {
 				throw new PersistException(" there are not applicationForm entities");
 			}
 		} catch (SQLException e) {
@@ -349,26 +347,26 @@ public class ApplicationFormDAO {
 	}
 
 
-	public String getUpdateQuery() {
+	private String getUpdateQuery() {
 		String sql = "UPDATE hrdepartment.application_form SET date = ?, age = ?, education = ?, \n"
 				+ "requirements = ?, post = ?, salary = ?";
 		return sql;
 	}
 	
 
-	public String getSelectQuery() {
+	private String getSelectQuery() {
 		String sql = "SELECT * FROM hrdepartment.application_form";
 		return sql;
 	}
 	
 	
-	public String getDeleteQuery() {
+	private String getDeleteQuery() {
 		String sql = "DELETE FROM hrdepartment.application_form";
 		return sql;
 	}
 		
 
-	public void prepareStatementForInsert(PreparedStatement statement,
+	private void prepareStatementForInsert(PreparedStatement statement,
 			ApplicationForm af) throws PersistException {
 		java.sql.Date sqlDate = convertDate(af.getDate());
 		String requirements = convertString(af.getRequirements());
@@ -398,11 +396,12 @@ public class ApplicationFormDAO {
 				require = rs.getString("requirements");
 				appForm.setPost(rs.getString("post"));
 				appForm.setSalary(rs.getInt("salary"));
+				appForm.setWorkExpirience(rs.getInt("work_Expirience"));
+				String[] requirementArray = require.split(";");
+				Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
+				appForm.setRequirements(requirements);
+				list.add(appForm);
 			}
-			String[] requirementArray = require.split(";");
-			Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
-			appForm.setRequirements(requirements);
-			list.add(appForm);
 		} catch (SQLException e) {
 			throw new PersistException();
 		}
@@ -413,6 +412,7 @@ public class ApplicationFormDAO {
 		StringBuilder sb = new StringBuilder();
 		for (String s : set) {
 			sb.append(s);
+			sb.append(";");
 		}
 		return sb.toString();
 	}

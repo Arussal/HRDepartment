@@ -10,14 +10,13 @@ import java.sql.DriverManager;
 import java.util.Properties;
 
 import com.mentat.nine.dao.CVFormDAO;
-import com.mentat.nine.dao.CandidateDAO;
 import com.mentat.nine.dao.DepartmentDAO;
 import com.mentat.nine.dao.EmployeeDAO;
 import com.mentat.nine.dao.ApplicationFormDAO;
+import com.mentat.nine.dao.PostgreSQLCandidateDAO;
 import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import com.mentat.nine.dao.exceptions.PersistException;
 import com.mentat.nine.dao.postgres.PostgreSQLCVFormDAO;
-import com.mentat.nine.dao.postgres.PostgreSQLCandidateDAO;
 import com.mentat.nine.dao.postgres.PostgreSQLDepartmentDAO;
 import com.mentat.nine.dao.postgres.PostgreSQLEmployeeDAO;
 
@@ -72,7 +71,7 @@ public class PostgreSQLDAOFactory extends DAOFactory {
 	 * @see com.mentat.nine.dao.util.DAOFactory#getCandidateDAO()
 	 */
 	@Override
-	public CandidateDAO getCandidateDAO() {
+	public CandidateDAO getCandidateDAO() throws PersistException {
 		return new PostgreSQLCandidateDAO();
 	}
 
