@@ -8,6 +8,7 @@ import java.sql.Connection;
 
 
 
+
 import com.mentat.nine.dao.ApplicationFormDAO;
 import com.mentat.nine.dao.CVFormDAO;
 import com.mentat.nine.dao.CandidateDAO;
@@ -15,6 +16,7 @@ import com.mentat.nine.dao.DepartmentDAO;
 import com.mentat.nine.dao.EmployeeDAO;
 import com.mentat.nine.dao.exceptions.NoSuitDAOFactoryException;
 import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
+import com.mentat.nine.dao.exceptions.PersistException;
 
 
 /**
@@ -29,7 +31,7 @@ public abstract class DAOFactory {
 	protected String driverName;
 	protected Connection connection;
 	
-	public abstract ApplicationFormDAO getApplicationFormDAO();
+	public abstract ApplicationFormDAO getApplicationFormDAO() throws PersistException;
 	public abstract CandidateDAO getCandidateDAO();
 	public abstract CVFormDAO getCVFormDAO();
 	public abstract DepartmentDAO getDepartmentDAO();
