@@ -14,6 +14,7 @@ import com.mentat.nine.domain.exceptions.NoSuchEmployeeException;
  */
 public class Department {
 
+	private Integer id;
 	private String name;
 	private String head;
 	private Set<Employee> employees;
@@ -34,6 +35,7 @@ public class Department {
 		employees = new HashSet<Employee>();
 	}
 
+
 	public void addEmployee(Employee employee) {
 		if (null == employee) {
 			throw new IllegalArgumentException();
@@ -50,6 +52,14 @@ public class Department {
 			throw new NoSuchEmployeeException();
 		}
 		employees.remove(employee);
+	}
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 	public String getName() {
@@ -92,6 +102,11 @@ public class Department {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "name=" + name + ", head=" + head + ", employees=" + employees;
 	}
 
 }

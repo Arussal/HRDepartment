@@ -118,4 +118,11 @@ public class Employee extends Person{
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "post=" + post + ", hireDate=" + hireDate + ", salary=" + salary 
+				+ ", department=" + department + ", education=" + getEducation()
+				+ ", name=" + getName() + ", age=" + getAge() + ", skills="
+				+ getSkills() + ", phone=" + getPhone() + ", email=" + getEmail();
+	}	
 }

@@ -65,20 +65,8 @@ public class ApplicationFormDAO {
 					throw new PersistException("ApplicationForm is already persist, id " + af.getId());
 				} 
 			}finally {
-				try {
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (SQLException e) {
-					throw new PersistException();
-				} 
-				try {
-					if (statement != null) {
-						statement.close();
-					}
-				} catch (SQLException e) {
-					throw new PersistException();
-				}
+				closeResultSet(rs);
+				closeStatement(statement);
 			}
 			
 			// create new ApplicationForm persist
@@ -87,27 +75,17 @@ public class ApplicationFormDAO {
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				prepareStatementForInsert(pStatement, af);
-				rs = pStatement.executeQuery();
-				if (rs.next()) {
+				int count = pStatement.e
+				if (0 != count)) {
 					id = rs.getInt("id"); 
 				} else {
 					throw new PersistException("ApplicationForm hasn't been created");
 				}
+				rs = pStatement.getGeneratedKeys();
+				i
 			} finally {
-				try {
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (SQLException e) {
-					throw new PersistException();
-				} 
-				try {
-					if (pStatement != null) {
-						pStatement.close();
-					}
-				} catch (SQLException e) {
-					throw new PersistException();
-				}
+				closeResultSet(rs);
+				closeStatement(statement);
 			}
 			
 			//return the last entity
@@ -117,36 +95,18 @@ public class ApplicationFormDAO {
 				rs = statement.executeQuery(sqlSelect);
 				List<ApplicationForm> list = parseResultSet(rs);
 				if (null == list || list.size() != 1) {
-					throw new PersistException("Was created more than one persist with id = " + id);
+					throw new PersistException("Created more than one ApplicationForm with id = " + id);
 				}
 				appForm = list.get(0);
 			} finally {
-				try {
-					if (rs != null) {
-						rs.close();
-					}
-				} catch (SQLException e) {
-					throw new PersistException();
-				} 
-				try {
-					if (statement != null) {
-						statement.close();
-					}
-				} catch (SQLException e) {
-					throw new PersistException();
-				}
+				closeResultSet(rs);
+				closeStatement(statement);
 			}
 			
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
+			closeConnection(connection);
 		}
 		
 		return appForm;
@@ -160,47 +120,21 @@ public class ApplicationFormDAO {
 		ResultSet rs = null;
 		
 		ApplicationForm appForm = new ApplicationForm();
-		String sqlSelect = getSelectQuery() + "WHERE id = " + id;
+		
 		try {
+			String sqlSelect = getSelectQuery() + "WHERE id = " + id;
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
-			String require = "";
-			while (rs.next()) {
-				appForm.setAge(rs.getInt("age"));
-				appForm.setDate(rs.getDate("date"));
-				appForm.setEducation(rs.getString("education"));
-				require = rs.getString("requirements");
-				appForm.setPost(rs.getString("post"));
-				appForm.setSalary(rs.getInt("salary"));
-				String[] requirementArray = require.split(";");
-				Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
-				appForm.setRequirements(requirements);
+			List<ApplicationForm> appFormList = parseResultSet(rs);
+			if (null == appFormList || appFormList.size() != 1) {
+				throw new PersistException("Was get more than one ApplicationForm with id = " + id);
 			}
+			appForm = appFormList.get(0);
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (statement != null) {
-					statement.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
+			close(connection, statement, rs);
 		}
 		return appForm;
 	}
@@ -230,27 +164,7 @@ public class ApplicationFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (pStatement != null) {
-					pStatement.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
+			close(connection, pStatement, rs);
 		}
 	}
 
@@ -277,20 +191,8 @@ public class ApplicationFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			try {
-				if (statement != null) {
-					statement.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
+			closeStatement(statement);
+			closeConnection(connection);
 		}
 	}
 
@@ -301,48 +203,28 @@ public class ApplicationFormDAO {
 		Statement statement = null;
 		ResultSet rs = null;
 		
-		List<ApplicationForm> list = null;
+		List<ApplicationForm> appForms = null;
 		String sqlSelect = getSelectQuery();
 		try { 
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
-			list = parseResultSet(rs);
-			if (null == list || 0 == list.size()) {
-				throw new PersistException(" there are not applicationForm entities");
+			appForms = parseResultSet(rs);
+			if (null == appForms || 0 == appForms.size()) {
+				throw new PersistException(" there are not ApplicationForm entities");
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (statement != null) {
-					statement.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
-			try {
-				if (connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			}
+			close(connection, statement, rs);
 		}
-		return list;
+		return appForms;
 	}
 
 	
 	private String getCreateQuery() {
-		String sql = "INSERT INTO hrdepartment.application_form (date, age, education, requirements, \n"
-				+ "post, salary) VALUES (?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO hrdepartment.application_form (date, age, education, \n"
+				+ "requirements, post, salary) VALUES (?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
 
@@ -425,5 +307,41 @@ public class ApplicationFormDAO {
 		return sqlDate;
 	}
 
+	private void closeResultSet(ResultSet rs) throws PersistException {
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
+	}
+	
+	private void closeStatement(Statement statement) throws PersistException {
+		try {
+			if (statement != null) {
+				statement.close();
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
+	}
+	
+	private void closeConnection(Connection connection) throws PersistException {
+		try {
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (SQLException e) {
+			throw new PersistException();
+		}
+	}
+		
+	private void close(Connection connection, Statement statement, ResultSet rs) 
+			throws PersistException {
+		closeResultSet(rs);
+		closeStatement(statement);
+		closeConnection(connection);
+	}
 
 }

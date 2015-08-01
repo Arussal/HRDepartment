@@ -4,8 +4,10 @@
 package com.mentat.nine.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import com.mentat.nine.dao.exceptions.DAOException;
+import com.mentat.nine.dao.exceptions.PersistException;
 import com.mentat.nine.domain.Employee;
 
 /**
@@ -14,23 +16,23 @@ import com.mentat.nine.domain.Employee;
  */
 public interface EmployeeDAO {
 
-	public Employee createEmployee() throws DAOException;
+	public Employee createEmployee(Employee employee) throws PersistException;
 	
-	public Employee readEmployeeByName(String name) throws DAOException;
+	public Employee getEmployeeByName(String name) throws PersistException;
 	
-	public Employee readEmployeeByEducation(String education) throws DAOException;
+	public Set<Employee> getEmployeeByEducation(String education) throws PersistException;
 	
-	public Employee readEmployeeByDepartament(String departament) throws DAOException;
+	public Set<Employee> getEmployeeByDepartament(String departament) throws PersistException;
 	
-	public Employee readEmployeeByPost(String post) throws DAOException;
+	public Set<Employee> getEmployeeByPost(String post) throws PersistException;
 	
-	public Employee readEmployeeBySalary(int salary) throws DAOException;
+	public Set<Employee> getEmployeeBySalary(int salary) throws PersistException;
 	
-	public Employee readEmployeeByAge(int age) throws DAOException;
+	public Set<Employee> readEmployeeByAge(int age) throws PersistException;
 	
-	public void updateEmployee(Employee employee) throws DAOException;
+	public void updateEmployee(Employee employee) throws PersistException;
 	
-	public void deleteEmployee(Employee employee) throws DAOException;
+	public void deleteEmployee(Employee employee) throws PersistException;
 	
-	public List<Employee> getAllEmployees() throws DAOException;
+	public Set<Employee> getAllEmployees() throws PersistException;
 }

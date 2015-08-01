@@ -13,12 +13,12 @@ import com.mentat.nine.dao.CVFormDAO;
 import com.mentat.nine.dao.DepartmentDAO;
 import com.mentat.nine.dao.EmployeeDAO;
 import com.mentat.nine.dao.ApplicationFormDAO;
-import com.mentat.nine.dao.PostgreSQLCandidateDAO;
+import com.mentat.nine.dao.CandidateDAO;
+import com.mentat.nine.dao.CVFormDAO;
+import com.mentat.nine.dao.DepartmentDAO;
+import com.mentat.nine.dao.PostgreSQLEmployeeDAO;
 import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import com.mentat.nine.dao.exceptions.PersistException;
-import com.mentat.nine.dao.postgres.PostgreSQLCVFormDAO;
-import com.mentat.nine.dao.postgres.PostgreSQLDepartmentDAO;
-import com.mentat.nine.dao.postgres.PostgreSQLEmployeeDAO;
 
 /**
  * @author Ruslan
@@ -72,7 +72,7 @@ public class PostgreSQLDAOFactory extends DAOFactory {
 	 */
 	@Override
 	public CandidateDAO getCandidateDAO() throws PersistException {
-		return new PostgreSQLCandidateDAO();
+		return new CandidateDAO();
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +80,7 @@ public class PostgreSQLDAOFactory extends DAOFactory {
 	 */
 	@Override
 	public CVFormDAO getCVFormDAO() {
-		return new PostgreSQLCVFormDAO();
+		return new CVFormDAO();
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +88,7 @@ public class PostgreSQLDAOFactory extends DAOFactory {
 	 */
 	@Override
 	public DepartmentDAO getDepartmentDAO() {
-		return new PostgreSQLDepartmentDAO();
+		return new DepartmentDAO();
 	}
 
 	/* (non-Javadoc)
