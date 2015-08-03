@@ -69,12 +69,13 @@ public class CandidateDAO {
 			
 			// create new Candidate persist
 			try {
-				id = 0;
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				prepareStatementForInsert(pStatement, candidate);
-				rs = pStatement.executeQuery();
-				if (rs.next()) {
+				int count = pStatement.executeUpdate();
+				if (1 == count) {
+					rs = pStatement.getGeneratedKeys();
+					rs.next();
 					id = rs.getInt("id"); 
 				} else {
 					throw new PersistException("Candidate hasn't been created");
@@ -110,7 +111,7 @@ public class CandidateDAO {
 	}
 
 	
-	public Candidate getCandidateByName(String name) throws PersistException {
+	public Candidate getCandidateById(int id) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
@@ -120,13 +121,15 @@ public class CandidateDAO {
 		Candidate candidate = new Candidate();
 
 		try {
-			String sqlSelect = getSelectQuery() + " WHERE name = " + name;
+			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			candidates = parseResultSet(rs);
-			if (null == candidates || candidates.size() != 1) {
-				throw new PersistException("Get more than one Candidate by name " + name);
+			if (candidates.size() > 1) {
+				throw new PersistException("Get more than one Candidate with id = " + id);
+			} else if (candidates.size() < 1) {
+				throw new PersistException("No Candidate with id = " + id);
 			}
 			for (Candidate cand : candidates) {
 				candidate = cand;	
@@ -154,6 +157,9 @@ public class CandidateDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			candidates = parseResultSet(rs);
+			if (candidates.size() < 1) {
+				throw new PersistException("No Candidates with post = " + post);
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -169,28 +175,17 @@ public class CandidateDAO {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		Set<Candidate> candidates = new HashSet<Candidate>();
+		Set<Candidate> candidates = null;
 		
-		Candidate candidate = new Candidate();
 		String sqlSelect = getSelectQuery() + "WHERE work_expirience = " + workExpirience;
+		
 		try {
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
-			
-			while (rs.next()) {
-				candidate.setName(rs.getString("name"));
-				candidate.setAge(rs.getInt("age"));
-				candidate.setEducation(rs.getString("education"));
-				candidate.setEmail(rs.getString("email"));
-				candidate.setPhone(rs.getString("phone"));
-				candidate.setPost(rs.getString("Post"));
-				candidate.setWorkExpirience(rs.getInt("work_expirience"));
-				String skill = rs.getString("skills");
-				String[] skillArray = skill.split(";");
-				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
-				candidate.setSkills(skills);
-				candidates.add(candidate);
+			candidates = parseResultSet(rs);
+			if (candidates.size() < 1) {
+				throw new PersistException("No Candidates with workExpirience = " + workExpirience);
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
@@ -220,8 +215,10 @@ public class CandidateDAO {
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			prepareStatementForInsert(pStatement, candidate);
 			int count = pStatement.executeUpdate();
-			if (1 != count) {
+			if (count > 1) {
 				throw new PersistException("Updated more than one Candidate");
+			} else if (count < 1) {
+				throw new PersistException("No one Candidate was updated");
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
@@ -247,7 +244,7 @@ public class CandidateDAO {
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlDelete);
-			if (count != 1) {
+			if (1 != count) {
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
@@ -313,8 +310,8 @@ public class CandidateDAO {
 
 		try {
 			String skill = "";
-			Candidate candidate = new Candidate();
 			while (rs.next()) {
+				Candidate candidate = new Candidate();
 				candidate.setName(rs.getString("name"));
 				candidate.setAge(rs.getInt("age"));
 				candidate.setEducation(rs.getString("education"));

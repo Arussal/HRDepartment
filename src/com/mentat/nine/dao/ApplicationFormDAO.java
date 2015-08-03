@@ -71,18 +71,17 @@ public class ApplicationFormDAO {
 			
 			// create new ApplicationForm persist
 			try {
-				id = 0;
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				prepareStatementForInsert(pStatement, af);
-				int count = pStatement.e
-				if (0 != count)) {
+				int count = pStatement.executeUpdate();
+				if (1 == count) {
+					rs = pStatement.getGeneratedKeys();
+					rs.next();
 					id = rs.getInt("id"); 
 				} else {
 					throw new PersistException("ApplicationForm hasn't been created");
 				}
-				rs = pStatement.getGeneratedKeys();
-				i
 			} finally {
 				closeResultSet(rs);
 				closeStatement(statement);
@@ -127,8 +126,10 @@ public class ApplicationFormDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			List<ApplicationForm> appFormList = parseResultSet(rs);
-			if (null == appFormList || appFormList.size() != 1) {
-				throw new PersistException("Was get more than one ApplicationForm with id = " + id);
+			if (appFormList.size() > 1) {
+				throw new PersistException("Get more than one ApplicationForm with id = " + id);
+			} else if (appFormList.size() < 1) {
+				throw new PersistException("No ApplicationForm with id = " + id);
 			}
 			appForm = appFormList.get(0);
 		} catch (SQLException e) {
@@ -158,8 +159,10 @@ public class ApplicationFormDAO {
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			prepareStatementForInsert(pStatement, af);
 			int count = pStatement.executeUpdate();
-			if (1 != count) {
+			if (count > 1) {
 				throw new PersistException("It was updated more than one persist");
+			} else if (count < 1) {
+				throw new PersistException("No one persist was updated");
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
@@ -185,7 +188,7 @@ public class ApplicationFormDAO {
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlDelete);
-			if (count != 1) {
+			if (1 != count) {
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
@@ -270,8 +273,8 @@ public class ApplicationFormDAO {
 
 		try {
 			String require = "";
-			ApplicationForm appForm = new ApplicationForm();
 			while (rs.next()) {
+				ApplicationForm appForm = new ApplicationForm();
 				appForm.setAge(rs.getInt("age"));
 				appForm.setDate(rs.getDate("date"));
 				appForm.setEducation(rs.getString("education"));

@@ -61,13 +61,14 @@ public class DepartmentDAO{
 			
 			// create new Department persist
 			try {
-				id = 0;
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				prepareStatementForInsert(pStatement, department);
-				rs = pStatement.executeUpdate();
-				if (rs.next()) {
-					id = rs.getInt("id"); 
+				int count = pStatement.executeUpdate();
+				if (1 == count) {
+					rs = pStatement.getGeneratedKeys();
+					rs.next();
+					id = rs.getInt("id");
 				} else {
 					throw new PersistException("Department hasn't been created");
 				}
@@ -115,8 +116,10 @@ public class DepartmentDAO{
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			departments = parseResultSet(rs);
-			if (null == departments || departments.size() != 1) {
-				throw new PersistException("Get more than one Department by name " + name);
+			if (departments.size() > 1) {
+				throw new PersistException("Get more than one Department with name = " + name);
+			} else if (departments.size() < 1) {
+				throw new PersistException("No Department with name = " + name);
 			}
 			department = departments.get(0);	
 		} catch (SQLException e) {
@@ -141,6 +144,9 @@ public class DepartmentDAO{
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			departments = parseResultSet(rs);
+			if (departments.size() < 1) {
+				throw new PersistException("No Departments with head = " + head);
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -161,9 +167,11 @@ public class DepartmentDAO{
 			connection = postgreSQLFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlUpdate);
-			if (1 != count) {
+			if (count > 1) {
 				throw new PersistException("Updated more than one Department");
-			} 
+			} else if (count < 1) {
+				throw new PersistException("No one Department was updated");
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {

@@ -55,12 +55,13 @@ public class CVFormDAO {
 			
 			// create new CVForm persist
 			try {
-				id = 0;
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				prepareStatementForInsert(pStatement, cv);
-				rs = pStatement.executeQuery();
-				if (rs.next()) {
+				int count = pStatement.executeUpdate();
+				if (1 == count) {
+					rs = pStatement.getGeneratedKeys();
+					rs.next();
 					id = rs.getInt("id"); 
 				} else {
 					throw new PersistException("Candidate hasn't been created");
@@ -107,6 +108,9 @@ public class CVFormDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			cvForms = parseResultSet(rs);
+			if (cvForms.size() < 1) {
+				throw new PersistException("No CVForms with post = " + post);
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -131,6 +135,9 @@ public class CVFormDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			cvForms = parseResultSet(rs);
+			if (cvForms.size() < 1) {
+				throw new PersistException("No Candidates with workExpirience = " + workExpirience);
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -155,6 +162,9 @@ public class CVFormDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			cvForms = parseResultSet(rs);
+			if (cvForms.size() < 1) {
+				throw new PersistException("No Candidates with education = " + education);
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -179,6 +189,9 @@ public class CVFormDAO {
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			cvForms = parseResultSet(rs);
+			if (cvForms.size() < 1) {
+				throw new PersistException("No Candidates with desiredSalary = " + desiredSalary);
+			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
@@ -207,8 +220,10 @@ public class CVFormDAO {
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			prepareStatementForInsert(pStatement, cv);
 			int count = pStatement.executeUpdate();
-			if (1 != count) {
+			if (count > 1) {
 				throw new PersistException("Updated more than one CVForm");
+			} else if (count < 1) {
+				throw new PersistException("No one CVForm was updated");
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
