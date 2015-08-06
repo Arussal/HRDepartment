@@ -231,14 +231,14 @@ public class DepartmentDAO{
 	}
 
 	private String getCreateQuery() {
-		String sql = "INSERT INTO hrdepartment.department (name, head, employees) \n"
+		String sql = "INSERT INTO department (name, head, employees) \n"
 				+ "VALUES (?, ?, ?)";
 		return sql;
 	}
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE hrdepartment.departament SET name = ?, head = ?, employees = ?, \n"
+		String sql = "UPDATE departament SET name = ?, head = ?, employees = ?, \n"
 				+ "VALUES (?, ?, ?)";
 		return sql;
 	}

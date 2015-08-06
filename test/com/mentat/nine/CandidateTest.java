@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.mentat.nine.dao.exceptions.PersistException;
 import com.mentat.nine.domain.CVForm;
 import com.mentat.nine.domain.Candidate;
 import com.mentat.nine.domain.HRDepartment;
@@ -37,16 +38,17 @@ public class CandidateTest {
 		String email = "email@gmail.com";
 		int desiredSalary = 10000;
 		String additionalInfo = "addition";
-		CVForm cv = candidate.createCVForm(name, age, skills, education, phone, email, desiredSalary, additionalInfo);
+		CVForm cv = candidate.createCVForm(name, age, skills, education, phone, email, desiredSalary, additionalInfo, additionalInfo, desiredSalary);
 		assertNotNull(cv);
 	}
 
 	/**
 	 * Test method for {@link com.mentat.nine.domain.Candidate#sendCVForm(com.mentat.nine.domain.CVForm, 
 	 * com.mentat.nine.domain.HRDepartment)}.
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testSendCVForm() {
+	public void testSendCVForm() throws PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		assertEquals(0, hrDep.getCvs().size());
 		Candidate candidate = new Candidate();

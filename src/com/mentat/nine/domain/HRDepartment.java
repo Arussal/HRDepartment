@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.mentat.nine.dao.ApplicationFormDAO;
+import com.mentat.nine.dao.CVFormDAO;
 import com.mentat.nine.dao.CandidateDAO;
 import com.mentat.nine.dao.EmployeeDAO;
 import com.mentat.nine.dao.exceptions.PersistException;
@@ -35,18 +36,18 @@ public class HRDepartment extends Department implements HRManager{
 	 * 
 	 */
 	public HRDepartment() {
-		cvs = new ArrayList<CVForm>();
 		staff = new HashSet<Employee>();
 		firedEmployees = new HashSet<Employee>();
 		daoFactory = DAOFactory.getFactory();
 	}
 	
 	@Override
-	public void addCVForm(CVForm form) {
+	public CVForm addCVForm(CVForm form) throws PersistException {
 		if (null == form) {
 			throw new IllegalArgumentException();
 		}
-		cvs.add(form);
+		CVFormDAO cvDao = daoFactory.getCVFormDAO();
+		return cvDao.createCVForm(form);
 	}
 
 	@Override
@@ -62,12 +63,17 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptPost", new Boolean(false));
 		conditions.put("acceptSalary", new Boolean(false));
 		
+		CVFormDAO cvDao = daoFactory.getCVFormDAO();
+		cvs = cvDao.getAllCVForms();
+		
 		outer: for (CVForm cv : cvs) {
 
+			// set "false" flag to all conditions
 			for (Entry<String, Boolean> condition : conditions.entrySet()) {
 				condition.setValue(new Boolean(false));
 			}
 			
+			// check all conditions
 			if (Math.abs(cv.getAge() - app.getAge()) < 2) {
 				conditions.put("acceptAge", new Boolean(true));								
 			}
@@ -128,7 +134,6 @@ public class HRDepartment extends Department implements HRManager{
 		employee.setPost(post);
 		employee.setSalary(salary);
 		employee.setHireDate(hireDate);
-		staff.add(employee);
 		
 		EmployeeDAO empDao = daoFactory.getEmployeeDAO();
 		return empDao.createEmployee(employee);

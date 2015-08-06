@@ -19,6 +19,9 @@ public class EmployeeDAO {
 
 	private DAOFactory daoFactory = null;
 	
+	public EmployeeDAO() throws PersistException{
+		daoFactory = DAOFactory.getFactory();
+	}
 	
 	public Employee createEmployee(Employee employee) throws PersistException {
 
@@ -221,7 +224,7 @@ public class EmployeeDAO {
 	}
 
 	
-	public Set<Employee> readEmployeeByAge(int age) throws PersistException {
+	public Set<Employee> getEmployeeByAge(int age) throws PersistException {
 		
 		Set<Employee> employees = null;
 		Connection connection = null;
@@ -316,7 +319,7 @@ public class EmployeeDAO {
 	}
 
 	private String getCreateQuery() {
-		String sql = "INSERT INTO hrdepartment.employee (name, age, education, email, phone, \n"
+		String sql = "INSERT INTO employee (name, age, education, email, phone, \n"
 				+ "post, skills, department, salary, hiredate, firedate) \n"
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
@@ -324,7 +327,7 @@ public class EmployeeDAO {
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE hrdepartment.employee SET name = ?, age = ?, education = ?, \n"
+		String sql = "UPDATE employee SET name = ?, age = ?, education = ?, \n"
 				+ "email = ?, phone = ?, post = ?, skills = ?, department = ?, \n"
 				+ "salary = ?, hiredate = ?, firedate = ?";
 		return sql;
@@ -332,13 +335,13 @@ public class EmployeeDAO {
 	
 
 	private String getSelectQuery() {
-		String sql = "SELECT * FROM hrdepartment.employee";
+		String sql = "SELECT * FROM employee";
 		return sql;
 	}
 	
 	
 	private String getDeleteQuery() {
-		String sql = "DELETE FROM hrdepartment.employee";
+		String sql = "DELETE FROM employee";
 		return sql;
 	}
 	
@@ -347,9 +350,8 @@ public class EmployeeDAO {
 
 		try {
 			String skill = "";
-			Employee employee = new Employee();
 			while (rs.next()) {
-				
+				Employee employee = new Employee();
 				employee.setName(rs.getString("name"));
 				employee.setAge(rs.getInt("age"));
 				employee.setEducation(rs.getString("education"));

@@ -290,7 +290,7 @@ public class CVFormDAO {
 	}
 
 	private String getCreateQuery() {
-		String sql = "INSERT INTO hrdepartment.cvform (name, age, education, email, phone, \n"
+		String sql = "INSERT INTO cvform (name, age, education, email, phone, \n"
 				+ "post, skills, work_expirience, desired_salalry, additional_info) \n"
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
@@ -298,21 +298,21 @@ public class CVFormDAO {
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE hrdepartment.cvform SET name = ?, age = ?, education = ?, \n"
-				+ "email = ?, phone = ?, skills, work_expirience = ?, desired_salary = ?, \n"
+		String sql = "UPDATE cvform SET name = ?, age = ?, education = ?, \n"
+				+ "email = ?, phone = ?, skills = ?, work_expirience = ?, desired_salary = ?, \n"
 				+ "additional_info = ?, VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
 	
 
 	private String getSelectQuery() {
-		String sql = "SELECT * FROM hrdepartment.cvform";
+		String sql = "SELECT * FROM cvform";
 		return sql;
 	}
 	
 	
 	private String getDeleteQuery() {
-		String sql = "DELETE FROM hrdepartment.cvform";
+		String sql = "DELETE FROM cvform";
 		return sql;
 	}
 	

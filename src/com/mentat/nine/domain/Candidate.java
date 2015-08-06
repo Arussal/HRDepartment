@@ -5,6 +5,8 @@ package com.mentat.nine.domain;
 
 import java.util.Set;
 
+import com.mentat.nine.dao.exceptions.PersistException;
+
 /**
  * @author Ruslan
  *
@@ -19,7 +21,7 @@ public class Candidate extends Person{
 	}
 	
 	public CVForm createCVForm(String name, int age, Set<String> skills, String education, String phone, 
-			String email, int desiredSalary, String additionalInfo) {
+			String email, int desiredSalary, String additionalInfo, String post, int workExpirience) {
 		CVForm cv = new CVForm();
 		cv.setName(name);
 		cv.setAge(age);
@@ -29,10 +31,12 @@ public class Candidate extends Person{
 		cv.setEmail(email);
 		cv.setDesiredSalary(desiredSalary);
 		cv.setAdditionalInfo(additionalInfo);
+		cv.setPost(post);
+		cv.setWorkExpirience(workExpirience);
 		return cv;
 	}
 	
-	public void sendCVForm(CVForm form, HRDepartment hr){
+	public void sendCVForm(CVForm form, HRDepartment hr) throws PersistException{
 		hr.addCVForm(form);
 	}
 

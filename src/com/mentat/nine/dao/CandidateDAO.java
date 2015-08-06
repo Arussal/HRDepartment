@@ -272,15 +272,15 @@ private DAOFactory daoFactory = null;
 	}
 
 	private String getCreateQuery() {
-		String sql = "INSERT INTO hrdepartment.candidate (name, age, education, email, phone, \n"
+		String sql = "INSERT INTO candidate (name, age, education, email, phone, \n"
 				+ "post, skills, work_expirience) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE hrdepartment.candidate SET name = ?, age = ?, education = ?, \n"
-				+ "email = ?, phone = ?, skills, work_expirience = ?";
+		String sql = "UPDATE candidate SET name = ?, age = ?, education = ?, \n"
+				+ "email = ?, phone = ?, skills = ?, work_expirience = ?";
 		return sql;
 	}
 	

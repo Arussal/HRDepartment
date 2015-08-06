@@ -53,7 +53,9 @@ public class ApplicationFormDAO {
 				List<ApplicationForm> list = parseResultSet(rs);
 				if (list.size() != 0) {
 					throw new PersistException("ApplicationForm is already persist, id " + af.getId());
-				} 
+				}
+			}catch (SQLException e) {
+				throw new PersistException(" can't check ApplicationForm by id");
 			}finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
@@ -72,6 +74,8 @@ public class ApplicationFormDAO {
 				} else {
 					throw new PersistException("ApplicationForm hasn't been created");
 				}
+			}catch (SQLException e) {
+				throw new PersistException(" can't create new ApplicationForm");
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(pStatement);
@@ -87,13 +91,12 @@ public class ApplicationFormDAO {
 					throw new PersistException("Created more than one ApplicationForm with id = " + id);
 				}
 				appForm = list.get(0);
+			}catch (SQLException e) {
+				throw new PersistException(" can't return new ApplicationForm");
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
 			}
-			
-		} catch (SQLException e) {
-			throw new PersistException();
 		} finally {
 			Closer.closeConnection(connection);
 		}
@@ -216,27 +219,27 @@ public class ApplicationFormDAO {
 
 	
 	private String getCreateQuery() {
-		String sql = "INSERT INTO hrdepartment.application_form (date, age, education, \n"
-				+ "requirements, post, salary) VALUES (?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO application_form (date, age, education, \n"
+				+ "requirements, post, salary, work_expirience) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE hrdepartment.application_form SET date = ?, age = ?, education = ?, \n"
-				+ "requirements = ?, post = ?, salary = ?";
+		String sql = "UPDATE application_form SET date = ?, age = ?, education = ?, \n"
+				+ "requirements = ?, post = ?, salary = ?, work_expirience = ?";
 		return sql;
 	}
 	
 
 	private String getSelectQuery() {
-		String sql = "SELECT * FROM hrdepartment.application_form";
+		String sql = "SELECT * FROM application_form";
 		return sql;
 	}
 	
 	
 	private String getDeleteQuery() {
-		String sql = "DELETE FROM hrdepartment.application_form";
+		String sql = "DELETE FROM application_form";
 		return sql;
 	}
 		
@@ -252,6 +255,7 @@ public class ApplicationFormDAO {
 			statement.setString(4, requirements);
 			statement.setString(5, af.getPost());
 			statement.setInt(6, af.getSalary());
+			statement.setInt(7, af.getWorkExpirience());
 		} catch (SQLException e) {
 			throw new PersistException();
 		}	

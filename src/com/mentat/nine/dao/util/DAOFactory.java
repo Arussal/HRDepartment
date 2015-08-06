@@ -55,9 +55,9 @@ public class DAOFactory {
 	public void loadConnectProperties() throws NoSuitableDBPropertiesException {
 		Properties properties = new Properties();
 		
-		try(FileInputStream fis = new FileInputStream("/resources/postgres.properties")) {
+		try(FileInputStream fis = new FileInputStream("resources/postgres.properties")) {
 			properties.load(fis);
-			
+
 			user = properties.getProperty("db.user");
 			password = properties.getProperty("db.password");
 			url = properties.getProperty("db.host");
@@ -82,7 +82,6 @@ public class DAOFactory {
 	 */
 	public ApplicationFormDAO getApplicationFormDAO() throws PersistException{
 		return new ApplicationFormDAO();
-		
 	}
 
 	/* (non-Javadoc)

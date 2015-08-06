@@ -31,9 +31,10 @@ public class HRDepartmentTest {
 	/**
 	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
 	 * addCVForm(com.mentat.nine.domain.CVForm)}.
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testAddCVForm() {
+	public void testAddCVForm() throws PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		CVForm cv = new CVForm();
 		hrDep.addCVForm(cv);
