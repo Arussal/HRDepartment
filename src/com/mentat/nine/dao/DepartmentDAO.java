@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.mentat.nine.dao.exceptions.PersistException;
+import com.mentat.nine.dao.util.Closer;
 import com.mentat.nine.dao.util.DAOFactory;
 import com.mentat.nine.domain.Department;
 import com.mentat.nine.domain.Employee;
@@ -29,8 +30,11 @@ import com.mentat.nine.domain.Employee;
 public class DepartmentDAO{
 
 	
-	DAOFactory postgreSQLFactory = null;
+	private DAOFactory daoFactory = null;
 	
+	public DepartmentDAO() throws PersistException{
+		daoFactory = DAOFactory.getFactory();
+	}
 
 	public Department createDepartment(Department department) throws PersistException {
 		
@@ -46,7 +50,7 @@ public class DepartmentDAO{
 			//check if this Department does not persist
 			try {
 				String sqlSelect = getSelectQuery() + " WHERE id = " + department.getId();
-				connection = postgreSQLFactory.createConnection();
+				connection = daoFactory.createConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(sqlSelect);
 				List<Department> departments = parseResultSet(rs);
@@ -55,8 +59,8 @@ public class DepartmentDAO{
 													department.getId());
 				} 
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 			
 			// create new Department persist
@@ -73,8 +77,8 @@ public class DepartmentDAO{
 					throw new PersistException("Department hasn't been created");
 				}
 			} finally {
-				closeResultSet(rs);
-				closeStatement(pStatement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(pStatement);
 			}
 			
 			//return the last entity
@@ -88,13 +92,13 @@ public class DepartmentDAO{
 				}
 				createdDepartment = departments.get(0);
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeConnection(connection);
+			Closer.closeConnection(connection);
 		}
 		
 		return createdDepartment;
@@ -112,7 +116,7 @@ public class DepartmentDAO{
 
 		try {
 			String sqlSelect = getSelectQuery() + " WHERE name = " + name;
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			departments = parseResultSet(rs);
@@ -125,7 +129,7 @@ public class DepartmentDAO{
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		return department;
 	}
@@ -140,7 +144,7 @@ public class DepartmentDAO{
 		
 		try {
 			String sqlSelect = getSelectQuery() + " WHERE head = " + head;
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			departments = parseResultSet(rs);
@@ -150,7 +154,7 @@ public class DepartmentDAO{
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return departments;
@@ -164,7 +168,7 @@ public class DepartmentDAO{
 		
 		try {
 			String sqlUpdate = getUpdateQuery() + " WHERE id = " + department.getId();
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlUpdate);
 			if (count > 1) {
@@ -175,8 +179,8 @@ public class DepartmentDAO{
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeStatement(statement);
-			closeConnection(connection);
+			Closer.closeStatement(statement);
+			Closer.closeConnection(connection);
 		}
 		
 	}
@@ -189,7 +193,7 @@ public class DepartmentDAO{
 		
 		try {
 			String sqlDelete = getDeleteQuery() + " WHERE id = " + department.getId(); 
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlDelete);
 			if (1 != count) {
@@ -198,8 +202,8 @@ public class DepartmentDAO{
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeStatement(statement);
-			closeConnection(connection);
+			Closer.closeStatement(statement);
+			Closer.closeConnection(connection);
 		}
 	}
 
@@ -213,14 +217,14 @@ public class DepartmentDAO{
 
 		try {
 			String sqlSelect = getSelectQuery();
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			departments = parseResultSet(rs);
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		return departments;
 		
@@ -343,42 +347,5 @@ public class DepartmentDAO{
 		Set<String> set = new HashSet<String>(Arrays.asList(stringArray));
 		return set;
 	}
-	
-	private void closeResultSet(ResultSet rs) throws PersistException {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeStatement(Statement statement) throws PersistException {
-		try {
-			if (statement != null) {
-				statement.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeConnection(Connection connection) throws PersistException {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
 		
-	private void close(Connection connection, Statement statement, ResultSet rs) 
-			throws PersistException {
-		closeResultSet(rs);
-		closeStatement(statement);
-		closeConnection(connection);
-	}
-	
 }

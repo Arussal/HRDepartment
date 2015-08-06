@@ -14,9 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.mentat.nine.dao.exceptions.NoSuitDAOFactoryException;
-import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import com.mentat.nine.dao.exceptions.PersistException;
+import com.mentat.nine.dao.util.Closer;
 import com.mentat.nine.dao.util.DAOFactory;
 import com.mentat.nine.domain.ApplicationForm;
 
@@ -27,19 +26,10 @@ import com.mentat.nine.domain.ApplicationForm;
 public class ApplicationFormDAO {
 
 
-	private DAOFactory postgreSQLFactory = null;
+	private DAOFactory daoFactory = null;
 	
 	public ApplicationFormDAO() throws PersistException{
-		try {
-			postgreSQLFactory = DAOFactory.getDAOFactory("POSTGRES");
-		} catch (NoSuitDAOFactoryException e) {
-			throw new PersistException(" No suit DAOFactory");
-		}
-		try {
-			postgreSQLFactory.loadConnectProperties();
-		} catch (NoSuitableDBPropertiesException e) {
-			throw new PersistException(" No suit db properties");
-		}
+		daoFactory = DAOFactory.getFactory();
 	}
 
 
@@ -57,7 +47,7 @@ public class ApplicationFormDAO {
 			//check if this ApplicationForm does not persist
 			try {
 				String sqlSelect = getSelectQuery() + " WHERE id = " + af.getId();
-				connection = postgreSQLFactory.createConnection();
+				connection = daoFactory.createConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(sqlSelect);
 				List<ApplicationForm> list = parseResultSet(rs);
@@ -65,8 +55,8 @@ public class ApplicationFormDAO {
 					throw new PersistException("ApplicationForm is already persist, id " + af.getId());
 				} 
 			}finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 			
 			// create new ApplicationForm persist
@@ -83,8 +73,8 @@ public class ApplicationFormDAO {
 					throw new PersistException("ApplicationForm hasn't been created");
 				}
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(pStatement);
 			}
 			
 			//return the last entity
@@ -98,14 +88,14 @@ public class ApplicationFormDAO {
 				}
 				appForm = list.get(0);
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 			
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeConnection(connection);
+			Closer.closeConnection(connection);
 		}
 		
 		return appForm;
@@ -122,7 +112,7 @@ public class ApplicationFormDAO {
 		
 		try {
 			String sqlSelect = getSelectQuery() + "WHERE id = " + id;
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			List<ApplicationForm> appFormList = parseResultSet(rs);
@@ -135,7 +125,7 @@ public class ApplicationFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		return appForm;
 	}
@@ -155,7 +145,7 @@ public class ApplicationFormDAO {
 		// update it
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + af.getId();
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			prepareStatementForInsert(pStatement, af);
 			int count = pStatement.executeUpdate();
@@ -167,7 +157,7 @@ public class ApplicationFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, pStatement, rs);
+			Closer.close(rs, pStatement, connection);
 		}
 	}
 
@@ -185,7 +175,7 @@ public class ApplicationFormDAO {
 		// delete ApplicationForm entity
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + af.getId();
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlDelete);
 			if (1 != count) {
@@ -194,8 +184,8 @@ public class ApplicationFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeStatement(statement);
-			closeConnection(connection);
+			Closer.closeStatement(statement);
+			Closer.closeConnection(connection);;
 		}
 	}
 
@@ -209,7 +199,7 @@ public class ApplicationFormDAO {
 		List<ApplicationForm> appForms = null;
 		String sqlSelect = getSelectQuery();
 		try { 
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			appForms = parseResultSet(rs);
@@ -219,7 +209,7 @@ public class ApplicationFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		return appForms;
 	}
@@ -308,43 +298,6 @@ public class ApplicationFormDAO {
 		}
 		java.sql.Date sqlDate = new java.sql.Date(date.getTime());  
 		return sqlDate;
-	}
-
-	private void closeResultSet(ResultSet rs) throws PersistException {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeStatement(Statement statement) throws PersistException {
-		try {
-			if (statement != null) {
-				statement.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeConnection(Connection connection) throws PersistException {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-		
-	private void close(Connection connection, Statement statement, ResultSet rs) 
-			throws PersistException {
-		closeResultSet(rs);
-		closeStatement(statement);
-		closeConnection(connection);
 	}
 
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.mentat.nine.dao.exceptions.PersistException;
+import com.mentat.nine.dao.util.Closer;
 import com.mentat.nine.dao.util.DAOFactory;
 import com.mentat.nine.domain.CVForm;
 
@@ -24,8 +25,11 @@ import com.mentat.nine.domain.CVForm;
  */
 public class CVFormDAO {
 	
-	DAOFactory postgreSQLFactory = null;
-
+	private DAOFactory daoFactory = null;
+	
+	public CVFormDAO() throws PersistException{
+		daoFactory = DAOFactory.getFactory();
+	}
 
 	public CVForm createCVForm(CVForm cv) throws PersistException {
 		
@@ -41,7 +45,7 @@ public class CVFormDAO {
 			//check if this CVForm does not persist
 			try {
 				String sqlSelect = getSelectQuery() + " WHERE id = " + cv.getId();
-				connection = postgreSQLFactory.createConnection();
+				connection = daoFactory.createConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(sqlSelect);
 				List<CVForm> cvList = parseResultSet(rs);
@@ -49,8 +53,8 @@ public class CVFormDAO {
 					throw new PersistException("CVForm is already persist, id " + cv.getId());
 				} 
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 			
 			// create new CVForm persist
@@ -67,8 +71,8 @@ public class CVFormDAO {
 					throw new PersistException("Candidate hasn't been created");
 				}
 			} finally {
-				closeResultSet(rs);
-				closeStatement(pStatement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(pStatement);
 			}
 			
 			//return the last entity
@@ -82,13 +86,13 @@ public class CVFormDAO {
 				}
 			createdCV = cvForms.get(0);
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeConnection(connection);
+			Closer.closeConnection(connection);
 		}
 		
 		return createdCV;
@@ -103,7 +107,7 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -114,7 +118,7 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return cvForms;
@@ -130,7 +134,7 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			String sqlSelect = getSelectQuery() + " WHERE work_expirience = " + workExpirience;
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -141,7 +145,7 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return cvForms;
@@ -157,7 +161,7 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			String sqlSelect = getSelectQuery() + " WHERE education = " + education;
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -168,7 +172,7 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return cvForms;
@@ -184,7 +188,7 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			String sqlSelect = getSelectQuery() + " WHERE desired_salary = " + desiredSalary;
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -195,7 +199,7 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return cvForms;
@@ -216,7 +220,7 @@ public class CVFormDAO {
 		// update CVForm entity
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + cv.getId();
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			prepareStatementForInsert(pStatement, cv);
 			int count = pStatement.executeUpdate();
@@ -228,7 +232,7 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, pStatement, rs);
+			Closer.close(rs, pStatement, connection);
 		}
 		
 	}
@@ -247,7 +251,7 @@ public class CVFormDAO {
 		// delete Candidate entity
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + cv.getId();
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlDelete);
 			if (count != 1) {
@@ -256,8 +260,8 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeStatement(statement);
-			closeConnection(connection);
+			Closer.closeStatement(statement);
+			Closer.closeConnection(connection);
 		}
 		
 	}
@@ -271,7 +275,7 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			String sqlSelect = getSelectQuery();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -279,7 +283,7 @@ public class CVFormDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return cvForms;
@@ -368,40 +372,4 @@ public class CVFormDAO {
 		return sb.toString();
 	}
 
-	private void closeResultSet(ResultSet rs) throws PersistException {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeStatement(Statement statement) throws PersistException {
-		try {
-			if (statement != null) {
-				statement.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeConnection(Connection connection) throws PersistException {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-		
-	private void close(Connection connection, Statement statement, ResultSet rs) 
-			throws PersistException {
-		closeResultSet(rs);
-		closeStatement(statement);
-		closeConnection(connection);
-	}
 }

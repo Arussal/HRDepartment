@@ -12,9 +12,9 @@ import java.sql.Statement;
  * @author Ruslan
  *
  */
-public class DBConnectCloser {
+public class Closer {
 
-	public static void resultSetClose(ResultSet rs) {
+	public static void closeResultSet(ResultSet rs) {
 		if (null != rs) {
 			try {
 				rs.close();
@@ -24,7 +24,7 @@ public class DBConnectCloser {
 		}
 	}
 	
-	public static void statementClose(Statement st) {
+	public static void closeStatement(Statement st) {
 		if (null != st) {
 			try {
 				st.close();
@@ -34,7 +34,7 @@ public class DBConnectCloser {
 		} 
 	}
 
-	public static void connectionClose(Connection connection) {
+	public static void closeConnection(Connection connection) {
 		if (null != connection) {
 			try {
 				connection.close();
@@ -45,8 +45,8 @@ public class DBConnectCloser {
 	}
 	
 	public static void close(ResultSet rs, Statement st, Connection connection) {
-		resultSetClose(rs);
-		statementClose(st);
-		connectionClose(connection);
+		closeResultSet(rs);
+		closeStatement(st);
+		closeConnection(connection);
 	}
 }

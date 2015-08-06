@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.mentat.nine.dao.exceptions.PersistException;
 import com.mentat.nine.domain.ApplicationForm;
 import com.mentat.nine.domain.CVForm;
 import com.mentat.nine.domain.Candidate;
@@ -28,7 +29,8 @@ import com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
 public class HRDepartmentTest {
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#addCVForm(com.mentat.nine.domain.CVForm)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * addCVForm(com.mentat.nine.domain.CVForm)}.
 	 */
 	@Test
 	public void testAddCVForm() {
@@ -39,11 +41,13 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#findCandidate(com.mentat.nine.domain.ApplicationForm)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * findCandidate(com.mentat.nine.domain.ApplicationForm)}.
 	 * @throws NoSuitableCandidateException 
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testFindCandidate() throws NoSuitableCandidateException {
+	public void testFindCandidate() throws NoSuitableCandidateException, PersistException {
 		
 		HRDepartment hrDep = new HRDepartment();
 		ApplicationForm af = new ApplicationForm();
@@ -88,11 +92,13 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#hireEmployee(com.mentat.nine.domain.Candidate, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * hireEmployee(com.mentat.nine.domain.Candidate, 
 	 * int, java.lang.String, java.util.Date, com.mentat.nine.domain.Department)}.
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testHireEmployee() {
+	public void testHireEmployee() throws PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		Candidate candidate = new Candidate();
 		Employee employee = hrDep.hireEmployee(candidate, 1000, "Post", new Date(), new Department());
@@ -100,12 +106,14 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#fireEmployee(com.mentat.nine.domain.Employee, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * fireEmployee(com.mentat.nine.domain.Employee, 
 	 * java.util.Date)}.
 	 * @throws NoSuchEmployeeException 
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testFireEmployee() throws NoSuchEmployeeException {
+	public void testFireEmployee() throws NoSuchEmployeeException, PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		Employee emp = new Employee();
 		hrDep.getStaff().add(emp);
@@ -117,11 +125,13 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changeSalary(com.mentat.nine.domain.Employee, int)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * changeSalary(com.mentat.nine.domain.Employee, int)}.
 	 * @throws NoSuchEmployeeException 
+	 * @throws PersistException 
 	 */
 	@Test (expected = NoSuchEmployeeException.class)
-	public void testChangeSalary1() throws NoSuchEmployeeException {
+	public void testChangeSalary1() throws NoSuchEmployeeException, PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		Employee emp = new Employee();
 		emp.setName("Employee");
@@ -129,11 +139,13 @@ public class HRDepartmentTest {
 	}
 	
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changeSalary(com.mentat.nine.domain.Employee, int)}.
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * changeSalary(com.mentat.nine.domain.Employee, int)}.
 	 * @throws NoSuchEmployeeException 
+	 * @throws PersistException 
 	 */
 	@Test 
-	public void testChangeSalary2() throws NoSuchEmployeeException {
+	public void testChangeSalary2() throws NoSuchEmployeeException, PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		Employee emp = new Employee();
 		emp.setSalary(2500);
@@ -143,24 +155,28 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changePost(com.mentat.nine.domain.Employee, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * changePost(com.mentat.nine.domain.Employee, 
 	 * java.lang.String)}.
 	 * @throws NoSuchEmployeeException 
+	 * @throws PersistException 
 	 */
 	@Test (expected = NoSuchEmployeeException.class)
-	public void testChangePost1() throws NoSuchEmployeeException {
+	public void testChangePost1() throws NoSuchEmployeeException, PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		Employee emp = new Employee();
 		hrDep.changePost(emp, "Head");
 	}
 	
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#changePost(com.mentat.nine.domain.Employee, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * changePost(com.mentat.nine.domain.Employee, 
 	 * java.lang.String)}.
 	 * @throws NoSuchEmployeeException 
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testChangePost2() throws NoSuchEmployeeException {
+	public void testChangePost2() throws NoSuchEmployeeException, PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		Employee emp = new Employee();
 		emp.setPost("SubHead");
@@ -170,11 +186,13 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.HRDepartment#createApplicationForm(int, java.lang.String, 
+	 * Test method for {@link com.mentat.nine.domain.HRDepartment#
+	 * createApplicationForm(int, java.lang.String, 
 	 * java.util.Set, java.lang.String, int, java.util.Date)}.
+	 * @throws PersistException 
 	 */
 	@Test
-	public void testCreateApplicationForm() {
+	public void testCreateApplicationForm() throws PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		int age = 25;
 		String education = "IT science";
@@ -183,13 +201,16 @@ public class HRDepartmentTest {
 		requirements.add(requirement);
 		String post = "available post";
 		int salary = 10000;
+		int workExpirience = 5;
 		Date date = Calendar.getInstance().getTime();
-		ApplicationForm aForm = hrDep.createApplicationForm(age, education, requirements, post, salary, date);
+		ApplicationForm aForm = hrDep.createApplicationForm(age, education, requirements, post, 
+				salary, workExpirience, date);
 		assertNotNull(aForm);
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.Department#addEmployee(com.mentat.nine.domain.Employee)}.
+	 * Test method for {@link com.mentat.nine.domain.Department#
+	 * addEmployee(com.mentat.nine.domain.Employee)}.
 	 */
 	@Test
 	public void testAddEmployee() {
@@ -201,7 +222,8 @@ public class HRDepartmentTest {
 	}
 
 	/**
-	 * Test method for {@link com.mentat.nine.domain.Department#removeEmployee(com.mentat.nine.domain.Employee)}.
+	 * Test method for {@link com.mentat.nine.domain.Department#
+	 * removeEmployee(com.mentat.nine.domain.Employee)}.
 	 * @throws NoSuchEmployeeException 
 	 */
 	@Test
@@ -216,7 +238,8 @@ public class HRDepartmentTest {
 	}
 	
 	/**
-	 * Test method for {@link com.mentat.nine.domain.Department#removeEmployee(com.mentat.nine.domain.Employee)}.
+	 * Test method for {@link com.mentat.nine.domain.Department#
+	 * removeEmployee(com.mentat.nine.domain.Employee)}.
 	 * @throws NoSuchEmployeeException 
 	 */
 	@Test (expected = NoSuchEmployeeException.class)

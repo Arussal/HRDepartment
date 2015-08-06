@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-import com.mentat.nine.dao.exceptions.NoSuitDAOFactoryException;
-import com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
+
 import com.mentat.nine.dao.exceptions.PersistException;
+import com.mentat.nine.dao.util.Closer;
 import com.mentat.nine.dao.util.DAOFactory;
 import com.mentat.nine.domain.Candidate;
 
@@ -25,19 +25,10 @@ import com.mentat.nine.domain.Candidate;
  */
 public class CandidateDAO {
 	
-	DAOFactory postgreSQLFactory = null;
+private DAOFactory daoFactory = null;
 	
 	public CandidateDAO() throws PersistException{
-		try {
-			postgreSQLFactory = DAOFactory.getDAOFactory("POSTGRES");
-		} catch (NoSuitDAOFactoryException e) {
-			throw new PersistException(" No suit DAOFactory");
-		}
-		try {
-			postgreSQLFactory.loadConnectProperties();
-		} catch (NoSuitableDBPropertiesException e) {
-			throw new PersistException(" No suit db properties");
-		}
+		daoFactory = DAOFactory.getFactory();
 	}
 
 	
@@ -55,7 +46,7 @@ public class CandidateDAO {
 			//check if this Candidate does not persist
 			try {
 				String sqlSelect = getSelectQuery() + " WHERE id = " + candidate.getId();
-				connection = postgreSQLFactory.createConnection();
+				connection = daoFactory.createConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(sqlSelect);
 				Set<Candidate> candidates = parseResultSet(rs);
@@ -63,8 +54,8 @@ public class CandidateDAO {
 					throw new PersistException("Candidate is already persist, id " + candidate.getId());
 				} 
 			}finally {
-				closeResultSet(rs);
-				closeStatement(statement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 			
 			// create new Candidate persist
@@ -81,8 +72,8 @@ public class CandidateDAO {
 					throw new PersistException("Candidate hasn't been created");
 				}
 			} finally {
-				closeResultSet(rs);
-				closeStatement(pStatement);
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(pStatement);
 			}
 			
 			//return the last entity
@@ -98,13 +89,13 @@ public class CandidateDAO {
 					createdCandidate = cand;	
 				}
 			} finally {
-				closeResultSet(rs);
-				closeStatement(statement);	
+				Closer.closeResultSet(rs);
+				Closer.closeStatement(statement);
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeConnection(connection);
+			Closer.closeConnection(connection);
 		}
 		
 		return createdCandidate;
@@ -122,7 +113,7 @@ public class CandidateDAO {
 
 		try {
 			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			candidates = parseResultSet(rs);
@@ -137,7 +128,7 @@ public class CandidateDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		return candidate;
 	}
@@ -153,7 +144,7 @@ public class CandidateDAO {
 		
 		try {
 			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			candidates = parseResultSet(rs);
@@ -163,7 +154,7 @@ public class CandidateDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return candidates;
@@ -180,7 +171,7 @@ public class CandidateDAO {
 		String sqlSelect = getSelectQuery() + "WHERE work_expirience = " + workExpirience;
 		
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			candidates = parseResultSet(rs);
@@ -190,7 +181,7 @@ public class CandidateDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		
 		return candidates;
@@ -211,7 +202,7 @@ public class CandidateDAO {
 		// update Candidate entity
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + candidate.getId();
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			prepareStatementForInsert(pStatement, candidate);
 			int count = pStatement.executeUpdate();
@@ -223,7 +214,7 @@ public class CandidateDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, pStatement, rs);
+			Closer.close(rs, pStatement, connection);
 		}
 	}
 	
@@ -241,7 +232,7 @@ public class CandidateDAO {
 		// delete Candidate entity
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + candidate.getId();
 		try {
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			int count = statement.executeUpdate(sqlDelete);
 			if (1 != count) {
@@ -250,8 +241,8 @@ public class CandidateDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			closeStatement(statement);
-			closeConnection(connection);
+			Closer.closeStatement(statement);
+			Closer.closeConnection(connection);
 		}
 	}
 
@@ -265,7 +256,7 @@ public class CandidateDAO {
 		Set<Candidate> candidates = null;
 		String sqlSelect = getSelectQuery();
 		try { 
-			connection = postgreSQLFactory.createConnection();
+			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
 			candidates = parseResultSet(rs);
@@ -275,7 +266,7 @@ public class CandidateDAO {
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			close(connection, statement, rs);
+			Closer.close(rs, statement, connection);
 		}
 		return candidates;
 	}
@@ -357,40 +348,4 @@ public class CandidateDAO {
 		return sb.toString();
 	}
 
-	private void closeResultSet(ResultSet rs) throws PersistException {
-		try {
-			if (rs != null) {
-				rs.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeStatement(Statement statement) throws PersistException {
-		try {
-			if (statement != null) {
-				statement.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-	
-	private void closeConnection(Connection connection) throws PersistException {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			throw new PersistException();
-		}
-	}
-		
-	private void close(Connection connection, Statement statement, ResultSet rs) 
-			throws PersistException {
-		closeResultSet(rs);
-		closeStatement(statement);
-		closeConnection(connection);
-	}
 }
