@@ -53,11 +53,14 @@ public class DepartmentDAO{
 				connection = daoFactory.createConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(sqlSelect);
+				
 				List<Department> departments = parseResultSet(rs);
 				if (departments.size() != 0) {
 					throw new PersistException("Department is already persist, id " + 
 													department.getId());
 				} 
+			} catch (SQLException e) {
+				throw new PersistException(" can't check Department with id " + department.getId());
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
@@ -76,6 +79,8 @@ public class DepartmentDAO{
 				} else {
 					throw new PersistException("Department hasn't been created");
 				}
+			} catch (SQLException e) {
+				throw new PersistException(" can't create Department with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(pStatement);
@@ -91,12 +96,13 @@ public class DepartmentDAO{
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
 				createdDepartment = departments.get(0);
+				createdDepartment.setId(id);
+			} catch (SQLException e) {
+				throw new PersistException(" can't return new Department with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
 			}
-		} catch (SQLException e) {
-			throw new PersistException();
 		} finally {
 			Closer.closeConnection(connection);
 		}
@@ -104,7 +110,35 @@ public class DepartmentDAO{
 		return createdDepartment;
 	}
 
+	public Department getDepartmentById(int id) throws PersistException {
 
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		List<Department> departments = null;
+		
+		Department department = new Department();
+
+		try {
+			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
+			connection = daoFactory.createConnection();
+			statement = connection.createStatement();
+			rs = statement.executeQuery(sqlSelect);
+			departments = parseResultSet(rs);
+			if (departments.size() > 1) {
+				throw new PersistException("Get more than one Department with id = " + id);
+			} else if (departments.size() < 1) {
+				throw new PersistException("No Department with id = " + id);
+			}
+			department = departments.get(0);	
+		} catch (SQLException e) {
+			throw new PersistException(" can't get Department by id " + id);
+		} finally {
+			Closer.close(rs, statement, connection);
+		}
+		return department;
+	}
+	
 	public Department getDepartmentByName(String name) throws PersistException {
 
 		Connection connection = null;
@@ -127,7 +161,7 @@ public class DepartmentDAO{
 			}
 			department = departments.get(0);	
 		} catch (SQLException e) {
-			throw new PersistException();
+			throw new PersistException(" can't get Department by name " + name);
 		} finally {
 			Closer.close(rs, statement, connection);
 		}
@@ -245,13 +279,13 @@ public class DepartmentDAO{
 	
 
 	private String getSelectQuery() {
-		String sql = "SELECT * FROM hrdepartment.department";
+		String sql = "SELECT * FROM department";
 		return sql;
 	}
 	
 	
 	private String getDeleteQuery() {
-		String sql = "DELETE FROM hrdepartment.department";
+		String sql = "DELETE FROM department";
 		return sql;
 	}
 	

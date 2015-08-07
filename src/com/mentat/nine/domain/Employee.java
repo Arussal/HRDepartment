@@ -40,9 +40,6 @@ public class Employee extends Person{
 	}
 
 	public void setHireDate(Date hireDate) {
-		if (null == hireDate) {
-			throw new IllegalArgumentException();
-		}
 		this.hireDate = hireDate;
 	}
 
@@ -51,9 +48,6 @@ public class Employee extends Person{
 	}
 
 	public void setFireDate(Date fireDate) {
-		if (null == fireDate) {
-			throw new IllegalArgumentException();
-		}
 		this.fireDate = fireDate;
 	}
 

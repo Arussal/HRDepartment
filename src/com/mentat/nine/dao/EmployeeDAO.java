@@ -45,7 +45,7 @@ public class EmployeeDAO {
 							" already persist");
 				}
 			} catch (SQLException e) {
-				throw new PersistException();
+				throw new PersistException(" can't check Employee with id " + employee.getId());
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
@@ -65,7 +65,7 @@ public class EmployeeDAO {
 					throw new PersistException("Employee hasn't been created");
 				}
 			}catch (SQLException e) {
-				throw new PersistException();
+				throw new PersistException(" can't create new Employee with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(pStatement);
@@ -73,7 +73,7 @@ public class EmployeeDAO {
 			
 			// return the last entity
 			try {
-				String sqlSelect = getSelectQuery() + " WHERE id " + id;
+				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
 				rs = statement.executeQuery(sqlSelect);
 				Set<Employee> employees = parseResultSet(rs);
@@ -83,12 +83,13 @@ public class EmployeeDAO {
 				for (Employee emp : employees) {
 					createdEmployee = emp;
 				}
+				createdEmployee.setId(id);
+			} catch (SQLException e) {
+				throw new PersistException(" can't return Employee with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
 			}
-		} catch (SQLException e) {
-				throw new PersistException();
 		} finally {
 			Closer.closeConnection(connection);
 		}
@@ -320,7 +321,7 @@ public class EmployeeDAO {
 
 	private String getCreateQuery() {
 		String sql = "INSERT INTO employee (name, age, education, email, phone, \n"
-				+ "post, skills, department, salary, hiredate, firedate) \n"
+				+ "post, skills, department_id, salary, hiredate, firedate) \n"
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
@@ -328,7 +329,7 @@ public class EmployeeDAO {
 
 	private String getUpdateQuery() {
 		String sql = "UPDATE employee SET name = ?, age = ?, education = ?, \n"
-				+ "email = ?, phone = ?, post = ?, skills = ?, department = ?, \n"
+				+ "email = ?, phone = ?, post = ?, skills = ?, department_id = ?, \n"
 				+ "salary = ?, hiredate = ?, firedate = ?";
 		return sql;
 	}
@@ -368,7 +369,7 @@ public class EmployeeDAO {
 				employee.setSkills(skills);
 				
 				DepartmentDAO departmentDao = new DepartmentDAO();
-				Department department = departmentDao.getDepartmentByName(rs.getString("department"));
+				Department department = departmentDao.getDepartmentById(Integer.parseInt(rs.getString("department_id")));
 				employee.setDepartment(department);
 
 				employees.add(employee);
@@ -391,7 +392,7 @@ public class EmployeeDAO {
 			statement.setString(5, employee.getPhone());
 			statement.setString(6, employee.getPost());
 			statement.setString(7, skills);
-			statement.setString(8, employee.getDepartment().toString());
+			statement.setInt(8, employee.getDepartment().getId());
 			statement.setInt(9, employee.getSalary());
 			statement.setDate(10, convertDate(employee.getHireDate()));
 			statement.setDate(11, convertDate(employee.getFireDate()));
@@ -411,7 +412,7 @@ public class EmployeeDAO {
 
 	private java.sql.Date convertDate(java.util.Date date) {
 		if (null == date) {
-			throw new IllegalArgumentException(" incorrect date argument");
+			return null;
 		}
 		java.sql.Date sqlDate = new java.sql.Date(date.getTime());  
 		return sqlDate;

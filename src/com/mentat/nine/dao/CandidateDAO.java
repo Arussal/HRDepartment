@@ -53,6 +53,8 @@ private DAOFactory daoFactory = null;
 				if (candidates.size() != 0) {
 					throw new PersistException("Candidate is already persist, id " + candidate.getId());
 				} 
+			}catch (SQLException e) {
+				throw new PersistException(" can't check Candidate with id " + candidate.getId());
 			}finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
@@ -71,6 +73,8 @@ private DAOFactory daoFactory = null;
 				} else {
 					throw new PersistException("Candidate hasn't been created");
 				}
+			}catch (SQLException e) {
+				throw new PersistException(" can't create Candidate with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(pStatement);
@@ -88,12 +92,13 @@ private DAOFactory daoFactory = null;
 				for (Candidate cand : candidates) {
 					createdCandidate = cand;	
 				}
+				createdCandidate.setId(id);
+			}catch (SQLException e) {
+				throw new PersistException(" can't return new Candidate with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
 			}
-		} catch (SQLException e) {
-			throw new PersistException();
 		} finally {
 			Closer.closeConnection(connection);
 		}
@@ -286,13 +291,13 @@ private DAOFactory daoFactory = null;
 	
 
 	private String getSelectQuery() {
-		String sql = "SELECT * FROM hrdepartment.candidate";
+		String sql = "SELECT * FROM candidate";
 		return sql;
 	}
 	
 	
 	private String getDeleteQuery() {
-		String sql = "DELETE FROM hrdepartment.candidate";
+		String sql = "DELETE FROM candidate";
 		return sql;
 	}
 	

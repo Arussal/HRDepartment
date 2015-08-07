@@ -3,21 +3,12 @@
  */
 package com.mentat.nine.domain.main;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
-import com.mentat.nine.dao.EmployeeDAO;
 import com.mentat.nine.dao.exceptions.PersistException;
 import com.mentat.nine.dao.util.DAOFactory;
 import com.mentat.nine.domain.ApplicationForm;
@@ -44,9 +35,7 @@ public class Main {
 		DAOFactory daoFactory = DAOFactory.getFactory();
 		HRDepartment hr = new HRDepartment();
 		Candidate candidate = new Candidate();
-		EmployeeDAO employeeDao = daoFactory.getEmployeeDAO();
 		Department department = new Department();
-		Set<Employee> employees = null;
 		department.setHead("Head 1");
 		department.setName("Department 1");
 		
@@ -55,7 +44,6 @@ public class Main {
 		try {
 			date = sdf.parse("2003-08-15");
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		Set<String> requirements = new HashSet<String>();
@@ -67,11 +55,11 @@ public class Main {
 			candidate.sendCVForm(cvform, hr);
 			ApplicationForm af = hr.createApplicationForm(27, "high", requirements, "engineer", 2500, 5, date);
 			candidate = hr.findCandidate(af);
-			Employee employee = hr.hireEmployee(candidate, 3100, "great post", null, department);
-			
+			Department dep = daoFactory.getDepartmentDAO().createDepartment(department);
+			Employee employee = hr.hireEmployee(candidate, 3100, "great post", date, dep);
+			System.out.println("Employee: " + employee);
 			
 		} catch (PersistException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

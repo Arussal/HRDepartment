@@ -91,6 +91,7 @@ public class ApplicationFormDAO {
 					throw new PersistException("Created more than one ApplicationForm with id = " + id);
 				}
 				appForm = list.get(0);
+				appForm.setId(id);
 			}catch (SQLException e) {
 				throw new PersistException(" can't return new ApplicationForm");
 			} finally {

@@ -52,6 +52,8 @@ public class CVFormDAO {
 				if (cvList.size() != 0) {
 					throw new PersistException("CVForm is already persist, id " + cv.getId());
 				} 
+			} catch (SQLException e) {
+				throw new PersistException(" can't check CVForm with id " + cv.getId());
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
@@ -70,6 +72,8 @@ public class CVFormDAO {
 				} else {
 					throw new PersistException("Candidate hasn't been created");
 				}
+			} catch (SQLException e) {
+				throw new PersistException(" can't create CVForm with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(pStatement);
@@ -85,12 +89,13 @@ public class CVFormDAO {
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
 			createdCV = cvForms.get(0);
+			createdCV.setId(id);
+			} catch (SQLException e) {
+				throw new PersistException(" can't return new CVForm with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(statement);
 			}
-		} catch (SQLException e) {
-			throw new PersistException();
 		} finally {
 			Closer.closeConnection(connection);
 		}
@@ -291,7 +296,7 @@ public class CVFormDAO {
 
 	private String getCreateQuery() {
 		String sql = "INSERT INTO cvform (name, age, education, email, phone, \n"
-				+ "post, skills, work_expirience, desired_salalry, additional_info) \n"
+				+ "post, skills, work_expirience, desired_salary, additional_info) \n"
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
