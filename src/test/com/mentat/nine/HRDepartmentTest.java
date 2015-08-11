@@ -63,7 +63,7 @@ public class HRDepartmentTest {
 		CVForm form = mock(CVForm.class);
 		CVForm cv1 = new CVForm();
 		cvDao = mock(CVFormDAO.class);
-		hrDep.setCVFormDAO(cvDao);
+		hrDep.setCvDao(cvDao);
 		when(cvDao.createCVForm(form)).thenReturn(cv1);
 		assertEquals(cv1, hrDep.addCVForm(form));
 	}
