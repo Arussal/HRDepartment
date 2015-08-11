@@ -6,6 +6,7 @@ package main.com.mentat.nine.domain;
 import java.util.Date;
 import java.util.Set;
 
+import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.domain.exceptions.NoSuchEmployeeException;
 import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;

@@ -49,7 +49,6 @@ public class HRDepartmentTest {
 	@Before
 	public void setUp() throws PersistException{
 		appFormDao = mock(ApplicationFormDAO.class);
-		cvDao = mock(CVFormDAO.class);
 		candidateDao = mock(CandidateDAO.class);
 		employeeDao = mock(EmployeeDAO.class);
 		try {
@@ -62,27 +61,37 @@ public class HRDepartmentTest {
 	@Test
 	public void testAddCVForm() throws PersistException {
 		CVForm form = mock(CVForm.class);
-		when(cvDao.createCVForm(form)).thenReturn(new CVForm());
-		assertNotNull(hrDep.addCVForm(form));
+		CVForm cv1 = new CVForm();
+		cvDao = mock(CVFormDAO.class);
+		hrDep.setCVFormDAO(cvDao);
+		when(cvDao.createCVForm(form)).thenReturn(cv1);
+		assertEquals(cv1, hrDep.addCVForm(form));
 	}
 	  
 	@Test
 	public void testFindCandidate() throws PersistException, NoSuitableCandidateException {
-		ApplicationForm app = mock(ApplicationForm.class);
-		Candidate candidate = mock(Candidate.class);
-		CVForm cv = mock(CVForm.class);
-		List<CVForm> cvs = new ArrayList<CVForm>();
-		cvs.add(cv);
-		when(cvDao.getAllCVForms()).thenReturn(cvs);
-		when(candidateDao.createCandidate(candidate)).thenReturn(new Candidate());
-		assertNotNull(hrDep.findCandidate(app));
+		Candidate cand = mock(Candidate.class);
+		CVForm form = mock(CVForm.class);
+		Candidate candidate = new Candidate();
+		
+		String education = "";
+		ApplicationForm app = new ApplicationForm();
+		app.setEducation(education);
+		when(cvDao.getAllCVForms()).thenReturn(new ArrayList<CVForm>());
+		
+		
+		when(form.getEducation()).thenReturn(education).thenReturn(app.getEducation());
+		when(candidateDao.createCandidate(cand)).thenReturn(candidate);
+		assertEquals(candidate, hrDep.findCandidate(app));
 	}
 	
 	@Test
 	public void testHireEmployee() throws PersistException {
 		Employee employee = mock(Employee.class);
-		Candidate candidate = mock(Candidate.class);
-		when(employeeDao.createEmployee(employee)).thenReturn(new Employee());
+		Department department = mock(Department.class);
+		Employee employee1 = new Employee();
+		Candidate candidate = new Candidate();
+		when(employeeDao.createEmployee(employee)).thenReturn(employee1);
 		assertNotNull(hrDep.hireEmployee(candidate, 3100, "post", new Date(), department));
 	}
 	

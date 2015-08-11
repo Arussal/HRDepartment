@@ -38,15 +38,15 @@ public class HRDepartment extends Department implements HRManager{
 	 */
 	public HRDepartment() throws PersistException {
 		daoFactory = DAOFactory.getFactory();
+		cvDao = daoFactory.getCVFormDAO();
 		empDao = daoFactory.getEmployeeDAO();
 	}
-	
+		
 	@Override
 	public CVForm addCVForm(CVForm form) throws PersistException {
 		if (null == form) {
 			throw new IllegalArgumentException();
 		}
-		cvDao = daoFactory.getCVFormDAO();
 		return cvDao.createCVForm(form);
 	}
 
@@ -63,7 +63,6 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptPost", new Boolean(false));
 		conditions.put("acceptSalary", new Boolean(false));
 		
-		CVFormDAO cvDao = daoFactory.getCVFormDAO();
 		cvs = cvDao.getAllCVForms();
 		
 		outer: for (CVForm cv : cvs) {
@@ -88,7 +87,7 @@ public class HRDepartment extends Department implements HRManager{
 			}
 			if (cv.getPost().equals(app.getPost())) {
 				conditions.put("acceptPost", new Boolean(true)); 									
-			}
+			} 
 			if (cv.getDesiredSalary() <= app.getSalary()) {
 				conditions.put("acceptSalary", new Boolean(true));									
 			}
@@ -225,5 +224,13 @@ public class HRDepartment extends Department implements HRManager{
 
 	public void setApps(List<ApplicationForm> apps) {
 		this.apps = apps;
+	}
+
+	public CVFormDAO getCvDao() {
+		return cvDao;
+	}
+
+	public void setCvDao(CVFormDAO cvDao) {
+		this.cvDao = cvDao;
 	}
 }
