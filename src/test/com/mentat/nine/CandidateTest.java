@@ -8,18 +8,29 @@ import static org.junit.Assert.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.HRDepartment;
 
+import org.junit.Before;
 import org.junit.Test;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author Ruslan
  *
  */
 public class CandidateTest {
+	
+	private CVFormDAO cvDao;
+
+	@Before
+	public void setUp() throws PersistException {
+		cvDao = mock(CVFormDAO.class);
+	}
 
 	/**
 	 * Test method for {@link main.com.mentat.nine.domain.Candidate#createCVForm(java.lang.String, int, 
@@ -38,7 +49,8 @@ public class CandidateTest {
 		String email = "email@gmail.com";
 		int desiredSalary = 10000;
 		String additionalInfo = "addition";
-		CVForm cv = candidate.createCVForm(name, age, skills, education, phone, email, desiredSalary, additionalInfo, additionalInfo, desiredSalary);
+		CVForm cv = candidate.formCVForm(name, age, skills, education, phone, email, 
+				desiredSalary, additionalInfo, additionalInfo, desiredSalary);
 		assertNotNull(cv);
 	}
 
@@ -50,11 +62,11 @@ public class CandidateTest {
 	@Test
 	public void testSendCVForm() throws PersistException {
 		HRDepartment hrDep = new HRDepartment();
-		assertEquals(0, hrDep.getCvs().size());
+		hrDep.setCvDao(cvDao);
+		CVForm cvMock = mock(CVForm.class);
 		Candidate candidate = new Candidate();
-		CVForm cv = new CVForm();
-		candidate.sendCVForm(cv, hrDep);
-		assertEquals(1, hrDep.getCvs().size());
+		candidate.sendCVForm(cvMock, hrDep);
+		verify(cvDao).createCVForm(cvMock);
 	}
 
 }
