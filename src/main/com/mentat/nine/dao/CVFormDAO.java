@@ -305,7 +305,7 @@ public class CVFormDAO {
 	private String getUpdateQuery() {
 		String sql = "UPDATE cvform SET name = ?, age = ?, education = ?, \n"
 				+ "email = ?, phone = ?, skills = ?, work_expirience = ?, desired_salary = ?, \n"
-				+ "additional_info = ?, VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "additional_info = ?";
 		return sql;
 	}
 	

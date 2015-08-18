@@ -272,8 +272,7 @@ public class DepartmentDAO{
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE departament SET name = ?, head = ?, employees = ?, \n"
-				+ "VALUES (?, ?, ?)";
+		String sql = "UPDATE department SET name = ?, head = ?, employees = ?";
 		return sql;
 	}
 	

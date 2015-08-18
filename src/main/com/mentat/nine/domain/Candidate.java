@@ -3,7 +3,10 @@
  */
 package main.com.mentat.nine.domain;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
 
@@ -13,6 +16,7 @@ import main.com.mentat.nine.dao.exceptions.PersistException;
  */
 public class Candidate extends Person{
 	
+	private static Logger log = Logger.getLogger(Candidate.class);
 	/**
 	 * 
 	 */
@@ -33,6 +37,9 @@ public class Candidate extends Person{
 		cv.setAdditionalInfo(additionalInfo);
 		cv.setPost(post);
 		cv.setWorkExpirience(workExpirience);
+		
+		log.info("CVForm by name: " + cv.getName() + " formed");
+		
 		return cv;
 	}
 	
@@ -40,4 +47,11 @@ public class Candidate extends Person{
 		hr.addCVForm(form);
 	}
 
+	
+	static class Test {
+		public static void main(String... args) {
+			Candidate candidate = new Candidate();
+			candidate.formCVForm("asdf", 24, new HashSet<String>(), "education", "phone", "email", 1400, "additionalInfo", "post", 3);
+		}
+	}
 }

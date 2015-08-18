@@ -105,7 +105,7 @@ public class EmployeeDAO {
 		Employee createdEmployee = null;
 		
 		try {
-			String sqlSelect = getSelectQuery() + " WHERE id " + id;
+			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -137,7 +137,7 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE education " + education;
+			String sqlSelect = getSelectQuery() + " WHERE education = " + education;
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -162,7 +162,7 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE departament " + departament;
+			String sqlSelect = getSelectQuery() + " WHERE departament = " + departament;
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -185,7 +185,7 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE post " + post;
+			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -209,7 +209,7 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE salary " + salary;
+			String sqlSelect = getSelectQuery() + " WHERE salary = " + salary;
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
@@ -233,7 +233,7 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE age " + age;
+			String sqlSelect = getSelectQuery() + " WHERE age = " + age;
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(sqlSelect);
