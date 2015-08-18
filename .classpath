@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="C:/workspace/HRDepartment/lib/postgresql-9.4-1201.jdbc41.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/HRDepartment/lib/mockito-all-1.9.5.jar"/>
 	<classpathentry kind="lib" path="C:/workspace/HRDepartment/lib/postgresql-9.3-1103.jdbc41.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
