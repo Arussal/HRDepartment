@@ -22,7 +22,7 @@ public class Candidate extends Person{
 	static{
 	LogConfig.loadLogConfig();
 	}
-	private static Logger log = Logger.getLogger(Candidate.class);
+	private final Logger log = Logger.getLogger(this.getClass());
 	/**
 	 * 
 	 */
@@ -53,7 +53,6 @@ public class Candidate extends Person{
 		hr.addCVForm(form);
 	}
 
-	
 	static class Test {
 		public static void main(String... args) {
 			Candidate candidate = new Candidate();
