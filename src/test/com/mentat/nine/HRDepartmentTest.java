@@ -78,7 +78,7 @@ public class HRDepartmentTest {
 	}
 	
 	@Test
-	public void testHireEmployee() {
+	public void testHireEmployee() throws PersistException {
 		assertNotNull(hrDep.hireEmployee(new Candidate(), 5000, "post", new Date(), new Department()));
 	}
 	

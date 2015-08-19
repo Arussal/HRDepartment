@@ -1,3 +1,4 @@
+
 /**
  * 
  */
@@ -9,6 +10,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * @author Ruslan
@@ -16,6 +18,10 @@ import main.com.mentat.nine.dao.exceptions.PersistException;
  */
 public class Candidate extends Person{
 	
+	
+	static{
+	LogConfig.loadLogConfig();
+	}
 	private static Logger log = Logger.getLogger(Candidate.class);
 	/**
 	 * 

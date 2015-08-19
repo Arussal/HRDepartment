@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.CandidateDAO;
@@ -19,6 +21,7 @@ import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.exceptions.NoSuchEmployeeException;
 import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * @author Ruslan
@@ -39,6 +42,12 @@ public class HRDepartment extends Department implements HRManager{
 	 * @throws PersistException 
 	 * 
 	 */
+	
+	static{
+		LogConfig.loadLogConfig();
+	}
+	private static Logger log = Logger.getLogger(HRDepartment.class);
+	
 	public HRDepartment() throws PersistException {
 		daoFactory = DAOFactory.getFactory();
 		appDao = daoFactory.getApplicationFormDAO();
@@ -50,8 +59,10 @@ public class HRDepartment extends Department implements HRManager{
 	@Override
 	public CVForm addCVForm(CVForm form) throws PersistException {
 		if (null == form) {
+			log.error("CVForm is null");
 			throw new IllegalArgumentException();
 		}
+		log.info("CVForm by name " + form.getName() + " created");
 		return cvDao.createCVForm(form);
 	}
 
@@ -71,6 +82,7 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptSalary", new Boolean(false));
 		
 		List<CVForm> cvs = cvDao.getAllCVForms();
+		log.trace("get all cvForms");
 		
 		
 		outer: for (CVForm cv : cvs) {
@@ -102,9 +114,12 @@ public class HRDepartment extends Department implements HRManager{
  
 			for (String condition : conditions.keySet()) {
 				if (conditions.get(condition) == false) {
-				continue outer;
+					log.trace("condition is failed, next cvForm");
+					continue outer;
 				}
 			}
+			
+			log.trace("candidate is found");
 			Candidate candidate = new Candidate();
 			candidate.setName(cv.getName());
 			candidate.setAge(cv.getAge());
@@ -115,13 +130,15 @@ public class HRDepartment extends Department implements HRManager{
 			candidate.setSkills(cv.getSkills());
 			candidate.setWorkExpirience(cv.getWorkExpirience());
 			createCandidate(candidate);
+			log.info("candidate created, id: " + candidate.getId());
 			candidates.add(candidate);
+			log.trace("add candidate to set");
 		}
 			
 		if (0 == candidates.size()) {
+			log.error("candidate was not found");
 			throw new NoSuitableCandidateException();
 		}
-
 		return candidates;
 	}
 	
