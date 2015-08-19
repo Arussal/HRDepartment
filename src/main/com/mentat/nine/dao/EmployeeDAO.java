@@ -128,7 +128,7 @@ public class EmployeeDAO {
 	}
 
 	
-	public Set<Employee> getEmployeeByEducation(String education)
+	public Set<Employee> getEmployeesByEducation(String education)
 			throws PersistException {
 
 		Set<Employee> employees = null;
@@ -153,7 +153,7 @@ public class EmployeeDAO {
 	}
 
 	
-	public Set<Employee> getEmployeeByDepartament(String departament)
+	public Set<Employee> getEmployeesByDepartament(String departament)
 			throws PersistException {
 		
 		Set<Employee> employees = null;
@@ -178,7 +178,7 @@ public class EmployeeDAO {
 	}
 
 	
-	public Set<Employee> getEmployeeByPost(String post) throws PersistException {
+	public Set<Employee> getEmployeesByPost(String post) throws PersistException {
 		Set<Employee> employees = null;
 		Connection connection = null;
 		Statement statement = null;
@@ -201,7 +201,7 @@ public class EmployeeDAO {
 	}
 
 	
-	public Set<Employee> getEmployeeBySalary(int salary)
+	public Set<Employee> getEmployeesBySalary(int salary)
 			throws PersistException {
 		Set<Employee> employees = null;
 		Connection connection = null;
@@ -225,7 +225,7 @@ public class EmployeeDAO {
 	}
 
 	
-	public Set<Employee> getEmployeeByAge(int age) throws PersistException {
+	public Set<Employee> getEmployeesByAge(int age) throws PersistException {
 		
 		Set<Employee> employees = null;
 		Connection connection = null;

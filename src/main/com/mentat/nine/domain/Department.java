@@ -6,7 +6,9 @@ package main.com.mentat.nine.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import main.com.mentat.nine.domain.exceptions.NoSuchEmployeeException;
+import main.com.mentat.nine.dao.EmployeeDAO;
+import main.com.mentat.nine.dao.exceptions.PersistException;
+import main.com.mentat.nine.dao.util.DAOFactory;
 
 /**
  * @author Ruslan
@@ -17,13 +19,17 @@ public class Department {
 	private Integer id;
 	private String name;
 	private String head;
+	private DAOFactory daoFactory;
+	private EmployeeDAO employeeDao;
 	private Set<Employee> employees;
 	
 	/**
+	 * @throws PersistException 
 	 * 
 	 */
-	public Department() {
-		employees = new HashSet<Employee>();
+	public Department() throws PersistException {
+		daoFactory = DAOFactory.getFactory();
+		employeeDao = daoFactory.getEmployeeDAO();
 	}
 	
 	/**
@@ -36,22 +42,18 @@ public class Department {
 	}
 
 
-	public void addEmployee(Employee employee) {
+	public void addEmployee(Employee employee) throws PersistException {
 		if (null == employee) {
 			throw new IllegalArgumentException();
 		}
-		employees.add(employee);
-		
+		employeeDao.createEmployee(employee);
 	}
 	
-	public void removeEmployee(Employee employee) throws NoSuchEmployeeException {
+	public void removeEmployee(Employee employee) throws PersistException {
 		if (null == employee) {
 			throw new IllegalArgumentException();
 		}
-		if (!employees.contains(employee)) {
-			throw new NoSuchEmployeeException();
-		}
-		employees.remove(employee);
+		employeeDao.deleteEmployee(employee);
 	}
 	
 	public Integer getId() {
@@ -74,8 +76,9 @@ public class Department {
 	public void setHead(String head) {
 		this.head = head;
 	}
-	public Set<Employee> getEmployees() {
-		return employees;
+	public Set<Employee> getEmployees() throws PersistException {
+		employees = employeeDao.getEmployeesByDepartament(this.getName()); 
+		return employees; 
 	}
 	public void setEmployees(Set<Employee> employees) {
 		this.employees = employees;
