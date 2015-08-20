@@ -245,7 +245,7 @@ public class HRDepartment extends Department implements HRManager{
 		app.setRequirements(requirements);
 		app.setSalary(salary);
 		app.setWorkExpirience(workExpirience);
-		log.trace("application form to post " + post + " formed");
+		log.trace("ApplicationForm to post " + post + " formed");
 		
 		return app;
 	}
@@ -253,7 +253,7 @@ public class HRDepartment extends Department implements HRManager{
 	@Override
 	public ApplicationForm createApplicationForm(ApplicationForm app) throws PersistException {
 		ApplicationForm createdApplicationForm = appDao.createApplicationForm(app);
-		log.info("create application form, id " + createdApplicationForm.getId());
+		log.info("create ApplicationForm, id " + createdApplicationForm.getId());
 		return createdApplicationForm;
 	}
 	

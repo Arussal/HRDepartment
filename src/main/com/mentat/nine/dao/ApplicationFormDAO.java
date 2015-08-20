@@ -56,7 +56,7 @@ public class ApplicationFormDAO {
 			//check if this ApplicationForm does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if AppForm whith id " + id + "exists");
+					log.trace("check if ApplicationForm whith id " + id + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + af.getId();
 				connection = daoFactory.createConnection();
@@ -71,7 +71,7 @@ public class ApplicationFormDAO {
 					throw new PersistException("ApplicationForm is already persist, id " + af.getId());
 				}
 				if(log.isTraceEnabled()){
-					log.trace("application form with id " + id + " is absent");
+					log.trace("ApplicationForm with id " + id + " is absent");
 				}
 			}catch (SQLException e) {
 				log.error(" can't check ApplicationForm by id");
@@ -83,7 +83,7 @@ public class ApplicationFormDAO {
 			
 			// create new ApplicationForm persist
 			try {
-				log.trace("create new enitiy AppForm");
+				log.trace("create new enitiy ApplicationForm");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -95,12 +95,12 @@ public class ApplicationFormDAO {
 					rs.next();
 					id = rs.getInt("id"); 
 				} else {
-					log.error("new entity AppForm not created");
+					log.error("new entity ApplicationForm not created");
 					throw new PersistException("ApplicationForm hasn't been created");
 				}
-				log.info("new enitiy AppForm created, id " + id);
+				log.info("new enitiy ApplicationForm created, id " + id);
 			}catch (SQLException e) {
-				log.error("new entity AppForm not created");
+				log.error("new entity ApplicationForm not created");
 				throw new PersistException(" can't create new ApplicationForm");
 			} finally {
 				Closer.closeResultSet(rs);
@@ -110,7 +110,7 @@ public class ApplicationFormDAO {
 			//return the last entity
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("get AppForm entity with id " + id);
+					log.trace("get ApplicationForm entity with id " + id);
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
@@ -119,11 +119,11 @@ public class ApplicationFormDAO {
 				log.trace("resulset got");
 				List<ApplicationForm> list = parseResultSet(rs);
 				if (null == list || list.size() != 1) {
-					log.warn("more than one AppForm with id " + id);
+					log.warn("more than one ApplicationForm with id " + id);
 					throw new PersistException("Created more than one ApplicationForm with id = " + id);
 				}
 				appForm = list.get(0);
-				log.info("new AppForm");
+				log.info("return new ApplicationForm");
 				appForm.setId(id);
 			}catch (SQLException e) {
 				log.error(" can't return new ApplicationForm with id " + id);
@@ -149,7 +149,7 @@ public class ApplicationFormDAO {
 		ApplicationForm appForm = new ApplicationForm();
 		
 		try {
-			log.trace("get AppForm with id " + id);
+			log.trace("get ApplicationForm with id " + id);
 			String sqlSelect = getSelectQuery() + "WHERE id = " + id;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -159,7 +159,7 @@ public class ApplicationFormDAO {
 			log.trace("resultset got");
 			List<ApplicationForm> appFormList = parseResultSet(rs);
 			if (appFormList.size() > 1) {
-				log.warn("more than one AppForm with id " + id);
+				log.warn("more than one ApplicationForm with id " + id);
 				throw new PersistException("Get more than one ApplicationForm with id = " + id);
 			} else if (appFormList.size() < 1) {
 				log.warn("no AppForm with id " + id);
@@ -167,10 +167,10 @@ public class ApplicationFormDAO {
 			}
 			appForm = appFormList.get(0);
 			if (log.isTraceEnabled()) {
-				log.trace("get AppForm with id " + id);
+				log.trace("get ApplicationForm with id " + id);
 			}
 		} catch (SQLException e) {
-			log.error("can't get AppForm with id " + id);
+			log.error("can't get ApplicationForm with id " + id);
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -187,7 +187,7 @@ public class ApplicationFormDAO {
 		
 		// check if there is ApplicationForm entity
 		if (null == af.getId()) {
-			log.warn("AppForm with id " + af.getId() + " is not persist");
+			log.warn("ApplicationForm with id " + af.getId() + " is not persist");
 			throw new PersistException("Object is not persist yet");
 		}
 		
@@ -195,7 +195,7 @@ public class ApplicationFormDAO {
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + af.getId();
 		try {
 			if(log.isTraceEnabled()) {
-				log.trace("update AppForm with id " + af.getId()); 
+				log.trace("update ApplicationForm with id " + af.getId()); 
 			}
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -204,14 +204,14 @@ public class ApplicationFormDAO {
 			prepareStatementForInsert(pStatement, af);
 			int count = pStatement.executeUpdate();
 			if (count > 1) {
-				log.warn("update more then one AppForm");
+				log.warn("update more then one ApplicationForm");
 				throw new PersistException("It was updated more than one persist");
 			} else if (count < 1) {
-				log.warn("no AppForm update");
+				log.warn("no ApplicationForm update");
 				throw new PersistException("No one persist was updated");
 			}
 		} catch (SQLException e) {
-			log.error("can't update AppForm");
+			log.error("can't update ApplicationForm");
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, pStatement, connection);
@@ -226,7 +226,7 @@ public class ApplicationFormDAO {
 		
 		// check if there is ApplicationForm entity
 		if (null == af.getId()) {
-			log.warn("AppForm with id " + af.getId() + " not persist");
+			log.warn("ApplicationForm with id " + af.getId() + " not persist");
 			throw new PersistException("ApplicationForm does not persist yet");
 		}
 		
@@ -234,7 +234,7 @@ public class ApplicationFormDAO {
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + af.getId();
 		try {
 			if (log.isTraceEnabled()) {
-				log.trace("delete AppForm with id " + af.getId());
+				log.trace("delete ApplicationForm with id " + af.getId());
 			}
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -246,7 +246,7 @@ public class ApplicationFormDAO {
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
-			log.error("can't delete AppForm");
+			log.error("can't delete ApplicationForm");
 			throw new PersistException();
 		} finally {
 			Closer.closeStatement(statement);
@@ -264,7 +264,7 @@ public class ApplicationFormDAO {
 		List<ApplicationForm> appForms = null;
 		String sqlSelect = getSelectQuery();
 		try { 
-			log.trace("get all AppForms");
+			log.trace("get all ApplicationForms");
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -273,11 +273,11 @@ public class ApplicationFormDAO {
 			log.trace("get resultset");
 			appForms = parseResultSet(rs);
 			if (null == appForms || 0 == appForms.size()) {
-				log.warn("no one AppForm persist");
+				log.warn("no one ApplicationForm persist");
 				throw new PersistException(" there are not ApplicationForm entities");
 			}
 		} catch (SQLException e) {
-			log.error("can't get all AppForms");
+			log.error("can't get all ApplicationForms");
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -349,7 +349,7 @@ public class ApplicationFormDAO {
 				String[] requirementArray = require.split(";");
 				Set<String> requirements = new HashSet<String>(Arrays.asList(requirementArray));
 				appForm.setRequirements(requirements);
-				log.trace("parsed AppForm entity");
+				log.trace("parsed ApplicationForm entity");
 				list.add(appForm);
 			}
 		} catch (SQLException e) {
