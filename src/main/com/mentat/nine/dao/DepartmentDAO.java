@@ -8,20 +8,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
-import main.com.mentat.nine.domain.Employee;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * @author Ruslan
@@ -29,6 +25,10 @@ import main.com.mentat.nine.domain.Employee;
  */
 public class DepartmentDAO{
 
+	static {
+		LogConfig.loadLogConfig();
+	}
+	private static Logger log = Logger.getLogger(DepartmentDAO.class);
 	
 	private DAOFactory daoFactory = null;
 	
@@ -49,17 +49,27 @@ public class DepartmentDAO{
 			
 			//check if this Department does not persist
 			try {
+				if(log.isTraceEnabled()) {
+					log.trace("check if Department whith id " + id + "exists");
+				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + department.getId();
 				connection = daoFactory.createConnection();
+				log.trace("connectin created");
 				statement = connection.createStatement();
+				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
-				
+				log.trace("resultset got");
 				List<Department> departments = parseResultSet(rs);
 				if (departments.size() != 0) {
+					log.warn("Department is already persist, id " + department.getId());
 					throw new PersistException("Department is already persist, id " + 
 													department.getId());
 				} 
+				if(log.isTraceEnabled()){
+					log.trace("Department with id " + id + " is absent");
+				}
 			} catch (SQLException e) {
+				log.error(" can't check Department by id");
 				throw new PersistException(" can't check Department with id " + department.getId());
 			} finally {
 				Closer.closeResultSet(rs);
@@ -68,18 +78,24 @@ public class DepartmentDAO{
 			
 			// create new Department persist
 			try {
+				log.trace("create new enitiy Department");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
+				log.trace("pStatement created");
 				prepareStatementForInsert(pStatement, department);
 				int count = pStatement.executeUpdate();
 				if (1 == count) {
 					rs = pStatement.getGeneratedKeys();
+					log.trace("generated pStatement keys");
 					rs.next();
 					id = rs.getInt("id");
 				} else {
+					log.error("new entity Department not created");
 					throw new PersistException("Department hasn't been created");
 				}
+				log.info("new enitiy Department created, id " + id);
 			} catch (SQLException e) {
+				log.error("new entity Department not created");
 				throw new PersistException(" can't create Department with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
@@ -88,16 +104,24 @@ public class DepartmentDAO{
 			
 			//return the last entity
 			try {
+				if(log.isTraceEnabled()) {
+					log.trace("get Department entity with id " + id);
+				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
+				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
+				log.trace("resulset got");
 				List<Department> departments = parseResultSet(rs);
 				if (null == departments || departments.size() != 1) {
+					log.warn("more than one Department with id " + id);
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
 				createdDepartment = departments.get(0);
+				log.info("new Department");
 				createdDepartment.setId(id);
 			} catch (SQLException e) {
+				log.error(" can't return new Department with id " + id);
 				throw new PersistException(" can't return new Department with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
@@ -120,18 +144,28 @@ public class DepartmentDAO{
 		Department department = new Department();
 
 		try {
+			log.trace("get Department with id " + id);
 			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			departments = parseResultSet(rs);
 			if (departments.size() > 1) {
+				log.warn("more than one Department with id " + id);
 				throw new PersistException("Get more than one Department with id = " + id);
 			} else if (departments.size() < 1) {
+				log.warn("no Department with id " + id);
 				throw new PersistException("No Department with id = " + id);
 			}
-			department = departments.get(0);	
+			department = departments.get(0);
+			if (log.isTraceEnabled()) {
+				log.trace("get Department with id " + id);
+			}
 		} catch (SQLException e) {
+			log.error("can't get Department with id " + id);
 			throw new PersistException(" can't get Department by id " + id);
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -149,18 +183,25 @@ public class DepartmentDAO{
 		Department department = new Department();
 
 		try {
+			log.trace("get Departments with post " + name);
 			String sqlSelect = getSelectQuery() + " WHERE name = " + name;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			departments = parseResultSet(rs);
 			if (departments.size() > 1) {
+				log.warn("no Departments with post " + name);
 				throw new PersistException("Get more than one Department with name = " + name);
 			} else if (departments.size() < 1) {
+				log.warn("no Department with id " + name);
 				throw new PersistException("No Department with name = " + name);
 			}
 			department = departments.get(0);	
 		} catch (SQLException e) {
+			log.error("can't get Departments with post " + name);
 			throw new PersistException(" can't get Department by name " + name);
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -178,12 +219,20 @@ public class DepartmentDAO{
 		
 		try {
 			String sqlSelect = getSelectQuery() + " WHERE head = " + head;
+			log.trace("get Department with id " + head);
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			departments = parseResultSet(rs);
 			if (departments.size() < 1) {
+				log.warn("no Department with id " + head);
 				throw new PersistException("No Departments with head = " + head);
+			}
+			if (log.isTraceEnabled()) {
+				log.trace("get Departments with head " + head);
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
@@ -198,42 +247,64 @@ public class DepartmentDAO{
 	public void updateDepartment(Department department) throws PersistException {
 		
 		Connection connection = null;
-		Statement statement = null;
+		PreparedStatement pStatement = null;
 		
+		// check if there is Department entity
+		if (null == department.getId()) {
+			log.warn("Department with id " + department.getId() + " is not persist");
+			throw new PersistException("Department does not persist yet");
+		}
+		
+		// update Department entity
 		try {
 			String sqlUpdate = getUpdateQuery() + " WHERE id = " + department.getId();
 			connection = daoFactory.createConnection();
-			statement = connection.createStatement();
-			int count = statement.executeUpdate(sqlUpdate);
+			log.trace("create connection");
+			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
+			log.trace("create pStatement");
+			int count = pStatement.executeUpdate();
 			if (count > 1) {
 				throw new PersistException("Updated more than one Department");
 			} else if (count < 1) {
 				throw new PersistException("No one Department was updated");
 			}
 		} catch (SQLException e) {
+			log.error("can't update Department");
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(statement);
+			Closer.closeStatement(pStatement);
 			Closer.closeConnection(connection);
 		}
 		
 	}
-
 
 	public void deleteDepartment(Department department) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
 		
+		// check if there is Department entity
+				if (null == department.getId()) {
+					log.warn("Department with id " + department.getId() + " is not persist");
+					throw new PersistException("Department does not persist yet");
+				}
+		
 		try {
+			if (log.isTraceEnabled()) {
+				log.trace("delete Department with id " + department.getId());
+			}
 			String sqlDelete = getDeleteQuery() + " WHERE id = " + department.getId(); 
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			int count = statement.executeUpdate(sqlDelete);
 			if (1 != count) {
+				log.warn("delete more than one entity");
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
+			log.error("can't delete Department");
 			throw new PersistException();
 		} finally {
 			Closer.closeStatement(statement);
@@ -250,12 +321,21 @@ public class DepartmentDAO{
 		List<Department> departments = null;
 
 		try {
+			log.trace("get all Departments");
 			String sqlSelect = getSelectQuery();
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("get resultset");
 			departments = parseResultSet(rs);
+			if (null == departments || 0 == departments.size()) {
+				log.warn("no one Department persist");
+				throw new PersistException(" there are not Department entities");
+			}
 		} catch (SQLException e) {
+			log.error("can't get all Departments");
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -265,14 +345,13 @@ public class DepartmentDAO{
 	}
 
 	private String getCreateQuery() {
-		String sql = "INSERT INTO department (name, head, employees) \n"
-				+ "VALUES (?, ?, ?)";
+		String sql = "INSERT INTO department (name, head) VALUES (?, ?, ?)";
 		return sql;
 	}
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE department SET name = ?, head = ?, employees = ?";
+		String sql = "UPDATE department SET name = ?, head = ?";
 		return sql;
 	}
 	
@@ -296,12 +375,11 @@ public class DepartmentDAO{
 				Department department = new Department();
 				department.setName(rs.getString("name"));
 				department.setHead(rs.getString("head"));
-				String employeesString = rs.getString("employees");
-				Set<Employee> employees = convertEmployee(employeesString, department);
-				department.setEmployees(employees);
+				log.trace("parsed Department entity");
 				departments.add(department);
 			}
 		} catch (SQLException e) {
+			log.error("can't parse query results");
 			throw new PersistException();
 		}
 		return departments;
@@ -309,76 +387,15 @@ public class DepartmentDAO{
 	
 	private void prepareStatementForInsert(PreparedStatement statement,
 			Department department) throws PersistException {
-		String employees = convertString(department.getEmployees());
 		try {
 			statement.setString(1, department.getName());
 			statement.setString(2, department.getHead());
-			statement.setString(3, employees);
 		} catch (SQLException e) {
+			log.error("can't create arguments for pStatement");
 			throw new PersistException();
-		}	
+		}
+		log.trace("create arguments for pStatement");
 	}
 	
-	private String convertString(Set<Employee> set) {
-		StringBuilder sb = new StringBuilder();
-		for (Employee employee : set) {
-			sb.append(employee.toString());
-			sb.append("|");
-		}
-		return sb.toString();
-	}
-	
-	private Set<Employee> convertEmployee(String line, Department department) 
-			throws PersistException {
-		Set<Employee> employees = new HashSet<Employee>();
-		String[] employeeArray = line.split("|");
-		for (int i = 0; i < employeeArray.length; i++) {
-			Employee employee = new Employee();
-			String[] attributes = employeeArray[i].split(", ");
-			for (int j = 0; j < attributes.length; j++) {
-				String[] attribute = attributes[j].split("=");
-				if (attribute[0].equals("post")) {
-					employee.setPost(attribute[1]);
-				} else if (attribute[0].equals("hireDate")) {
-					employee.setHireDate(convertDate(attribute[1]));
-				} else if (attribute[0].equals("salary")) {
-					employee.setSalary(Integer.parseInt(attribute[1]));
-				} else if (attribute[0].equals("department")) {
-					employee.setDepartment(department);
-				} else if (attribute[0].equals("education")) {
-					employee.setEducation(attribute[1]);
-				} else if (attribute[0].equals("name")) {
-					employee.setName(attribute[1]);
-				} else if (attribute[0].equals("age")) {
-					employee.setAge(Integer.parseInt(attribute[1]));
-				} else if (attribute[0].equals("skills")) {
-					employee.setSkills(convertSet(attribute[1], ";"));
-				} else if (attribute[0].equals("phone")) {
-					employee.setPhone(attribute[1]);
-				} else if (attribute[0].equals("email")) {
-					employee.setEmail(attribute[1]);
-				}
-			}
-			employees.add(employee);
-		}
-		return employees;
-	}
-
-	private Date convertDate(String line) throws PersistException {
-		Date date;
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			date = sdf.parse(line);
-		} catch (ParseException e) {
-			throw new PersistException(" incorrect Date");
-		}
-		return date;
-	}
-	
-	private Set<String> convertSet(String line, String dilimiter) {
-		String[] stringArray = line.split(dilimiter);
-		Set<String> set = new HashSet<String>(Arrays.asList(stringArray));
-		return set;
-	}
 		
 }

@@ -9,14 +9,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 public class EmployeeDAO {
 
+	static {
+		LogConfig.loadLogConfig();
+	}
+	private static Logger log = Logger.getLogger(EmployeeDAO.class);
+	
 	private DAOFactory daoFactory = null;
 	
 	public EmployeeDAO() throws PersistException{
@@ -35,16 +43,27 @@ public class EmployeeDAO {
 		try {
 		//check if there is already persist the Employee
 			try {
+				if(log.isTraceEnabled()) {
+					log.trace("check if Employee whith id " + id + "exists");
+				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + employee.getId();
 				connection = daoFactory.createConnection();
+				log.trace("connectin created");
 				statement = connection.createStatement();
+				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
+				log.trace("resultset got");
 				Set <Employee> employees = parseResultSet(rs);
 				if (0 != employees.size()) {
+					log.warn("Employee is already persist, id " + employee.getId());
 					throw new PersistException("Employee with id - " + employee.getId() + 
 							" already persist");
 				}
+				if(log.isTraceEnabled()){
+					log.trace("Employee with id " + id + " is absent");
+				}
 			} catch (SQLException e) {
+				log.error(" can't check Employee by id");
 				throw new PersistException(" can't check Employee with id " + employee.getId());
 			} finally {
 				Closer.closeResultSet(rs);
@@ -53,18 +72,24 @@ public class EmployeeDAO {
 			
 			// create new Employee persist
 			try {
+				log.trace("create new enitiy Employee");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
+				log.trace("pStatement created");
 				prepareStatementForInsert(pStatement, employee);
 				int count = pStatement.executeUpdate();
 				if (1 == count) {
 					rs = pStatement.getGeneratedKeys();
+					log.trace("generated pStatement keys");
 					rs.next();
 					id = rs.getInt("id");
 				} else {
+					log.error("new entity Employee not created");
 					throw new PersistException("Employee hasn't been created");
 				}
+				log.info("new enitiy Employee created, id " + id);
 			}catch (SQLException e) {
+				log.error("new entity Employee not created");
 				throw new PersistException(" can't create new Employee with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
@@ -73,18 +98,26 @@ public class EmployeeDAO {
 			
 			// return the last entity
 			try {
+				if(log.isTraceEnabled()) {
+					log.trace("get Employee entity with id " + id);
+				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
+				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
+				log.trace("resulset got");
 				Set<Employee> employees = parseResultSet(rs);
 				if (null == employees || 1 != employees.size()) {
+					log.warn("more than one Employee with id " + id);
 					throw new PersistException("Was created more than one persist with id = " + id);
 					}
 				for (Employee emp : employees) {
 					createdEmployee = emp;
 				}
+				log.info("new Employee");
 				createdEmployee.setId(id);
 			} catch (SQLException e) {
+				log.error(" can't return new Employee with id " + id);
 				throw new PersistException(" can't return Employee with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
@@ -105,20 +138,30 @@ public class EmployeeDAO {
 		Employee createdEmployee = null;
 		
 		try {
+			log.trace("get Employee with id " + id);
 			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			Set<Employee> employees = parseResultSet(rs);
 			if (employees.size() > 1) {
+				log.warn("more than one Employee with id " + id);
 				throw new PersistException("Get more than one Employee with id = " + id);
 			} else if (employees.size() < 1) {
+				log.warn("no Employee with id " + id);
 				throw new PersistException("No Employee with id = " + id);
 			}
 			for (Employee emp : employees) {
 				createdEmployee = emp;
 			}
+			if (log.isTraceEnabled()) {
+				log.trace("get Employee with id " + id);
+			}
 		} catch (SQLException e) {
+			log.error("can't get Employee with id " + id);
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -137,15 +180,21 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE education = " + education;
+			log.trace("get Employees with education " + education);
+			String sqlSelect = getSelectQuery() + "WHERE education = " + education;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
+				log.warn("no Employees with education " + education);
 				throw new PersistException("No one Employee with education " + education);
 			}
 		} catch (SQLException e) {
+			log.error("can't get Employees with workExpirience " + education);
 			throw new PersistException();
 		}
 		
@@ -162,15 +211,21 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
+			log.trace("get Employees with departament " + departament);
 			String sqlSelect = getSelectQuery() + " WHERE departament = " + departament;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
+				log.warn("no Employees with departament " + departament);
 				throw new PersistException("No one Employee with departament " + departament);
 			}
 		} catch (SQLException e) {
+			log.error("can't get Employees with departament " + departament);
 			throw new PersistException();
 		}
 		
@@ -185,15 +240,21 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
+			log.trace("get Employees with post " + post);
 			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
+				log.warn("no Employees with post " + post);
 				throw new PersistException("No one Employee with post " + post);
 			}
 		} catch (SQLException e) {
+			log.error("can't get Employees with post " + post);
 			throw new PersistException();
 		}
 		
@@ -209,15 +270,21 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE salary = " + salary;
+			log.trace("get Employees with salary " + salary);
+			String sqlSelect = getSelectQuery() + "WHERE salary = " + salary;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
+				log.warn("no Employees with salary " + salary);
 				throw new PersistException("No one Employee with salary " + salary);
 			}
 		} catch (SQLException e) {
+			log.error("can't get Employees with salary " + salary);
 			throw new PersistException();
 		}
 		
@@ -233,15 +300,21 @@ public class EmployeeDAO {
 		ResultSet rs = null;
 		
 		try { 
-			String sqlSelect = getSelectQuery() + " WHERE age = " + age;
+			log.trace("get Employees with age " + age);
+			String sqlSelect = getSelectQuery() + "WHERE age = " + age;
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
+				log.warn("no Employees with age " + age);
 				throw new PersistException("No one Employee with age " + age);
 			}
 		} catch (SQLException e) {
+			log.error("can't get Employees with age " + age);
 			throw new PersistException();
 		}
 		
@@ -252,42 +325,64 @@ public class EmployeeDAO {
 	public void updateEmployee(Employee employee) throws PersistException {
 		
 		Connection connection = null;
-		Statement statement = null;
+		PreparedStatement pStatement = null;
+		
+		// check if there is Employee entity
+		if (null == employee.getId()) {
+			log.warn("Employee with id " + employee.getId() + " is not persist");
+			throw new PersistException("Employee does not persist yet");
+		}
 		
 		try {
+			if(log.isTraceEnabled()) {
+				log.trace("update Employee with id " + employee.getId()); 
+			}
 			String sqlUpdate = getUpdateQuery() + " WHERE id = " + employee.getId();
 			connection = daoFactory.createConnection();
-			statement = connection.createStatement();
-			int count = statement.executeUpdate(sqlUpdate);
+			log.trace("create connection");
+			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
+			log.trace("create pStatement");
+			int count = pStatement.executeUpdate();
 			if (count > 1) {
+				log.warn("update more then one Employee");
 				throw new PersistException("Updated more than one Employee");
 			} else if (count < 1) {
+				log.warn("no Employee update");
 				throw new PersistException("No one Employee was updated");
 			}
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(statement);
+			Closer.closeStatement(pStatement);
 			Closer.closeConnection(connection);
 		}
 		
 	}
-		
 	
 	public void deleteEmployee(Employee employee) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
 		
+		// check if there is Employee entity
+		if (null == employee.getId()) {
+			log.warn("Employee with id " + employee.getId() + " is not persist");
+			throw new PersistException("Employee does not persist yet");
+		}
+		
 		try {
 			String sqlDelete = getDeleteQuery() + " WHERE id = " + employee.getId(); 
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			int count = statement.executeUpdate(sqlDelete);
 			if (1 != count) {
+				log.warn("delete more than one entity");
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
+			log.error("can't delete Employee");
 			throw new PersistException();
 		} finally {
 			Closer.closeStatement(statement);
@@ -302,17 +397,23 @@ public class EmployeeDAO {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
+		String sqlSelect = getSelectQuery();
 		
 		try { 
-			String sqlSelect = getSelectQuery();
+			log.trace("get all Employees");
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("get resultset");
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
+				log.warn("no one Employee persist");
 				throw new PersistException("No one Employee persist");
 			}
 		} catch (SQLException e) {
+			log.error("can't get all Employees");
 			throw new PersistException();
 		}
 		
@@ -372,10 +473,11 @@ public class EmployeeDAO {
 				Department department = 
 						departmentDao.getDepartmentById(Integer.parseInt(rs.getString("department_id")));
 				employee.setDepartment(department);
-
+				log.trace("parsed Employee entity");
 				employees.add(employee);
 			}
 		} catch (SQLException e) {
+			log.error("can't parse query results");
 			throw new PersistException();
 		}
 		return employees;
@@ -398,8 +500,10 @@ public class EmployeeDAO {
 			statement.setDate(10, convertDate(employee.getHireDate()));
 			statement.setDate(11, convertDate(employee.getFireDate()));
 		} catch (SQLException e) {
+			log.error("can't create arguments for pStatement");
 			throw new PersistException();
-		}	
+		}
+		log.trace("create arguments for pStatement");
 	}
 	
 	private String convertString(Set<String> set) {

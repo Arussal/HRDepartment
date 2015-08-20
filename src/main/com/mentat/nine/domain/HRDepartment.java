@@ -43,7 +43,7 @@ public class HRDepartment extends Department implements HRManager{
 	 * 
 	 */
 	
-	static{
+	static {
 		LogConfig.loadLogConfig();
 	}
 	private static Logger log = Logger.getLogger(HRDepartment.class);
@@ -136,7 +136,7 @@ public class HRDepartment extends Department implements HRManager{
 		}
 			
 		if (0 == candidates.size()) {
-			log.error("candidate was not found");
+			log.warn("candidate was not found");
 			throw new NoSuitableCandidateException();
 		}
 		return candidates;
@@ -162,13 +162,16 @@ public class HRDepartment extends Department implements HRManager{
 		employee.setPost(post);
 		employee.setSalary(salary);
 		employee.setHireDate(hireDate);
+		log.trace("employee by name " + employee.getName() + " formed");
 		
 		return employee;
 	}
 	
 	@Override
 	public Employee createEmployee(Employee employee) throws PersistException {
-		return empDao.createEmployee(employee);
+		Employee createdEmployee = empDao.createEmployee(employee);
+		log.info("employee created, id: " + createdEmployee.getId());
+		return createdEmployee;
 	}
 	
 	@Override
@@ -177,6 +180,7 @@ public class HRDepartment extends Department implements HRManager{
 		
 		staff = empDao.getAllEmployees();
 		if (!staff.contains(employee)) {
+			log.warn("employee with id " + employee.getId() + " not found");
 			throw new NoSuchEmployeeException();
 		}
 		for (Employee emp : staff) {
@@ -194,6 +198,7 @@ public class HRDepartment extends Department implements HRManager{
 		
 		staff = empDao.getAllEmployees();
 		if (!staff.contains(employee)) {
+			log.warn("employee with id " + employee.getId() + " not found");
 			throw new NoSuchEmployeeException();
 		}
 		for (Employee emp : staff) {
@@ -210,6 +215,7 @@ public class HRDepartment extends Department implements HRManager{
 	
 		staff = empDao.getAllEmployees();
 		if (!staff.contains(employee)) {
+			log.warn("employee with id " + employee.getId() + " not found");
 			throw new NoSuchEmployeeException();
 		}
 		for (Employee emp : staff) {
@@ -223,7 +229,8 @@ public class HRDepartment extends Department implements HRManager{
 	
 	@Override
 	public void updateEmployee(Employee employee) throws PersistException {
-		empDao.updateEmployee(employee);
+		log.info("employee with id " + employee.getId() + " updated");
+		empDao.updateEmployee(employee); 
 	}
 	
 	@Override
@@ -238,13 +245,16 @@ public class HRDepartment extends Department implements HRManager{
 		app.setRequirements(requirements);
 		app.setSalary(salary);
 		app.setWorkExpirience(workExpirience);
+		log.trace("application form to post " + post + " formed");
 		
 		return app;
 	}
 	
 	@Override
 	public ApplicationForm createApplicationForm(ApplicationForm app) throws PersistException {
-		return appDao.createApplicationForm(app);
+		ApplicationForm createdApplicationForm = appDao.createApplicationForm(app);
+		log.info("create application form, id " + createdApplicationForm.getId());
+		return createdApplicationForm;
 	}
 	
 	public Set<Employee> getStaff() {
@@ -252,6 +262,9 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	public void setStaff(Set<Employee> staff) {
+		if (null == staff) {
+			throw new IllegalArgumentException("set Staff is null");
+		}
 		this.staff = staff;
 	}
 
@@ -260,6 +273,9 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	public void setApps(List<ApplicationForm> apps) {
+		if (null == apps) {
+			throw new IllegalArgumentException(("set Apps is null"));
+		}
 		this.apps = apps;
 	}
 
@@ -268,6 +284,9 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	public void setCvDao(CVFormDAO cvDao) {
+		if (null == cvDao) {
+			throw new IllegalArgumentException("cvDao is null");
+		}
 		this.cvDao = cvDao;
 	}
 
@@ -276,6 +295,9 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	public void setCandDao(CandidateDAO candDao) {
+		if (null == candDao) {
+			throw new IllegalArgumentException("cvDao is null");
+		}
 		this.candDao = candDao;
 	}
 
@@ -284,6 +306,9 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	public void setEmpDao(EmployeeDAO empDao) {
+		if (null == empDao) {
+			throw new IllegalArgumentException("empDao is null");
+		}
 		this.empDao = empDao;
 	}
 
@@ -292,6 +317,9 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	public void setAppDao(ApplicationFormDAO appDao) {
+		if (null == appDao) {
+			throw new IllegalArgumentException("cvDao is null");
+		}
 		this.appDao = appDao;
 	}
 }

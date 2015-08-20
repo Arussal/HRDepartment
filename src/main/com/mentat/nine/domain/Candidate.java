@@ -4,7 +4,6 @@
  */
 package main.com.mentat.nine.domain;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -19,15 +18,16 @@ import main.com.mentat.nine.domain.util.LogConfig;
 public class Candidate extends Person{
 	
 	
-	static{
-	LogConfig.loadLogConfig();
+	static {
+		LogConfig.loadLogConfig();
 	}
-	private final Logger log = Logger.getLogger(this.getClass());
+	
+	private static Logger log = Logger.getLogger(Candidate.class);
+	
 	/**
 	 * 
 	 */
 	public Candidate() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public CVForm formCVForm(String name, int age, Set<String> skills, String education, String phone, 
@@ -51,12 +51,5 @@ public class Candidate extends Person{
 	
 	public void sendCVForm(CVForm form, HRDepartment hr) throws PersistException{
 		hr.addCVForm(form);
-	}
-
-	static class Test {
-		public static void main(String... args) {
-			Candidate candidate = new Candidate();
-			candidate.formCVForm("asdf", 24, new HashSet<String>(), "education", "phone", "email", 1400, "additionalInfo", "post", 3);
-		}
 	}
 }

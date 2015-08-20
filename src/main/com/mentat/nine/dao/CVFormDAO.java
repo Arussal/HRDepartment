@@ -14,16 +14,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * @author Ruslan
  *
  */
 public class CVFormDAO {
+	
+	static {
+		LogConfig.loadLogConfig();
+	}
+	private static Logger log = Logger.getLogger(CVFormDAO.class);
 	
 	private DAOFactory daoFactory = null;
 	
@@ -44,15 +52,26 @@ public class CVFormDAO {
 			
 			//check if this CVForm does not persist
 			try {
+				if(log.isTraceEnabled()) {
+					log.trace("check if CVForm whith id " + id + "exists");
+				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + cv.getId();
 				connection = daoFactory.createConnection();
+				log.trace("connectin created");
 				statement = connection.createStatement();
+				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
+				log.trace("resultset got");
 				List<CVForm> cvList = parseResultSet(rs);
 				if (cvList.size() != 0) {
+					log.warn("CVForm is already persist, id " + cv.getId());
 					throw new PersistException("CVForm is already persist, id " + cv.getId());
 				} 
+				if(log.isTraceEnabled()){
+					log.trace("CVForm with id " + id + " is absent");
+				}
 			} catch (SQLException e) {
+				log.error(" can't check CVForm by id");
 				throw new PersistException(" can't check CVForm with id " + cv.getId());
 			} finally {
 				Closer.closeResultSet(rs);
@@ -61,18 +80,24 @@ public class CVFormDAO {
 			
 			// create new CVForm persist
 			try {
+				log.trace("create new enitiy CVForm");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
+				log.trace("pStatement created");
 				prepareStatementForInsert(pStatement, cv);
 				int count = pStatement.executeUpdate();
 				if (1 == count) {
 					rs = pStatement.getGeneratedKeys();
+					log.trace("generated pStatement keys");
 					rs.next();
 					id = rs.getInt("id"); 
 				} else {
-					throw new PersistException("Candidate hasn't been created");
+					log.error("new entity CVForm not created");
+					throw new PersistException("CVForm hasn't been created");
 				}
+				log.info("new enitiy CVForm created, id " + id);
 			} catch (SQLException e) {
+				log.error("new entity CVForm not created");
 				throw new PersistException(" can't create CVForm with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
@@ -81,16 +106,24 @@ public class CVFormDAO {
 			
 			//return the last entity
 			try {
+				if(log.isTraceEnabled()) {
+					log.trace("get CVForm entity with id " + id);
+				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
+				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
+				log.trace("resulset got");
 				List<CVForm> cvForms = parseResultSet(rs);
 				if (null == cvForms || cvForms.size() != 1) {
+					log.warn("more than one CVForm with id " + id);
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
-			createdCV = cvForms.get(0);
-			createdCV.setId(id);
+				createdCV = cvForms.get(0);
+				log.info("new CVForm");
+				createdCV.setId(id);
 			} catch (SQLException e) {
+				log.error(" can't return new CVForm with id " + id);
 				throw new PersistException(" can't return new CVForm with id " + id);
 			} finally {
 				Closer.closeResultSet(rs);
@@ -112,15 +145,21 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
-			connection = daoFactory.createConnection();
+			log.trace("get CVForms with post " + post);
 			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
+			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			cvForms = parseResultSet(rs);
 			if (cvForms.size() < 1) {
+				log.warn("no CVForms with post " + post);
 				throw new PersistException("No CVForms with post = " + post);
 			}
 		} catch (SQLException e) {
+			log.error("can't get CVForms with post " + post);
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -139,15 +178,21 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
+			log.trace("get CVForms with workExpirience " + workExpirience);
+			String sqlSelect = getSelectQuery() + "WHERE work_expirience = " + workExpirience;
 			connection = daoFactory.createConnection();
-			String sqlSelect = getSelectQuery() + " WHERE work_expirience = " + workExpirience;
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			cvForms = parseResultSet(rs);
 			if (cvForms.size() < 1) {
-				throw new PersistException("No Candidates with workExpirience = " + workExpirience);
+				log.warn("no CVForms with workExpirience " + workExpirience);
+				throw new PersistException("No CVForms with workExpirience = " + workExpirience);
 			}
 		} catch (SQLException e) {
+			log.error("can't get CVForms with workExpirience " + workExpirience);
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -166,15 +211,21 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
+			log.trace("get CVForms with education " + education);
+			String sqlSelect = getSelectQuery() + "WHERE education = " + education;
 			connection = daoFactory.createConnection();
-			String sqlSelect = getSelectQuery() + " WHERE education = " + education;
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			cvForms = parseResultSet(rs);
 			if (cvForms.size() < 1) {
-				throw new PersistException("No Candidates with education = " + education);
+				log.warn("no CVForms with education " + education);
+				throw new PersistException("No CVForms with education = " + education);
 			}
 		} catch (SQLException e) {
+			log.error("can't get CVForms with workExpirience " + education);
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -193,15 +244,21 @@ public class CVFormDAO {
 		List<CVForm> cvForms = null;
 		
 		try {
+			log.trace("get CVForms with desiredSalary " + desiredSalary);
+			String sqlSelect = getSelectQuery() + "WHERE desiredSalary = " + desiredSalary;
 			connection = daoFactory.createConnection();
-			String sqlSelect = getSelectQuery() + " WHERE desired_salary = " + desiredSalary;
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("resultset got");
 			cvForms = parseResultSet(rs);
 			if (cvForms.size() < 1) {
-				throw new PersistException("No Candidates with desiredSalary = " + desiredSalary);
+				log.warn("no CVForms with desiredSalary " + desiredSalary);
+				throw new PersistException("No CVForms with desiredSalary = " + desiredSalary);
 			}
 		} catch (SQLException e) {
+			log.error("can't get CVForms with desiredSalary " + desiredSalary);
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -219,22 +276,31 @@ public class CVFormDAO {
 		
 		// check if there is CVForm entity
 		if (null == cv.getId()) {
+			log.warn("CVForm with id " + cv.getId() + " is not persist");
 			throw new PersistException("CVForm does not persist yet");
 		}
 		
 		// update CVForm entity
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + cv.getId();
 		try {
+			if(log.isTraceEnabled()) {
+				log.trace("update CVForm with id " + cv.getId()); 
+			}
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
+			log.trace("create pStatement");
 			prepareStatementForInsert(pStatement, cv);
 			int count = pStatement.executeUpdate();
 			if (count > 1) {
+				log.warn("update more then one CVForm");
 				throw new PersistException("Updated more than one CVForm");
 			} else if (count < 1) {
+				log.warn("no CVForm update");
 				throw new PersistException("No one CVForm was updated");
 			}
 		} catch (SQLException e) {
+			log.error("can't update CVForm");
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, pStatement, connection);
@@ -250,19 +316,28 @@ public class CVFormDAO {
 		
 		// check if there is CVForm entity
 		if (null == cv.getId()) {
+			log.warn("CVForm with id " + cv.getId() + " not persist");
 			throw new PersistException("CVForm does not persist");
 		}
 		
-		// delete Candidate entity
-		String sqlDelete = getDeleteQuery() + " WHERE id = " + cv.getId();
+		// delete CVForm entity
+
 		try {
+			if (log.isTraceEnabled()) {
+				log.trace("delete CVForm with id " + cv.getId());
+			}
+			String sqlDelete = getDeleteQuery() + " WHERE id = " + cv.getId();
 			connection = daoFactory.createConnection();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			int count = statement.executeUpdate(sqlDelete);
-			if (count != 1) {
+			if (1 != count) {
+				log.warn("delete more than one entity");
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
+			log.error("can't delete CVForm");
 			throw new PersistException();
 		} finally {
 			Closer.closeStatement(statement);
@@ -278,14 +353,23 @@ public class CVFormDAO {
 		Statement statement = null;
 		ResultSet rs = null;
 		List<CVForm> cvForms = null;
+		String sqlSelect = getSelectQuery();
 		
 		try {
+			log.trace("get all CVForms");
 			connection = daoFactory.createConnection();
-			String sqlSelect = getSelectQuery();
+			log.trace("create connection");
 			statement = connection.createStatement();
+			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
+			log.trace("get resultset");
 			cvForms = parseResultSet(rs);
+			if (null == cvForms || 0 == cvForms.size()) {
+				log.warn("no one CVForm persist");
+				throw new PersistException(" there are not CVForm entities");
+			}
 		} catch (SQLException e) {
+			log.error("can't get all CVForms");
 			throw new PersistException();
 		} finally {
 			Closer.close(rs, statement, connection);
@@ -341,9 +425,11 @@ public class CVFormDAO {
 				String[] skillArray = skill.split(";");
 				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
 				cv.setSkills(skills);
+				log.trace("parsed CVForm entity");
 				cvForms.add(cv);
 			}
 		} catch (SQLException e) {
+			log.error("can't parse query results");
 			throw new PersistException();
 		}
 		return cvForms;
@@ -364,8 +450,10 @@ public class CVFormDAO {
 			statement.setInt(9, cv.getDesiredSalary());
 			statement.setString(10, cv.getAdditionalInfo());
 		} catch (SQLException e) {
+			log.error("can't create arguments for pStatement");
 			throw new PersistException();
 		}	
+		log.trace("create arguments for pStatement");
 	}
 	
 	private String convertString(Set<String> set) {
