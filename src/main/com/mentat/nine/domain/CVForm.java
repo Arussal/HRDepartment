@@ -23,8 +23,12 @@ public class CVForm extends Person{
 		return desiredSalary;
 	}
 	public void setDesiredSalary(int desiredSalary) {
+		if (desiredSalary < 0) {
+			throw new IllegalArgumentException();
+		}
 		this.desiredSalary = desiredSalary;
 	}
+	
 	public String getAdditionalInfo() {
 		return additionalInfo;
 	}
