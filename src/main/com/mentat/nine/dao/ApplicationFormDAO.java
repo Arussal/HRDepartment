@@ -56,11 +56,11 @@ public class ApplicationFormDAO {
 			//check if this ApplicationForm does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if ApplicationForm whith id " + id + " exists");
+					log.trace("check if ApplicationForm with id " + id + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + af.getId();
 				connection = daoFactory.createConnection();
-				log.trace("connectin created");
+				log.trace("connection created");
 				statement = connection.createStatement();
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
@@ -83,7 +83,7 @@ public class ApplicationFormDAO {
 			
 			// create new ApplicationForm persist
 			try {
-				log.trace("create new enitiy ApplicationForm");
+				log.trace("create new entity ApplicationForm");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -98,7 +98,7 @@ public class ApplicationFormDAO {
 					log.error("new entity ApplicationForm not created");
 					throw new PersistException("ApplicationForm hasn't been created");
 				}
-				log.info("new enitiy ApplicationForm created, id " + id);
+				log.info("new entity ApplicationForm created, id " + id);
 			}catch (SQLException e) {
 				log.error("new entity ApplicationForm not created");
 				throw new PersistException(" can't create new ApplicationForm");

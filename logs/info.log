@@ -1,0 +1,643 @@
+2015-08-21 18:02:48,937 INFO  main             domain.ApplicationForm    - new entity ApplicationForm created, id 93
+2015-08-21 18:02:48,937 INFO  main             domain.ApplicationForm    - return new ApplicationForm
+2015-08-21 18:02:48,937 INFO  main             domain.HRDepartment       - create ApplicationForm, id 93
+2015-08-21 18:02:49,062 INFO  main             domain.Candidate          - CVForm by name: name formed
+2015-08-21 18:02:49,062 INFO  main             domain.HRDepartment       - CVForm by name name created
+2015-08-21 18:02:49,359 INFO  main             dao.CVFormDAO             - new entity CVForm created, id 103
+2015-08-21 18:02:49,359 INFO  main             dao.CVFormDAO             - return new CVForm
+2015-08-21 18:02:49,671 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 551
+2015-08-21 18:02:49,671 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:49,671 INFO  main             domain.HRDepartment       - candidate created, id: 551
+2015-08-21 18:02:49,765 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 552
+2015-08-21 18:02:49,765 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:49,765 INFO  main             domain.HRDepartment       - candidate created, id: 552
+2015-08-21 18:02:49,859 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 553
+2015-08-21 18:02:49,859 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:49,859 INFO  main             domain.HRDepartment       - candidate created, id: 553
+2015-08-21 18:02:49,968 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 554
+2015-08-21 18:02:49,968 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:49,984 INFO  main             domain.HRDepartment       - candidate created, id: 554
+2015-08-21 18:02:50,062 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 555
+2015-08-21 18:02:50,078 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,078 INFO  main             domain.HRDepartment       - candidate created, id: 555
+2015-08-21 18:02:50,171 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 556
+2015-08-21 18:02:50,171 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,171 INFO  main             domain.HRDepartment       - candidate created, id: 556
+2015-08-21 18:02:50,265 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 557
+2015-08-21 18:02:50,281 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,281 INFO  main             domain.HRDepartment       - candidate created, id: 557
+2015-08-21 18:02:50,359 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 558
+2015-08-21 18:02:50,375 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,375 INFO  main             domain.HRDepartment       - candidate created, id: 558
+2015-08-21 18:02:50,468 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 559
+2015-08-21 18:02:50,468 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,468 INFO  main             domain.HRDepartment       - candidate created, id: 559
+2015-08-21 18:02:50,562 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 560
+2015-08-21 18:02:50,562 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,562 INFO  main             domain.HRDepartment       - candidate created, id: 560
+2015-08-21 18:02:50,656 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 561
+2015-08-21 18:02:50,671 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,671 INFO  main             domain.HRDepartment       - candidate created, id: 561
+2015-08-21 18:02:50,765 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 562
+2015-08-21 18:02:50,765 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,765 INFO  main             domain.HRDepartment       - candidate created, id: 562
+2015-08-21 18:02:50,875 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 563
+2015-08-21 18:02:50,890 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,890 INFO  main             domain.HRDepartment       - candidate created, id: 563
+2015-08-21 18:02:50,984 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 564
+2015-08-21 18:02:50,984 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:50,984 INFO  main             domain.HRDepartment       - candidate created, id: 564
+2015-08-21 18:02:51,078 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 565
+2015-08-21 18:02:51,078 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,078 INFO  main             domain.HRDepartment       - candidate created, id: 565
+2015-08-21 18:02:51,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 566
+2015-08-21 18:02:51,218 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,218 INFO  main             domain.HRDepartment       - candidate created, id: 566
+2015-08-21 18:02:51,296 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 567
+2015-08-21 18:02:51,312 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,312 INFO  main             domain.HRDepartment       - candidate created, id: 567
+2015-08-21 18:02:51,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 568
+2015-08-21 18:02:51,406 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,406 INFO  main             domain.HRDepartment       - candidate created, id: 568
+2015-08-21 18:02:51,500 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 569
+2015-08-21 18:02:51,500 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,500 INFO  main             domain.HRDepartment       - candidate created, id: 569
+2015-08-21 18:02:51,812 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 570
+2015-08-21 18:02:51,812 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,812 INFO  main             domain.HRDepartment       - candidate created, id: 570
+2015-08-21 18:02:51,890 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 571
+2015-08-21 18:02:51,906 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:51,906 INFO  main             domain.HRDepartment       - candidate created, id: 571
+2015-08-21 18:02:51,984 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 572
+2015-08-21 18:02:52,000 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,000 INFO  main             domain.HRDepartment       - candidate created, id: 572
+2015-08-21 18:02:52,078 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 573
+2015-08-21 18:02:52,093 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,093 INFO  main             domain.HRDepartment       - candidate created, id: 573
+2015-08-21 18:02:52,171 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 574
+2015-08-21 18:02:52,187 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,187 INFO  main             domain.HRDepartment       - candidate created, id: 574
+2015-08-21 18:02:52,265 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 575
+2015-08-21 18:02:52,281 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,281 INFO  main             domain.HRDepartment       - candidate created, id: 575
+2015-08-21 18:02:52,359 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 576
+2015-08-21 18:02:52,375 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,375 INFO  main             domain.HRDepartment       - candidate created, id: 576
+2015-08-21 18:02:52,468 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 577
+2015-08-21 18:02:52,468 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,468 INFO  main             domain.HRDepartment       - candidate created, id: 577
+2015-08-21 18:02:52,562 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 578
+2015-08-21 18:02:52,562 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,562 INFO  main             domain.HRDepartment       - candidate created, id: 578
+2015-08-21 18:02:52,656 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 579
+2015-08-21 18:02:52,656 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,656 INFO  main             domain.HRDepartment       - candidate created, id: 579
+2015-08-21 18:02:52,750 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 580
+2015-08-21 18:02:52,750 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,750 INFO  main             domain.HRDepartment       - candidate created, id: 580
+2015-08-21 18:02:52,843 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 581
+2015-08-21 18:02:52,843 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,843 INFO  main             domain.HRDepartment       - candidate created, id: 581
+2015-08-21 18:02:52,937 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 582
+2015-08-21 18:02:52,953 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:52,953 INFO  main             domain.HRDepartment       - candidate created, id: 582
+2015-08-21 18:02:53,031 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 583
+2015-08-21 18:02:53,046 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,046 INFO  main             domain.HRDepartment       - candidate created, id: 583
+2015-08-21 18:02:53,140 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 584
+2015-08-21 18:02:53,140 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,140 INFO  main             domain.HRDepartment       - candidate created, id: 584
+2015-08-21 18:02:53,234 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 585
+2015-08-21 18:02:53,234 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,234 INFO  main             domain.HRDepartment       - candidate created, id: 585
+2015-08-21 18:02:53,343 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 586
+2015-08-21 18:02:53,343 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,343 INFO  main             domain.HRDepartment       - candidate created, id: 586
+2015-08-21 18:02:53,437 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 587
+2015-08-21 18:02:53,437 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,437 INFO  main             domain.HRDepartment       - candidate created, id: 587
+2015-08-21 18:02:53,546 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 588
+2015-08-21 18:02:53,546 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,546 INFO  main             domain.HRDepartment       - candidate created, id: 588
+2015-08-21 18:02:53,640 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 589
+2015-08-21 18:02:53,656 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,656 INFO  main             domain.HRDepartment       - candidate created, id: 589
+2015-08-21 18:02:53,734 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 590
+2015-08-21 18:02:53,734 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,734 INFO  main             domain.HRDepartment       - candidate created, id: 590
+2015-08-21 18:02:53,828 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 591
+2015-08-21 18:02:53,828 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,828 INFO  main             domain.HRDepartment       - candidate created, id: 591
+2015-08-21 18:02:53,921 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 592
+2015-08-21 18:02:53,921 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:53,921 INFO  main             domain.HRDepartment       - candidate created, id: 592
+2015-08-21 18:02:54,000 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 593
+2015-08-21 18:02:54,015 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,015 INFO  main             domain.HRDepartment       - candidate created, id: 593
+2015-08-21 18:02:54,093 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 594
+2015-08-21 18:02:54,109 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,109 INFO  main             domain.HRDepartment       - candidate created, id: 594
+2015-08-21 18:02:54,187 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 595
+2015-08-21 18:02:54,187 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,187 INFO  main             domain.HRDepartment       - candidate created, id: 595
+2015-08-21 18:02:54,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 596
+2015-08-21 18:02:54,312 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,312 INFO  main             domain.HRDepartment       - candidate created, id: 596
+2015-08-21 18:02:54,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 597
+2015-08-21 18:02:54,406 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,406 INFO  main             domain.HRDepartment       - candidate created, id: 597
+2015-08-21 18:02:54,500 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 598
+2015-08-21 18:02:54,515 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,515 INFO  main             domain.HRDepartment       - candidate created, id: 598
+2015-08-21 18:02:54,609 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 599
+2015-08-21 18:02:54,609 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,609 INFO  main             domain.HRDepartment       - candidate created, id: 599
+2015-08-21 18:02:54,687 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 600
+2015-08-21 18:02:54,703 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,703 INFO  main             domain.HRDepartment       - candidate created, id: 600
+2015-08-21 18:02:54,796 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 601
+2015-08-21 18:02:54,796 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,796 INFO  main             domain.HRDepartment       - candidate created, id: 601
+2015-08-21 18:02:54,875 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 602
+2015-08-21 18:02:54,890 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,890 INFO  main             domain.HRDepartment       - candidate created, id: 602
+2015-08-21 18:02:54,984 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 603
+2015-08-21 18:02:54,984 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:54,984 INFO  main             domain.HRDepartment       - candidate created, id: 603
+2015-08-21 18:02:55,125 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 604
+2015-08-21 18:02:55,125 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:55,125 INFO  main             domain.HRDepartment       - candidate created, id: 604
+2015-08-21 18:02:55,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 605
+2015-08-21 18:02:55,218 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:55,218 INFO  main             domain.HRDepartment       - candidate created, id: 605
+2015-08-21 18:02:55,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 606
+2015-08-21 18:02:55,312 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:55,312 INFO  main             domain.HRDepartment       - candidate created, id: 606
+2015-08-21 18:02:55,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 607
+2015-08-21 18:02:55,406 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:55,406 INFO  main             domain.HRDepartment       - candidate created, id: 607
+2015-08-21 18:02:55,687 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 608
+2015-08-21 18:02:55,703 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:55,703 INFO  main             domain.HRDepartment       - candidate created, id: 608
+2015-08-21 18:02:56,093 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 609
+2015-08-21 18:02:56,093 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,093 INFO  main             domain.HRDepartment       - candidate created, id: 609
+2015-08-21 18:02:56,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 610
+2015-08-21 18:02:56,203 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,203 INFO  main             domain.HRDepartment       - candidate created, id: 610
+2015-08-21 18:02:56,281 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 611
+2015-08-21 18:02:56,296 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,296 INFO  main             domain.HRDepartment       - candidate created, id: 611
+2015-08-21 18:02:56,375 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 612
+2015-08-21 18:02:56,390 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,390 INFO  main             domain.HRDepartment       - candidate created, id: 612
+2015-08-21 18:02:56,546 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 613
+2015-08-21 18:02:56,562 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,562 INFO  main             domain.HRDepartment       - candidate created, id: 613
+2015-08-21 18:02:56,640 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 614
+2015-08-21 18:02:56,656 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,656 INFO  main             domain.HRDepartment       - candidate created, id: 614
+2015-08-21 18:02:56,781 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 615
+2015-08-21 18:02:56,781 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,781 INFO  main             domain.HRDepartment       - candidate created, id: 615
+2015-08-21 18:02:56,859 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 616
+2015-08-21 18:02:56,859 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,859 INFO  main             domain.HRDepartment       - candidate created, id: 616
+2015-08-21 18:02:56,953 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 617
+2015-08-21 18:02:56,953 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:56,953 INFO  main             domain.HRDepartment       - candidate created, id: 617
+2015-08-21 18:02:57,046 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 618
+2015-08-21 18:02:57,046 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,046 INFO  main             domain.HRDepartment       - candidate created, id: 618
+2015-08-21 18:02:57,125 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 619
+2015-08-21 18:02:57,140 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,140 INFO  main             domain.HRDepartment       - candidate created, id: 619
+2015-08-21 18:02:57,218 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 620
+2015-08-21 18:02:57,218 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,218 INFO  main             domain.HRDepartment       - candidate created, id: 620
+2015-08-21 18:02:57,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 621
+2015-08-21 18:02:57,312 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,312 INFO  main             domain.HRDepartment       - candidate created, id: 621
+2015-08-21 18:02:57,390 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 622
+2015-08-21 18:02:57,406 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,406 INFO  main             domain.HRDepartment       - candidate created, id: 622
+2015-08-21 18:02:57,484 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 623
+2015-08-21 18:02:57,484 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,484 INFO  main             domain.HRDepartment       - candidate created, id: 623
+2015-08-21 18:02:57,593 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 624
+2015-08-21 18:02:57,593 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,593 INFO  main             domain.HRDepartment       - candidate created, id: 624
+2015-08-21 18:02:57,671 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 625
+2015-08-21 18:02:57,687 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,687 INFO  main             domain.HRDepartment       - candidate created, id: 625
+2015-08-21 18:02:57,781 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 626
+2015-08-21 18:02:57,781 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,781 INFO  main             domain.HRDepartment       - candidate created, id: 626
+2015-08-21 18:02:57,875 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 627
+2015-08-21 18:02:57,890 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,890 INFO  main             domain.HRDepartment       - candidate created, id: 627
+2015-08-21 18:02:57,968 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 628
+2015-08-21 18:02:57,968 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:57,968 INFO  main             domain.HRDepartment       - candidate created, id: 628
+2015-08-21 18:02:58,078 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 629
+2015-08-21 18:02:58,078 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,078 INFO  main             domain.HRDepartment       - candidate created, id: 629
+2015-08-21 18:02:58,171 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 630
+2015-08-21 18:02:58,171 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,171 INFO  main             domain.HRDepartment       - candidate created, id: 630
+2015-08-21 18:02:58,328 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 631
+2015-08-21 18:02:58,328 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,328 INFO  main             domain.HRDepartment       - candidate created, id: 631
+2015-08-21 18:02:58,421 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 632
+2015-08-21 18:02:58,421 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,421 INFO  main             domain.HRDepartment       - candidate created, id: 632
+2015-08-21 18:02:58,500 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 633
+2015-08-21 18:02:58,500 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,500 INFO  main             domain.HRDepartment       - candidate created, id: 633
+2015-08-21 18:02:58,593 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 634
+2015-08-21 18:02:58,609 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,609 INFO  main             domain.HRDepartment       - candidate created, id: 634
+2015-08-21 18:02:58,687 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 635
+2015-08-21 18:02:58,687 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,687 INFO  main             domain.HRDepartment       - candidate created, id: 635
+2015-08-21 18:02:58,765 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 636
+2015-08-21 18:02:58,781 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,781 INFO  main             domain.HRDepartment       - candidate created, id: 636
+2015-08-21 18:02:58,859 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 637
+2015-08-21 18:02:58,859 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,859 INFO  main             domain.HRDepartment       - candidate created, id: 637
+2015-08-21 18:02:58,953 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 638
+2015-08-21 18:02:58,953 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:58,953 INFO  main             domain.HRDepartment       - candidate created, id: 638
+2015-08-21 18:02:59,031 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 639
+2015-08-21 18:02:59,031 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,046 INFO  main             domain.HRDepartment       - candidate created, id: 639
+2015-08-21 18:02:59,125 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 640
+2015-08-21 18:02:59,125 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,125 INFO  main             domain.HRDepartment       - candidate created, id: 640
+2015-08-21 18:02:59,218 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 641
+2015-08-21 18:02:59,218 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,218 INFO  main             domain.HRDepartment       - candidate created, id: 641
+2015-08-21 18:02:59,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 642
+2015-08-21 18:02:59,312 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,312 INFO  main             domain.HRDepartment       - candidate created, id: 642
+2015-08-21 18:02:59,390 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 643
+2015-08-21 18:02:59,390 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,390 INFO  main             domain.HRDepartment       - candidate created, id: 643
+2015-08-21 18:02:59,484 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 644
+2015-08-21 18:02:59,484 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,484 INFO  main             domain.HRDepartment       - candidate created, id: 644
+2015-08-21 18:02:59,578 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 645
+2015-08-21 18:02:59,578 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,578 INFO  main             domain.HRDepartment       - candidate created, id: 645
+2015-08-21 18:02:59,671 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 646
+2015-08-21 18:02:59,671 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,671 INFO  main             domain.HRDepartment       - candidate created, id: 646
+2015-08-21 18:02:59,765 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 647
+2015-08-21 18:02:59,765 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,765 INFO  main             domain.HRDepartment       - candidate created, id: 647
+2015-08-21 18:02:59,843 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 648
+2015-08-21 18:02:59,843 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,843 INFO  main             domain.HRDepartment       - candidate created, id: 648
+2015-08-21 18:02:59,921 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 649
+2015-08-21 18:02:59,937 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:02:59,937 INFO  main             domain.HRDepartment       - candidate created, id: 649
+2015-08-21 18:03:00,265 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 650
+2015-08-21 18:03:00,265 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:03:00,265 INFO  main             domain.HRDepartment       - candidate created, id: 650
+2015-08-21 18:03:00,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 651
+2015-08-21 18:03:00,406 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:03:00,406 INFO  main             domain.HRDepartment       - candidate created, id: 651
+2015-08-21 18:03:00,500 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 652
+2015-08-21 18:03:00,500 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:03:00,500 INFO  main             domain.HRDepartment       - candidate created, id: 652
+2015-08-21 18:03:00,593 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 653
+2015-08-21 18:03:00,609 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:03:00,609 INFO  main             domain.HRDepartment       - candidate created, id: 653
+2015-08-21 18:08:00,859 INFO  main             domain.ApplicationForm    - new entity ApplicationForm created, id 94
+2015-08-21 18:08:00,859 INFO  main             domain.ApplicationForm    - return new ApplicationForm
+2015-08-21 18:08:00,859 INFO  main             domain.HRDepartment       - create ApplicationForm, id 94
+2015-08-21 18:08:01,312 WARN  main             dao.CandidateDAO          - Candidate with id null not persist
+2015-08-21 18:09:12,656 INFO  main             domain.ApplicationForm    - new entity ApplicationForm created, id 95
+2015-08-21 18:09:12,671 INFO  main             domain.ApplicationForm    - return new ApplicationForm
+2015-08-21 18:09:12,671 INFO  main             domain.HRDepartment       - create ApplicationForm, id 95
+2015-08-21 18:09:13,125 WARN  main             dao.CandidateDAO          - Candidate with id null not persist
+2015-08-21 18:09:26,531 INFO  main             domain.ApplicationForm    - new entity ApplicationForm created, id 96
+2015-08-21 18:09:26,546 INFO  main             domain.ApplicationForm    - return new ApplicationForm
+2015-08-21 18:09:26,546 INFO  main             domain.HRDepartment       - create ApplicationForm, id 96
+2015-08-21 18:09:26,984 INFO  main             domain.Candidate          - CVForm by name: name formed
+2015-08-21 18:09:26,984 INFO  main             domain.HRDepartment       - CVForm by name name created
+2015-08-21 18:09:27,187 INFO  main             dao.CVFormDAO             - new entity CVForm created, id 104
+2015-08-21 18:09:27,203 INFO  main             dao.CVFormDAO             - return new CVForm
+2015-08-21 18:09:27,453 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 654
+2015-08-21 18:09:27,468 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:27,468 INFO  main             domain.HRDepartment       - candidate created, id: 654
+2015-08-21 18:09:27,546 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 655
+2015-08-21 18:09:27,546 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:27,546 INFO  main             domain.HRDepartment       - candidate created, id: 655
+2015-08-21 18:09:27,656 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 656
+2015-08-21 18:09:27,656 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:27,656 INFO  main             domain.HRDepartment       - candidate created, id: 656
+2015-08-21 18:09:27,750 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 657
+2015-08-21 18:09:27,750 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:27,750 INFO  main             domain.HRDepartment       - candidate created, id: 657
+2015-08-21 18:09:27,843 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 658
+2015-08-21 18:09:27,859 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:27,859 INFO  main             domain.HRDepartment       - candidate created, id: 658
+2015-08-21 18:09:27,953 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 659
+2015-08-21 18:09:27,953 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:27,953 INFO  main             domain.HRDepartment       - candidate created, id: 659
+2015-08-21 18:09:28,046 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 660
+2015-08-21 18:09:28,046 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,046 INFO  main             domain.HRDepartment       - candidate created, id: 660
+2015-08-21 18:09:28,140 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 661
+2015-08-21 18:09:28,140 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,140 INFO  main             domain.HRDepartment       - candidate created, id: 661
+2015-08-21 18:09:28,234 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 662
+2015-08-21 18:09:28,234 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,234 INFO  main             domain.HRDepartment       - candidate created, id: 662
+2015-08-21 18:09:28,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 663
+2015-08-21 18:09:28,328 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,328 INFO  main             domain.HRDepartment       - candidate created, id: 663
+2015-08-21 18:09:28,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 664
+2015-08-21 18:09:28,421 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,421 INFO  main             domain.HRDepartment       - candidate created, id: 664
+2015-08-21 18:09:28,515 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 665
+2015-08-21 18:09:28,515 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,515 INFO  main             domain.HRDepartment       - candidate created, id: 665
+2015-08-21 18:09:28,609 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 666
+2015-08-21 18:09:28,609 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,609 INFO  main             domain.HRDepartment       - candidate created, id: 666
+2015-08-21 18:09:28,703 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 667
+2015-08-21 18:09:28,703 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,703 INFO  main             domain.HRDepartment       - candidate created, id: 667
+2015-08-21 18:09:28,796 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 668
+2015-08-21 18:09:28,796 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,796 INFO  main             domain.HRDepartment       - candidate created, id: 668
+2015-08-21 18:09:28,890 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 669
+2015-08-21 18:09:28,890 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:28,890 INFO  main             domain.HRDepartment       - candidate created, id: 669
+2015-08-21 18:09:28,984 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 670
+2015-08-21 18:09:28,984 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,000 INFO  main             domain.HRDepartment       - candidate created, id: 670
+2015-08-21 18:09:29,078 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 671
+2015-08-21 18:09:29,078 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,078 INFO  main             domain.HRDepartment       - candidate created, id: 671
+2015-08-21 18:09:29,171 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 672
+2015-08-21 18:09:29,171 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,171 INFO  main             domain.HRDepartment       - candidate created, id: 672
+2015-08-21 18:09:29,265 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 673
+2015-08-21 18:09:29,265 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,265 INFO  main             domain.HRDepartment       - candidate created, id: 673
+2015-08-21 18:09:29,343 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 674
+2015-08-21 18:09:29,359 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,359 INFO  main             domain.HRDepartment       - candidate created, id: 674
+2015-08-21 18:09:29,437 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 675
+2015-08-21 18:09:29,453 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,453 INFO  main             domain.HRDepartment       - candidate created, id: 675
+2015-08-21 18:09:29,531 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 676
+2015-08-21 18:09:29,531 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,531 INFO  main             domain.HRDepartment       - candidate created, id: 676
+2015-08-21 18:09:29,625 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 677
+2015-08-21 18:09:29,625 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,625 INFO  main             domain.HRDepartment       - candidate created, id: 677
+2015-08-21 18:09:29,718 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 678
+2015-08-21 18:09:29,734 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,734 INFO  main             domain.HRDepartment       - candidate created, id: 678
+2015-08-21 18:09:29,812 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 679
+2015-08-21 18:09:29,828 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,828 INFO  main             domain.HRDepartment       - candidate created, id: 679
+2015-08-21 18:09:29,921 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 680
+2015-08-21 18:09:29,921 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:29,921 INFO  main             domain.HRDepartment       - candidate created, id: 680
+2015-08-21 18:09:30,046 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 681
+2015-08-21 18:09:30,062 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,062 INFO  main             domain.HRDepartment       - candidate created, id: 681
+2015-08-21 18:09:30,140 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 682
+2015-08-21 18:09:30,156 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,156 INFO  main             domain.HRDepartment       - candidate created, id: 682
+2015-08-21 18:09:30,234 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 683
+2015-08-21 18:09:30,234 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,234 INFO  main             domain.HRDepartment       - candidate created, id: 683
+2015-08-21 18:09:30,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 684
+2015-08-21 18:09:30,328 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,328 INFO  main             domain.HRDepartment       - candidate created, id: 684
+2015-08-21 18:09:30,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 685
+2015-08-21 18:09:30,421 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,421 INFO  main             domain.HRDepartment       - candidate created, id: 685
+2015-08-21 18:09:30,546 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 686
+2015-08-21 18:09:30,546 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,546 INFO  main             domain.HRDepartment       - candidate created, id: 686
+2015-08-21 18:09:30,671 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 687
+2015-08-21 18:09:30,671 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,671 INFO  main             domain.HRDepartment       - candidate created, id: 687
+2015-08-21 18:09:30,750 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 688
+2015-08-21 18:09:30,750 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,750 INFO  main             domain.HRDepartment       - candidate created, id: 688
+2015-08-21 18:09:30,843 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 689
+2015-08-21 18:09:30,843 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,843 INFO  main             domain.HRDepartment       - candidate created, id: 689
+2015-08-21 18:09:30,937 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 690
+2015-08-21 18:09:30,937 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:30,937 INFO  main             domain.HRDepartment       - candidate created, id: 690
+2015-08-21 18:09:31,015 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 691
+2015-08-21 18:09:31,031 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:31,031 INFO  main             domain.HRDepartment       - candidate created, id: 691
+2015-08-21 18:09:31,109 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 692
+2015-08-21 18:09:31,109 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:31,109 INFO  main             domain.HRDepartment       - candidate created, id: 692
+2015-08-21 18:09:31,281 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 693
+2015-08-21 18:09:31,281 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:31,281 INFO  main             domain.HRDepartment       - candidate created, id: 693
+2015-08-21 18:09:31,656 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 694
+2015-08-21 18:09:31,656 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:31,656 INFO  main             domain.HRDepartment       - candidate created, id: 694
+2015-08-21 18:09:32,015 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 695
+2015-08-21 18:09:32,015 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:32,015 INFO  main             domain.HRDepartment       - candidate created, id: 695
+2015-08-21 18:09:32,109 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 696
+2015-08-21 18:09:32,109 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:32,109 INFO  main             domain.HRDepartment       - candidate created, id: 696
+2015-08-21 18:09:32,406 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 697
+2015-08-21 18:09:32,421 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:32,421 INFO  main             domain.HRDepartment       - candidate created, id: 697
+2015-08-21 18:09:32,828 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 698
+2015-08-21 18:09:32,828 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:32,828 INFO  main             domain.HRDepartment       - candidate created, id: 698
+2015-08-21 18:09:33,000 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 699
+2015-08-21 18:09:33,000 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,000 INFO  main             domain.HRDepartment       - candidate created, id: 699
+2015-08-21 18:09:33,078 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 700
+2015-08-21 18:09:33,093 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,093 INFO  main             domain.HRDepartment       - candidate created, id: 700
+2015-08-21 18:09:33,187 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 701
+2015-08-21 18:09:33,187 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,187 INFO  main             domain.HRDepartment       - candidate created, id: 701
+2015-08-21 18:09:33,265 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 702
+2015-08-21 18:09:33,265 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,265 INFO  main             domain.HRDepartment       - candidate created, id: 702
+2015-08-21 18:09:33,359 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 703
+2015-08-21 18:09:33,359 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,359 INFO  main             domain.HRDepartment       - candidate created, id: 703
+2015-08-21 18:09:33,453 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 704
+2015-08-21 18:09:33,453 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,453 INFO  main             domain.HRDepartment       - candidate created, id: 704
+2015-08-21 18:09:33,531 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 705
+2015-08-21 18:09:33,546 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,546 INFO  main             domain.HRDepartment       - candidate created, id: 705
+2015-08-21 18:09:33,640 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 706
+2015-08-21 18:09:33,640 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,640 INFO  main             domain.HRDepartment       - candidate created, id: 706
+2015-08-21 18:09:33,718 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 707
+2015-08-21 18:09:33,734 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,734 INFO  main             domain.HRDepartment       - candidate created, id: 707
+2015-08-21 18:09:33,812 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 708
+2015-08-21 18:09:33,812 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,812 INFO  main             domain.HRDepartment       - candidate created, id: 708
+2015-08-21 18:09:33,937 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 709
+2015-08-21 18:09:33,937 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:33,937 INFO  main             domain.HRDepartment       - candidate created, id: 709
+2015-08-21 18:09:34,031 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 710
+2015-08-21 18:09:34,031 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:34,031 INFO  main             domain.HRDepartment       - candidate created, id: 710
+2015-08-21 18:09:34,109 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 711
+2015-08-21 18:09:34,109 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:34,109 INFO  main             domain.HRDepartment       - candidate created, id: 711
+2015-08-21 18:09:34,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 712
+2015-08-21 18:09:34,203 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:34,203 INFO  main             domain.HRDepartment       - candidate created, id: 712
+2015-08-21 18:09:34,296 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 713
+2015-08-21 18:09:34,296 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:34,296 INFO  main             domain.HRDepartment       - candidate created, id: 713
+2015-08-21 18:09:34,765 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 714
+2015-08-21 18:09:34,765 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:34,781 INFO  main             domain.HRDepartment       - candidate created, id: 714
+2015-08-21 18:09:35,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 715
+2015-08-21 18:09:35,203 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:35,203 INFO  main             domain.HRDepartment       - candidate created, id: 715
+2015-08-21 18:09:35,546 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 716
+2015-08-21 18:09:35,546 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:35,546 INFO  main             domain.HRDepartment       - candidate created, id: 716
+2015-08-21 18:09:35,765 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 717
+2015-08-21 18:09:35,765 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:35,781 INFO  main             domain.HRDepartment       - candidate created, id: 717
+2015-08-21 18:09:35,890 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 718
+2015-08-21 18:09:35,890 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:35,890 INFO  main             domain.HRDepartment       - candidate created, id: 718
+2015-08-21 18:09:36,218 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 719
+2015-08-21 18:09:36,234 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:36,234 INFO  main             domain.HRDepartment       - candidate created, id: 719
+2015-08-21 18:09:36,937 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 720
+2015-08-21 18:09:36,937 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:36,937 INFO  main             domain.HRDepartment       - candidate created, id: 720
+2015-08-21 18:09:37,031 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 721
+2015-08-21 18:09:37,031 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,031 INFO  main             domain.HRDepartment       - candidate created, id: 721
+2015-08-21 18:09:37,109 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 722
+2015-08-21 18:09:37,109 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,109 INFO  main             domain.HRDepartment       - candidate created, id: 722
+2015-08-21 18:09:37,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 723
+2015-08-21 18:09:37,203 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,203 INFO  main             domain.HRDepartment       - candidate created, id: 723
+2015-08-21 18:09:37,281 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 724
+2015-08-21 18:09:37,281 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,281 INFO  main             domain.HRDepartment       - candidate created, id: 724
+2015-08-21 18:09:37,375 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 725
+2015-08-21 18:09:37,375 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,375 INFO  main             domain.HRDepartment       - candidate created, id: 725
+2015-08-21 18:09:37,468 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 726
+2015-08-21 18:09:37,468 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,468 INFO  main             domain.HRDepartment       - candidate created, id: 726
+2015-08-21 18:09:37,562 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 727
+2015-08-21 18:09:37,562 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,562 INFO  main             domain.HRDepartment       - candidate created, id: 727
+2015-08-21 18:09:37,640 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 728
+2015-08-21 18:09:37,640 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,640 INFO  main             domain.HRDepartment       - candidate created, id: 728
+2015-08-21 18:09:37,750 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 729
+2015-08-21 18:09:37,765 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,765 INFO  main             domain.HRDepartment       - candidate created, id: 729
+2015-08-21 18:09:37,843 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 730
+2015-08-21 18:09:37,843 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,843 INFO  main             domain.HRDepartment       - candidate created, id: 730
+2015-08-21 18:09:37,921 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 731
+2015-08-21 18:09:37,921 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:37,921 INFO  main             domain.HRDepartment       - candidate created, id: 731
+2015-08-21 18:09:38,250 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 732
+2015-08-21 18:09:38,250 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,250 INFO  main             domain.HRDepartment       - candidate created, id: 732
+2015-08-21 18:09:38,359 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 733
+2015-08-21 18:09:38,375 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,375 INFO  main             domain.HRDepartment       - candidate created, id: 733
+2015-08-21 18:09:38,453 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 734
+2015-08-21 18:09:38,453 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,453 INFO  main             domain.HRDepartment       - candidate created, id: 734
+2015-08-21 18:09:38,531 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 735
+2015-08-21 18:09:38,531 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,531 INFO  main             domain.HRDepartment       - candidate created, id: 735
+2015-08-21 18:09:38,609 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 736
+2015-08-21 18:09:38,625 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,625 INFO  main             domain.HRDepartment       - candidate created, id: 736
+2015-08-21 18:09:38,703 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 737
+2015-08-21 18:09:38,703 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,703 INFO  main             domain.HRDepartment       - candidate created, id: 737
+2015-08-21 18:09:38,781 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 738
+2015-08-21 18:09:38,781 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,781 INFO  main             domain.HRDepartment       - candidate created, id: 738
+2015-08-21 18:09:38,859 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 739
+2015-08-21 18:09:38,859 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,859 INFO  main             domain.HRDepartment       - candidate created, id: 739
+2015-08-21 18:09:38,953 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 740
+2015-08-21 18:09:38,953 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:38,953 INFO  main             domain.HRDepartment       - candidate created, id: 740
+2015-08-21 18:09:39,031 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 741
+2015-08-21 18:09:39,031 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,031 INFO  main             domain.HRDepartment       - candidate created, id: 741
+2015-08-21 18:09:39,109 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 742
+2015-08-21 18:09:39,125 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,125 INFO  main             domain.HRDepartment       - candidate created, id: 742
+2015-08-21 18:09:39,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 743
+2015-08-21 18:09:39,218 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,234 INFO  main             domain.HRDepartment       - candidate created, id: 743
+2015-08-21 18:09:39,312 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 744
+2015-08-21 18:09:39,312 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,312 INFO  main             domain.HRDepartment       - candidate created, id: 744
+2015-08-21 18:09:39,390 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 745
+2015-08-21 18:09:39,406 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,406 INFO  main             domain.HRDepartment       - candidate created, id: 745
+2015-08-21 18:09:39,484 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 746
+2015-08-21 18:09:39,484 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,484 INFO  main             domain.HRDepartment       - candidate created, id: 746
+2015-08-21 18:09:39,562 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 747
+2015-08-21 18:09:39,578 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,578 INFO  main             domain.HRDepartment       - candidate created, id: 747
+2015-08-21 18:09:39,656 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 748
+2015-08-21 18:09:39,656 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,656 INFO  main             domain.HRDepartment       - candidate created, id: 748
+2015-08-21 18:09:39,734 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 749
+2015-08-21 18:09:39,734 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,734 INFO  main             domain.HRDepartment       - candidate created, id: 749
+2015-08-21 18:09:39,812 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 750
+2015-08-21 18:09:39,812 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,812 INFO  main             domain.HRDepartment       - candidate created, id: 750
+2015-08-21 18:09:39,890 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 751
+2015-08-21 18:09:39,906 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:39,906 INFO  main             domain.HRDepartment       - candidate created, id: 751
+2015-08-21 18:09:40,015 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 752
+2015-08-21 18:09:40,015 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:40,015 INFO  main             domain.HRDepartment       - candidate created, id: 752
+2015-08-21 18:09:40,093 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 753
+2015-08-21 18:09:40,093 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:40,109 INFO  main             domain.HRDepartment       - candidate created, id: 753
+2015-08-21 18:09:40,203 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 754
+2015-08-21 18:09:40,203 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:40,203 INFO  main             domain.HRDepartment       - candidate created, id: 754
+2015-08-21 18:09:40,281 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 755
+2015-08-21 18:09:40,296 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:40,296 INFO  main             domain.HRDepartment       - candidate created, id: 755
+2015-08-21 18:09:40,375 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 756
+2015-08-21 18:09:40,375 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:40,375 INFO  main             domain.HRDepartment       - candidate created, id: 756
+2015-08-21 18:09:40,453 INFO  main             dao.CandidateDAO          - new entity Candidate created, id 757
+2015-08-21 18:09:40,468 INFO  main             dao.CandidateDAO          - return new Candidate
+2015-08-21 18:09:40,468 INFO  main             domain.HRDepartment       - candidate created, id: 757

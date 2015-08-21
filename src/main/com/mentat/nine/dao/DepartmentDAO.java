@@ -50,11 +50,11 @@ public class DepartmentDAO{
 			//check if this Department does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if Department whith id " + id + "exists");
+					log.trace("check if Department with id " + id + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + department.getId();
 				connection = daoFactory.createConnection();
-				log.trace("connectin created");
+				log.trace("connection created");
 				statement = connection.createStatement();
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
@@ -78,7 +78,7 @@ public class DepartmentDAO{
 			
 			// create new Department persist
 			try {
-				log.trace("create new enitiy Department");
+				log.trace("create new entity Department");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -93,7 +93,7 @@ public class DepartmentDAO{
 					log.error("new entity Department not created");
 					throw new PersistException("Department hasn't been created");
 				}
-				log.info("new enitiy Department created, id " + id);
+				log.info("new entity Department created, id " + id);
 			} catch (SQLException e) {
 				log.error("new entity Department not created");
 				throw new PersistException(" can't create Department with id " + id);

@@ -53,11 +53,11 @@ public class CVFormDAO {
 			//check if this CVForm does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if CVForm whith id " + id + "exists");
+					log.trace("check if CVForm with id " + id + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + cv.getId();
 				connection = daoFactory.createConnection();
-				log.trace("connectin created");
+				log.trace("connection created");
 				statement = connection.createStatement();
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
@@ -80,7 +80,7 @@ public class CVFormDAO {
 			
 			// create new CVForm persist
 			try {
-				log.trace("create new enitiy CVForm");
+				log.trace("create new entity CVForm");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -95,7 +95,7 @@ public class CVFormDAO {
 					log.error("new entity CVForm not created");
 					throw new PersistException("CVForm hasn't been created");
 				}
-				log.info("new enitiy CVForm created, id " + id);
+				log.info("new entity CVForm created, id " + id);
 			} catch (SQLException e) {
 				log.error("new entity CVForm not created");
 				throw new PersistException(" can't create CVForm with id " + id);
@@ -120,7 +120,7 @@ public class CVFormDAO {
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
 				createdCV = cvForms.get(0);
-				log.info("new CVForm");
+				log.info("return new CVForm");
 				createdCV.setId(id);
 			} catch (SQLException e) {
 				log.error(" can't return new CVForm with id " + id);

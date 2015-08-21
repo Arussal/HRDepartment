@@ -44,11 +44,11 @@ public class EmployeeDAO {
 		//check if there is already persist the Employee
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if Employee whith id " + id + "exists");
+					log.trace("check if Employee with id " + id + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + employee.getId();
 				connection = daoFactory.createConnection();
-				log.trace("connectin created");
+				log.trace("connection created");
 				statement = connection.createStatement();
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
@@ -72,7 +72,7 @@ public class EmployeeDAO {
 			
 			// create new Employee persist
 			try {
-				log.trace("create new enitiy Employee");
+				log.trace("create new entity Employee");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -87,7 +87,7 @@ public class EmployeeDAO {
 					log.error("new entity Employee not created");
 					throw new PersistException("Employee hasn't been created");
 				}
-				log.info("new enitiy Employee created, id " + id);
+				log.info("new entity Employee created, id " + id);
 			}catch (SQLException e) {
 				log.error("new entity Employee not created");
 				throw new PersistException(" can't create new Employee with id " + id);

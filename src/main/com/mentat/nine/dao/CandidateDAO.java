@@ -52,11 +52,11 @@ public class CandidateDAO {
 			//check if this Candidate does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if Candidate whith id " + id + "exists");
+					log.trace("check if Candidate with id " + id + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + candidate.getId();
 				connection = daoFactory.createConnection();
-				log.trace("connectin created");
+				log.trace("connection created");
 				statement = connection.createStatement();
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
@@ -79,7 +79,7 @@ public class CandidateDAO {
 			
 			// create new Candidate persist
 			try {
-				log.trace("create new enitiy Candidate");
+				log.trace("create new entity Candidate");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -94,7 +94,7 @@ public class CandidateDAO {
 					log.error("new entity Candidate not created");
 					throw new PersistException("Candidate hasn't been created");
 				}
-				log.info("new enitiy Candidate created, id " + id);
+				log.info("new entity Candidate created, id " + id);
 			}catch (SQLException e) {
 				log.error("new entity Candidate not created");
 				throw new PersistException(" can't create Candidate with id " + id);
@@ -121,7 +121,7 @@ public class CandidateDAO {
 				for (Candidate cand : candidates) {
 					createdCandidate = cand;	
 				}
-				log.info("new Candidate");
+				log.info("return new Candidate");
 				createdCandidate.setId(id);
 			} catch (SQLException e) {
 				log.error(" can't return new Candidate with id " + id);

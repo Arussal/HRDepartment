@@ -82,7 +82,7 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptSalary", new Boolean(false));
 		
 		List<CVForm> cvs = cvDao.getAllCVForms();
-		log.trace("get all cvForms");
+		log.trace("check conditions to find candidate");
 		
 		
 		outer: for (CVForm cv : cvs) {
@@ -129,7 +129,7 @@ public class HRDepartment extends Department implements HRManager{
 			candidate.setPost(cv.getPost());
 			candidate.setSkills(cv.getSkills());
 			candidate.setWorkExpirience(cv.getWorkExpirience());
-			createCandidate(candidate);
+			candidate = createCandidate(candidate);
 			log.info("candidate created, id: " + candidate.getId());
 			candidates.add(candidate);
 			log.trace("add candidate to set");
