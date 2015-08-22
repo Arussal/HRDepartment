@@ -56,7 +56,7 @@ public class ApplicationFormDAO {
 			//check if this ApplicationForm does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if ApplicationForm with id " + id + " exists");
+					log.trace("try to check if ApplicationForm with id " + af.getId() + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + af.getId();
 				connection = daoFactory.createConnection();
@@ -83,7 +83,7 @@ public class ApplicationFormDAO {
 			
 			// create new ApplicationForm persist
 			try {
-				log.trace("create new entity ApplicationForm");
+				log.trace("try to create new entity ApplicationForm");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -110,7 +110,7 @@ public class ApplicationFormDAO {
 			//return the last entity
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("get ApplicationForm entity with id " + id);
+					log.trace("try to return ApplicationForm entity with id " + id);
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
@@ -123,7 +123,7 @@ public class ApplicationFormDAO {
 					throw new PersistException("Created more than one ApplicationForm with id = " + id);
 				}
 				appForm = list.get(0);
-				log.info("return new ApplicationForm");
+				log.info("return new ApplicationForm with id " + id);
 				appForm.setId(id);
 			}catch (SQLException e) {
 				log.error(" can't return new ApplicationForm with id " + id);
@@ -186,16 +186,24 @@ public class ApplicationFormDAO {
 		ResultSet rs = null;
 		
 		// check if there is ApplicationForm entity
+		if (null == af) {
+			throw new IllegalArgumentException();
+		}
 		if (null == af.getId()) {
 			log.warn("ApplicationForm with id " + af.getId() + " is not persist");
-			throw new PersistException("Object is not persist yet");
+			throw new PersistException("ApplicationForm does not persist yet");
 		}
+		ApplicationForm selectedApp = this.getApplicationFormById(af.getId());
+		if (null == selectedApp) {
+			log.warn("ApplicationForm with id " + af.getId() + " is not persist");
+			throw new PersistException("ApplicationForm does not persist yet");
+		}	
 		
 		// update it
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + af.getId();
 		try {
 			if(log.isTraceEnabled()) {
-				log.trace("update ApplicationForm with id " + af.getId()); 
+				log.trace("try to update ApplicationForm with id " + af.getId()); 
 			}
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -205,7 +213,7 @@ public class ApplicationFormDAO {
 			int count = pStatement.executeUpdate();
 			if (count > 1) {
 				log.warn("update more then one ApplicationForm");
-				throw new PersistException("It was updated more than one persist");
+				throw new PersistException("It was updated more than one persist: " + count);
 			} else if (count < 1) {
 				log.warn("no ApplicationForm update");
 				throw new PersistException("No one persist was updated");
@@ -225,16 +233,24 @@ public class ApplicationFormDAO {
 		Statement statement = null;
 		
 		// check if there is ApplicationForm entity
+		if (null == af) {
+			throw new IllegalArgumentException();
+		}
 		if (null == af.getId()) {
-			log.warn("ApplicationForm with id " + af.getId() + " not persist");
+			log.warn("ApplicationForm with id " + af.getId() + " is not persist");
 			throw new PersistException("ApplicationForm does not persist yet");
 		}
+		ApplicationForm selectedApp = this.getApplicationFormById(af.getId());
+		if (null == selectedApp) {
+			log.warn("ApplicationForm with id " + af.getId() + " is not persist");
+			throw new PersistException("ApplicationForm does not persist yet");
+		}	
 		
 		// delete ApplicationForm entity
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + af.getId();
 		try {
 			if (log.isTraceEnabled()) {
-				log.trace("delete ApplicationForm with id " + af.getId());
+				log.trace("try to delete ApplicationForm with id " + af.getId());
 			}
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -339,6 +355,7 @@ public class ApplicationFormDAO {
 			String require = "";
 			while (rs.next()) {
 				ApplicationForm appForm = new ApplicationForm();
+				appForm.setId(rs.getInt("id"));
 				appForm.setAge(rs.getInt("age"));
 				appForm.setDate(rs.getDate("date"));
 				appForm.setEducation(rs.getString("education"));

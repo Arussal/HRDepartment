@@ -44,7 +44,7 @@ public class EmployeeDAO {
 		//check if there is already persist the Employee
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if Employee with id " + id + " exists");
+					log.trace("try to check if Employee with id " + employee.getId() + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + employee.getId();
 				connection = daoFactory.createConnection();
@@ -72,7 +72,7 @@ public class EmployeeDAO {
 			
 			// create new Employee persist
 			try {
-				log.trace("create new entity Employee");
+				log.trace("try to create new entity Employee");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -99,7 +99,7 @@ public class EmployeeDAO {
 			// return the last entity
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("get Employee entity with id " + id);
+					log.trace("try to get Employee entity with id " + id);
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
@@ -114,7 +114,7 @@ public class EmployeeDAO {
 				for (Employee emp : employees) {
 					createdEmployee = emp;
 				}
-				log.info("new Employee");
+				log.info("return new Employee with id " + id);
 				createdEmployee.setId(id);
 			} catch (SQLException e) {
 				log.error(" can't return new Employee with id " + id);
@@ -328,20 +328,29 @@ public class EmployeeDAO {
 		PreparedStatement pStatement = null;
 		
 		// check if there is Employee entity
+		if (null == employee) {
+			throw new IllegalArgumentException();
+		}
 		if (null == employee.getId()) {
 			log.warn("Employee with id " + employee.getId() + " is not persist");
 			throw new PersistException("Employee does not persist yet");
 		}
+		Employee selectedEmployee = this.getEmployeeById(employee.getId());
+		if (null == selectedEmployee) {
+			log.warn("Employee with id " + employee.getId() + " is not persist");
+			throw new PersistException("Employee does not persist yet");
+		}	
 		
 		try {
 			if(log.isTraceEnabled()) {
-				log.trace("update Employee with id " + employee.getId()); 
+				log.trace("try to update Employee with id " + employee.getId()); 
 			}
 			String sqlUpdate = getUpdateQuery() + " WHERE id = " + employee.getId();
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
 			log.trace("create pStatement");
+			prepareStatementForInsert(pStatement, employee);
 			int count = pStatement.executeUpdate();
 			if (count > 1) {
 				log.warn("update more then one Employee");
@@ -365,12 +374,24 @@ public class EmployeeDAO {
 		Statement statement = null;
 		
 		// check if there is Employee entity
+		if (null == employee) {
+			throw new IllegalArgumentException();
+		}
 		if (null == employee.getId()) {
 			log.warn("Employee with id " + employee.getId() + " is not persist");
 			throw new PersistException("Employee does not persist yet");
 		}
+		Employee selectedEmployee = this.getEmployeeById(employee.getId());
+		if (null == selectedEmployee) {
+			log.warn("Employee with id " + employee.getId() + " is not persist");
+			throw new PersistException("Employee does not persist yet");
+		}
+		
 		
 		try {
+			if(log.isTraceEnabled()) {
+				log.trace("try to delete Employee with id " + employee.getId()); 
+			}
 			String sqlDelete = getDeleteQuery() + " WHERE id = " + employee.getId(); 
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -378,7 +399,9 @@ public class EmployeeDAO {
 			log.trace("create statement");
 			int count = statement.executeUpdate(sqlDelete);
 			if (1 != count) {
-				log.warn("delete more than one entity");
+				if(log.isTraceEnabled()) {
+					log.warn("On delete modify more then 1 record: " + count); 
+				}
 				throw new PersistException("On delete modify more then 1 record: " + count);
 			}
 		} catch (SQLException e) {
@@ -422,16 +445,15 @@ public class EmployeeDAO {
 
 	private String getCreateQuery() {
 		String sql = "INSERT INTO employee (name, age, education, email, phone, \n"
-				+ "post, skills, department_id, salary, hiredate, firedate) \n"
+				+ "post, skills, id_department, salary, hiredate, firedate) \n"
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		return sql;
 	}
 
 
 	private String getUpdateQuery() {
-		String sql = "UPDATE employee SET name = ?, age = ?, education = ?, \n"
-				+ "email = ?, phone = ?, post = ?, skills = ?, department_id = ?, \n"
-				+ "salary = ?, hiredate = ?, firedate = ?";
+		String sql = "UPDATE employee SET name = ?, age = ?, education = ?, email = ?, phone = ?, \n"
+				+ "post = ?, skills = ?, id_department = ?, salary = ?, hiredate = ?, firedate = ?";
 		return sql;
 	}
 	
@@ -454,6 +476,7 @@ public class EmployeeDAO {
 			String skill = "";
 			while (rs.next()) {
 				Employee employee = new Employee();
+				employee.setId(rs.getInt("id"));
 				employee.setName(rs.getString("name"));
 				employee.setAge(rs.getInt("age"));
 				employee.setEducation(rs.getString("education"));
@@ -468,10 +491,11 @@ public class EmployeeDAO {
 				String[] skillArray = skill.split(";");
 				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
 				employee.setSkills(skills);
-				
+
 				DepartmentDAO departmentDao = new DepartmentDAO();
 				Department department = 
-						departmentDao.getDepartmentById(Integer.parseInt(rs.getString("department_id")));
+						departmentDao.getDepartmentById(Integer.parseInt(rs.getString("id_department")));
+
 				employee.setDepartment(department);
 				log.trace("parsed Employee entity");
 				employees.add(employee);

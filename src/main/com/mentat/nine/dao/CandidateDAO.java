@@ -51,8 +51,9 @@ public class CandidateDAO {
 			
 			//check if this Candidate does not persist
 			try {
+				
 				if(log.isTraceEnabled()) {
-					log.trace("check if Candidate with id " + id + " exists");
+					log.trace("try to check if Candidate with id " + candidate.getId() + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + candidate.getId();
 				connection = daoFactory.createConnection();
@@ -79,7 +80,7 @@ public class CandidateDAO {
 			
 			// create new Candidate persist
 			try {
-				log.trace("create new entity Candidate");
+				log.trace("try to create new entity Candidate");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -106,7 +107,7 @@ public class CandidateDAO {
 			//return the last entity
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("get Candidate entity with id " + id);
+					log.trace("try to get Candidate entity with id " + id);
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
@@ -121,7 +122,7 @@ public class CandidateDAO {
 				for (Candidate cand : candidates) {
 					createdCandidate = cand;	
 				}
-				log.info("return new Candidate");
+				log.info("return new Candidate with id " + id);
 				createdCandidate.setId(id);
 			} catch (SQLException e) {
 				log.error(" can't return new Candidate with id " + id);
@@ -251,17 +252,25 @@ public class CandidateDAO {
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
 		
-		// check if there is Candidate entity
+		// check if there is CVForm entity
+		if (null == candidate) {
+			throw new IllegalArgumentException();
+		}
 		if (null == candidate.getId()) {
 			log.warn("Candidate with id " + candidate.getId() + " is not persist");
 			throw new PersistException("Candidate does not persist yet");
 		}
+		Candidate selectedCandidate = this.getCandidateById(candidate.getId());
+		if (null == selectedCandidate) {
+			log.warn("Candidate with id " + candidate.getId() + " is not persist");
+			throw new PersistException("Candidate does not persist yet");
+		}	
 		
 		// update Candidate entity
 		String sqlUpdate = getUpdateQuery() + "WHERE id = " + candidate.getId();
 		try {
 			if(log.isTraceEnabled()) {
-				log.trace("update Candidate with id " + candidate.getId()); 
+				log.trace("try to update Candidate with id " + candidate.getId()); 
 			}
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -271,7 +280,7 @@ public class CandidateDAO {
 			int count = pStatement.executeUpdate();
 			if (count > 1) {
 				log.warn("update more then one Candidate");
-				throw new PersistException("Updated more than one Candidate");
+				throw new PersistException("Updated more than one Candidate: " + count);
 			} else if (count < 1) {
 				log.warn("no Candidate update");
 				throw new PersistException("No one Candidate was updated");
@@ -290,17 +299,25 @@ public class CandidateDAO {
 		Connection connection = null;
 		Statement statement = null;
 		
-		// check if there is Candidate entity
-		if (null == candidate.getId()) {
-			log.warn("Candidate with id " + candidate.getId() + " not persist");
-			throw new PersistException("Candidate does not persist");
+		// check if there is CVForm entity
+		if (null == candidate) {
+			throw new IllegalArgumentException();
 		}
+		if (null == candidate.getId()) {
+			log.warn("Candidate with id " + candidate.getId() + " is not persist");
+			throw new PersistException("Candidate does not persist yet");
+		}
+		Candidate selectedCandidate = this.getCandidateById(candidate.getId());
+		if (null == selectedCandidate) {
+			log.warn("Candidate with id " + candidate.getId() + " is not persist");
+			throw new PersistException("Candidate does not persist yet");
+		}	
 		
 		// delete Candidate entity
 		String sqlDelete = getDeleteQuery() + " WHERE id = " + candidate.getId();
 		try {
 			if (log.isTraceEnabled()) {
-				log.trace("delete Candidate with id " + candidate.getId());
+				log.trace("try to delete Candidate with id " + candidate.getId());
 			}
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -384,6 +401,7 @@ public class CandidateDAO {
 			String skill = "";
 			while (rs.next()) {
 				Candidate candidate = new Candidate();
+				candidate.setId(rs.getInt("id"));
 				candidate.setName(rs.getString("name"));
 				candidate.setAge(rs.getInt("age"));
 				candidate.setEducation(rs.getString("education"));

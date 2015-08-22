@@ -50,7 +50,7 @@ public class DepartmentDAO{
 			//check if this Department does not persist
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("check if Department with id " + id + " exists");
+					log.trace("try to check if Department with id " + department.getId() + " exists");
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + department.getId();
 				connection = daoFactory.createConnection();
@@ -78,7 +78,7 @@ public class DepartmentDAO{
 			
 			// create new Department persist
 			try {
-				log.trace("create new entity Department");
+				log.trace("try to create new entity Department");
 				String sqlCreate = getCreateQuery();
 				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
 				log.trace("pStatement created");
@@ -105,7 +105,7 @@ public class DepartmentDAO{
 			//return the last entity
 			try {
 				if(log.isTraceEnabled()) {
-					log.trace("get Department entity with id " + id);
+					log.trace("try to get Department entity with id " + id);
 				}
 				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();
@@ -118,8 +118,7 @@ public class DepartmentDAO{
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
 				createdDepartment = departments.get(0);
-				log.info("new Department");
-				createdDepartment.setId(id);
+				log.info("return new Department with id " + id);
 			} catch (SQLException e) {
 				log.error(" can't return new Department with id " + id);
 				throw new PersistException(" can't return new Department with id " + id);
@@ -144,7 +143,7 @@ public class DepartmentDAO{
 		Department department = new Department();
 
 		try {
-			log.trace("get Department with id " + id);
+			log.trace("try to get Department with id " + id);
 			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -250,13 +249,25 @@ public class DepartmentDAO{
 		PreparedStatement pStatement = null;
 		
 		// check if there is Department entity
+		if (null == department) {
+			throw new IllegalArgumentException();
+		}
 		if (null == department.getId()) {
 			log.warn("Department with id " + department.getId() + " is not persist");
 			throw new PersistException("Department does not persist yet");
 		}
+		Department selectedDepartment = this.getDepartmentById(department.getId());
+		if (null == selectedDepartment) {
+			log.warn("Department with id " + department.getId() + " is not persist");
+			throw new PersistException("Department does not persist yet");
+		}			
+			
 		
 		// update Department entity
 		try {
+			if (log.isTraceEnabled()) {
+				log.trace("try to update Department with id " + department.getId());
+			}
 			String sqlUpdate = getUpdateQuery() + " WHERE id = " + department.getId();
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
@@ -264,7 +275,7 @@ public class DepartmentDAO{
 			log.trace("create pStatement");
 			int count = pStatement.executeUpdate();
 			if (count > 1) {
-				throw new PersistException("Updated more than one Department");
+				throw new PersistException("Updated more than one Department: " + count);
 			} else if (count < 1) {
 				throw new PersistException("No one Department was updated");
 			}
@@ -284,14 +295,22 @@ public class DepartmentDAO{
 		Statement statement = null;
 		
 		// check if there is Department entity
-				if (null == department.getId()) {
-					log.warn("Department with id " + department.getId() + " is not persist");
-					throw new PersistException("Department does not persist yet");
-				}
-		
+		if (null == department) {
+			throw new IllegalArgumentException();
+		}
+		if (null == department.getId()) {
+			log.warn("Department with id " + department.getId() + " is not persist");
+			throw new PersistException("Department does not persist yet");
+		}
+		Department selectedDepartment = this.getDepartmentById(department.getId());
+		if (null == selectedDepartment) {
+			log.warn("Department with id " + department.getId() + " is not persist");
+			throw new PersistException("Department does not persist yet");
+		}			
+				
 		try {
 			if (log.isTraceEnabled()) {
-				log.trace("delete Department with id " + department.getId());
+				log.trace("try to delete Department with id " + department.getId());
 			}
 			String sqlDelete = getDeleteQuery() + " WHERE id = " + department.getId(); 
 			connection = daoFactory.createConnection();
@@ -345,7 +364,7 @@ public class DepartmentDAO{
 	}
 
 	private String getCreateQuery() {
-		String sql = "INSERT INTO department (name, head) VALUES (?, ?, ?)";
+		String sql = "INSERT INTO department (name, head) VALUES (?, ?)";
 		return sql;
 	}
 
@@ -373,6 +392,7 @@ public class DepartmentDAO{
 		try {
 			while (rs.next()) {
 				Department department = new Department();
+				department.setId(rs.getInt("id"));
 				department.setName(rs.getString("name"));
 				department.setHead(rs.getString("head"));
 				log.trace("parsed Department entity");
