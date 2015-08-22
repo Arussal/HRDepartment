@@ -5,6 +5,10 @@ package main.com.mentat.nine.domain;
 
 import java.util.Date;
 
+
+import main.com.mentat.nine.dao.exceptions.PersistException;
+
+
 /**
  * @author Ruslan
  *
@@ -21,7 +25,6 @@ public class Employee extends Person{
 	 * 
 	 */
 	public Employee() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getPost() {
@@ -62,7 +65,7 @@ public class Employee extends Person{
 		this.salary = salary;
 	}
 
-	public Department getDepartment() {
+	public Department getDepartment() throws PersistException {
 		return department;
 	}
 

@@ -62,7 +62,6 @@ public class HRDepartment extends Department implements HRManager{
 			log.error("CVForm is null");
 			throw new IllegalArgumentException();
 		}
-		log.info("CVForm by name " + form.getName() + " created");
 		return cvDao.createCVForm(form);
 	}
 
@@ -91,25 +90,25 @@ public class HRDepartment extends Department implements HRManager{
 			for (Entry<String, Boolean> condition : conditions.entrySet()) {
 				condition.setValue(new Boolean(false));
 			}
-			
+
 			// check all conditions
 			if (Math.abs(cv.getAge() - app.getAge()) < 2) {
-				conditions.put("acceptAge", new Boolean(true));								
+				conditions.put("acceptAge", new Boolean(true));	
 			}
 			if (cv.getWorkExpirience() >= app.getWorkExpirience()) {
-				conditions.put("acceptWorkExperience", new Boolean(true));								
+				conditions.put("acceptWorkExperience", new Boolean(true));
 			}
 			if (cv.getEducation().equals(app.getEducation())) {		
-				conditions.put("acceptEducation", new Boolean(true)); 									
+				conditions.put("acceptEducation", new Boolean(true));
 			}
 			if (cv.getSkills().containsAll(app.getRequirements())) {
-				conditions.put("acceptSkills", new Boolean(true));									
+				conditions.put("acceptSkills", new Boolean(true));
 			}
 			if (cv.getPost().equals(app.getPost())) {
-				conditions.put("acceptPost", new Boolean(true)); 									
+				conditions.put("acceptPost", new Boolean(true));
 			} 
 			if (cv.getDesiredSalary() <= app.getSalary()) {
-				conditions.put("acceptSalary", new Boolean(true));									
+				conditions.put("acceptSalary", new Boolean(true));
 			}
  
 			for (String condition : conditions.keySet()) {
@@ -163,15 +162,13 @@ public class HRDepartment extends Department implements HRManager{
 		employee.setSalary(salary);
 		employee.setHireDate(hireDate);
 		log.trace("employee by name " + employee.getName() + " formed");
-		
+
 		return employee;
 	}
 	
 	@Override
 	public Employee createEmployee(Employee employee) throws PersistException {
-		Employee createdEmployee = empDao.createEmployee(employee);
-		log.info("employee created, id: " + createdEmployee.getId());
-		return createdEmployee;
+		return empDao.createEmployee(employee);
 	}
 	
 	@Override
@@ -253,7 +250,6 @@ public class HRDepartment extends Department implements HRManager{
 	@Override
 	public ApplicationForm createApplicationForm(ApplicationForm app) throws PersistException {
 		ApplicationForm createdApplicationForm = appDao.createApplicationForm(app);
-		log.info("create ApplicationForm, id " + createdApplicationForm.getId());
 		return createdApplicationForm;
 	}
 	
