@@ -29,10 +29,20 @@ public class CVForm extends Person{
 		this.desiredSalary = desiredSalary;
 	}
 	
+	@Override
+	public String toString() {
+		return "CVForm [desiredSalary=" + desiredSalary + ", additionalInfo="
+				+ additionalInfo + ", id=" + id + ", name=" + name + ", age="
+				+ age + ", workExpirience=" + workExpirience + ", skills="
+				+ skills + ", education=" + education + ", phone=" + phone
+				+ ", email=" + email + ", post=" + post + "]";
+	}
+
 	public String getAdditionalInfo() {
 		return additionalInfo;
 	}
 	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
 	}
+	
 }

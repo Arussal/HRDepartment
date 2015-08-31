@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -307,6 +308,50 @@ public class CVFormDAO {
 		return cvForms;
 	}
 
+	
+	public List<CVForm> getCVForm(Map<String, Object> queries) throws PersistException {
+		
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		List<CVForm> cvForms = null;
+		
+		try {
+			log.trace("get CVForms with different query parameters");
+			StringBuilder selectBuilder = new StringBuilder();
+			String selectPhrase = getSelectQuery();
+			selectBuilder.append(selectPhrase);
+			selectBuilder.append(" WHERE ");
+			for (String key : queries.keySet()) {
+				selectBuilder.append(key);
+				selectBuilder.append("='");
+				selectBuilder.append(queries.get(key));
+				selectBuilder.append("'");
+				selectBuilder.append(" AND ");
+			}
+					
+			String selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+			System.out.println(selectSql);
+			connection = daoFactory.createConnection();
+			log.trace("create connection");
+			statement = connection.createStatement();
+			log.trace("create statement");
+			rs = statement.executeQuery(selectSql);
+			log.trace("resultset got");
+			cvForms = parseResultSet(rs);
+			if (cvForms.size() < 1) {
+				log.warn("no CVForms with different query parameters");
+				throw new PersistException("No CVForms with different query parameters");
+			}
+		} catch (SQLException e) {
+			log.error("can't get CVForms with different query parameters");
+			throw new PersistException();
+		} finally {
+			Closer.close(rs, statement, connection);
+		}
+		
+		return cvForms;
+	}
 
 	public void updateCVForm(CVForm cv) throws PersistException {
 
