@@ -181,7 +181,7 @@ public class EmployeeDAO {
 		
 		try { 
 			log.trace("get Employees with education " + education);
-			String sqlSelect = getSelectQuery() + "WHERE education = " + education;
+			String sqlSelect = getSelectQuery() + " WHERE education = " + education;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -271,7 +271,7 @@ public class EmployeeDAO {
 		
 		try { 
 			log.trace("get Employees with salary " + salary);
-			String sqlSelect = getSelectQuery() + "WHERE salary = " + salary;
+			String sqlSelect = getSelectQuery() + " WHERE salary = " + salary;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -301,7 +301,7 @@ public class EmployeeDAO {
 		
 		try { 
 			log.trace("get Employees with age " + age);
-			String sqlSelect = getSelectQuery() + "WHERE age = " + age;
+			String sqlSelect = getSelectQuery() + " WHERE age = " + age;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();

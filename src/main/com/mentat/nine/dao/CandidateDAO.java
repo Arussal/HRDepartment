@@ -223,7 +223,7 @@ public class CandidateDAO {
 		
 		try {
 			log.trace("get Candidates with workExpirience " + workExpirience);
-			String sqlSelect = getSelectQuery() + "WHERE work_expirience = " + workExpirience;
+			String sqlSelect = getSelectQuery() + " WHERE work_expirience = " + workExpirience;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -267,7 +267,7 @@ public class CandidateDAO {
 		}	
 		
 		// update Candidate entity
-		String sqlUpdate = getUpdateQuery() + "WHERE id = " + candidate.getId();
+		String sqlUpdate = getUpdateQuery() + " WHERE id = " + candidate.getId();
 		try {
 			if(log.isTraceEnabled()) {
 				log.trace("try to update Candidate with id " + candidate.getId()); 

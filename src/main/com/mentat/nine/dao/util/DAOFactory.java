@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.CandidateDAO;
@@ -16,12 +18,21 @@ import main.com.mentat.nine.dao.DepartmentDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * @author Ruslan
  *
  */
 public class DAOFactory {
+	
+	static {
+		LogConfig.loadLogConfig();
+	}
+	
+	private static Logger log = Logger.getLogger(DAOFactory.class);
+	
+	public final static String PATH = "C:\\workspace\\HRDepartment\\resources\\postgres.properties";
 	
 	private static DAOFactory daoFactory;	
 	private String user;
@@ -31,6 +42,7 @@ public class DAOFactory {
 	private Connection connection;
 	
 	private DAOFactory(){
+
 		try{
 			loadConnectProperties();
 		} catch (NoSuitableDBPropertiesException e){
@@ -53,15 +65,19 @@ public class DAOFactory {
 
 	
 	public void loadConnectProperties() throws NoSuitableDBPropertiesException {
-		Properties properties = new Properties();
 		
-		try(FileInputStream fis = new FileInputStream("resources/postgres.properties")) {
+		Properties properties = new Properties();
+	
+		try(FileInputStream fis = new FileInputStream(PATH)) {
 			properties.load(fis);
-
+			log.trace("file with db properties loaded");
+			
 			user = properties.getProperty("db.user");
 			password = properties.getProperty("db.password");
 			url = properties.getProperty("db.host");
 			driverName = properties.getProperty("db.driver");
+			
+			log.trace("properties for db loaded");
 		} catch (IOException e) {
 			throw new NoSuitableDBPropertiesException();
 		}

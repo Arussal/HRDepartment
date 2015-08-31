@@ -219,7 +219,7 @@ public class CVFormDAO {
 		
 		try {
 			log.trace("get CVForms with workExpirience " + workExpirience);
-			String sqlSelect = getSelectQuery() + "WHERE work_expirience = " + workExpirience;
+			String sqlSelect = getSelectQuery() + " WHERE work_expirience = " + workExpirience;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -252,7 +252,7 @@ public class CVFormDAO {
 		
 		try {
 			log.trace("get CVForms with education " + education);
-			String sqlSelect = getSelectQuery() + "WHERE education = " + education;
+			String sqlSelect = getSelectQuery() + " WHERE education = " + education;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -285,7 +285,7 @@ public class CVFormDAO {
 		
 		try {
 			log.trace("get CVForms with desiredSalary " + desiredSalary);
-			String sqlSelect = getSelectQuery() + "WHERE desiredSalary = " + desiredSalary;
+			String sqlSelect = getSelectQuery() + " WHERE desiredSalary = " + desiredSalary;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -329,7 +329,7 @@ public class CVFormDAO {
 		}	
 		
 		// update CVForm entity
-		String sqlUpdate = getUpdateQuery() + "WHERE id = " + cv.getId();
+		String sqlUpdate = getUpdateQuery() + " WHERE id = " + cv.getId();
 		try {
 			if(log.isTraceEnabled()) {
 				log.trace("try to update CVForm with id " + cv.getId()); 

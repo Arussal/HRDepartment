@@ -150,7 +150,7 @@ public class ApplicationFormDAO {
 		
 		try {
 			log.trace("get ApplicationForm with id " + id);
-			String sqlSelect = getSelectQuery() + "WHERE id = " + id;
+			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
