@@ -13,10 +13,8 @@
 	
 	<a href="<c:url value="appControllerServlet">
 		<c:param name="createApp" value="createApp"/></c:url>">Создать</a>
-	<a href="appControllerServlet" name="createApp">Редактировать</a>
-
 	<form action="appControllerServlet" method="post">
-			
+			<input type="submit" name="editApp" value="Редактировать" />
 			<input type="submit" name="deleteApp" value="Удалить" />
 
 

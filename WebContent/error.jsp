@@ -8,7 +8,9 @@
 <title>HRDepartment - error</title>
 </head>
 <body>
-	<c:if test="${not empty newAppFormError}">
+	<h1>Error!</h1>
+	<hr />
+	<c:if test="${not empty wrongData}">
 	Ошибка ввода данных:<br /><br />
 		<c:forEach var="item" items="${emptyFields}">
 		Пустое поле - <c:out value="${item}" /><br />
@@ -17,7 +19,14 @@
 		Неправильный формат данных в поле - <c:out value="${item}" /><br />
 		</c:forEach>
 	</c:if>
+	<c:if test="${not empty nothingToEditError}">
+	Ошибка ввода данных: выбрано 0 записей для редактирования<br /><br />
+	</c:if>
+	<c:if test="${not empty tooMuchToEditError}">
+	Ошибка ввода данных: выбрано записей для редактирования - <c:out value="${appCountToEdit}" /><br />
+	Необходимо выбрать одну запись<br /><br />
+	</c:if>
 	<br /><br />
-	<a href="new_application.jsp">Назад</a> <a href="main.jsp">На главную</a> 
+	<a href="main.jsp">На главную</a> 
 </body>
 </html>

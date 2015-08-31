@@ -87,20 +87,20 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			createNewApp(request, response);
 		} else if (2 == action) {
 			deleteApp(request, response);
-		} else {
-			
+		} else if (3 == action) {
+			editApp(request, response);
 		}
 		
 	}
 	
-	
+
 	private int checkAction(HttpServletRequest request){
-		if (request.getParameter("createApp") != null) {
-			return 1;
-		} else if (request.getParameter("newApp") != null) {
+		if ((request.getParameter("createApp") != null) || (request.getParameter("newApp") != null)) {
 			return 1;
 		} else if (request.getParameter("deleteApp") != null) {
 			return 2;
+		} else if ((request.getParameter("editApp") != null) || (request.getParameter("edit") != null)) {
+			return 3;
 		}
 		return 0;
 	}
@@ -113,6 +113,17 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			forward("new_application.jsp", request, response);
 		}
 
+		ApplicationForm appForm = getDataFromForm(request, response);
+		appDao.createApplicationForm(appForm);
+		
+		forward("applicationsServlet", request, response);
+		
+	}
+
+	
+	private ApplicationForm getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException, PersistException {
+				
 		boolean isEmptyFields = checkEmptyFields(request);
 
 		String date = request.getParameter("date");
@@ -131,7 +142,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		boolean isWrongData = checkWrongDataFields(intData, request);
 		
 		if (isEmptyFields | isWrongData) {
-			request.setAttribute("newAppFormError", "newAppFormError");
+			request.setAttribute("wrongData", "wrongData");
 			forward("error.jsp", request, response);
 		}
 		
@@ -150,13 +161,10 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		ApplicationForm appForm = hrDep.formApplicationForm(parsedAge, education, 
 				parsedRequirements, post, parsedSalary, parsedWorkExpirience, parsedDate);
 		
-		appDao.createApplicationForm(appForm);
-		
-		forward("applicationsServlet", request, response);
-		
+		return appForm;
 	}
-
 	
+
 	private boolean checkEmptyFields(HttpServletRequest request) 
 			throws ServletException, IOException {
 		
@@ -207,12 +215,49 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		
 		for (Integer id : idList) {
 			ApplicationForm appForm = appDao.getApplicationFormById(id);
-			System.out.println(appForm);
 			appDao.deleteApplicationForm(appForm);
 		}
 		
 		forward("applicationsServlet", request, response);
 	}
+	
+	
+	private void editApp(HttpServletRequest request, HttpServletResponse response)
+			throws PersistException, ServletException, IOException {
+						
+		if (request.getParameter("editApp") != null) {
+			List<Integer> idList = new ArrayList<Integer>();
+			Map<String, String[]> parameters = request.getParameterMap();
+			for (String key : parameters.keySet()) {
+				if (key.equals("appId")){
+					for (String values : parameters.get(key)) {
+						idList.add(Integer.parseInt(values));
+					}
+				}
+			}
+			System.out.println(idList.size());
+			if (0 == idList.size()) {
+				request.setAttribute("nothingToEditError", "nothingToEditError");
+				forward("error.jsp", request, response);
+			} else if (idList.size() > 1) {
+				request.setAttribute("appCountToEdit", idList.size());
+				request.setAttribute("tooMuchToEditError", "tooMuchToEditError");
+				forward("error.jsp", request, response);
+			}
+			ApplicationForm appForm = appDao.getApplicationFormById(idList.get(0));
+			request.setAttribute("app", appForm);
+			forward("edit_application.jsp", request, response);
+		}
+		
+		ApplicationForm appForm = getDataFromForm(request, response);
+		Integer id = Integer.parseInt(request.getParameter("id"));
+		appForm.setId(id);
+		appDao.updateApplicationForm(appForm);
+		
+		forward("applicationsServlet", request, response);
+	}
+	
+	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {

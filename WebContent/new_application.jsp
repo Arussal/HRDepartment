@@ -14,7 +14,7 @@
 	<form action="appControllerServlet" method="post">
 	<table>
 		<tr>        
-			<td>Дата (гггг.мм.дд):</td>
+			<td>Дата (гггг-мм-дд):</td>
 			<td><input type="text" name="date" /></td>
 		</tr>
 		<tr>	
@@ -47,7 +47,7 @@
 	</table>
 	</form>
 	<br />
-	<a href="main.jsp">На главную</a>
+	<a href="applicationsServlet">Назад</a> <a href="main.jsp">На главную</a>
 	
 </body>
 </html>
