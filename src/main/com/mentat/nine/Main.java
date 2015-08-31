@@ -3,9 +3,18 @@
  */
 package main.com.mentat.nine;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.CVFormDAO;
@@ -22,6 +31,7 @@ import main.com.mentat.nine.domain.Employee;
 import main.com.mentat.nine.domain.HRDepartment;
 import main.com.mentat.nine.domain.exceptions.NoSuchEmployeeException;
 import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * @author Ruslan
@@ -38,7 +48,7 @@ public class Main {
 	 * @throws NoSuchEmployeeException 
 	 */
 	public static void main(String[] args) throws PersistException, NoSuitableCandidateException, NoSuchEmployeeException {
-		DAOFactory daoF = DAOFactory.getFactory();
+		/*DAOFactory daoF = DAOFactory.getFactory();
 		ApplicationFormDAO adao = daoF.getApplicationFormDAO();
 		DepartmentDAO ddao = daoF.getDepartmentDAO();
 		CandidateDAO cdao = daoF.getCandidateDAO();
@@ -106,15 +116,44 @@ public class Main {
 		}
 
 
-		adao.deleteApplicationForm(af);
-		cvdao.deleteCVForm(cv);
-		cvdao.deleteCVForm(cv1);
-		ddao.deleteDepartment(department);
-		for (Candidate cand : candidates) {
-			cdao.deleteCandidate(cand);
-		}
-		edao.deleteEmployee(employee);
-		
+//		adao.deleteApplicationForm(af);
+//		cvdao.deleteCVForm(cv);
+//		cvdao.deleteCVForm(cv1);
+//		ddao.deleteDepartment(department);
+//		for (Candidate cand : candidates) {
+//			cdao.deleteCandidate(cand);
+//		}
+//		edao.deleteEmployee(employee);
+	*/
+		ServletConfig config = new ServletConfig() {
+			
+			@Override
+			public String getServletName() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ServletContext getServletContext() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Enumeration<String> getInitParameterNames() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getInitParameter(String arg0) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		LogConfig lc = new LogConfig();
+		lc.loadLogConfig(config);
+
 	}
 
 }
