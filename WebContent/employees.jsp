@@ -4,10 +4,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>HRDepartment - employees</title>
 </head>
 <body>
-Success JSP!
-	<input type="button" name="applications" value="Картотека вакансий"><br />
+	<h1>Employees</h1>
+	<hr />
+	<a href="main.jsp">На главную</a>
 </body>
 </html>
