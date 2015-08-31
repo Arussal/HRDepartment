@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
@@ -125,34 +128,17 @@ public class Main {
 //		}
 //		edao.deleteEmployee(employee);
 	*/
-		ServletConfig config = new ServletConfig() {
-			
-			@Override
-			public String getServletName() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public ServletContext getServletContext() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public Enumeration<String> getInitParameterNames() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getInitParameter(String arg0) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-		LogConfig lc = new LogConfig();
-		lc.loadLogConfig(config);
+		DAOFactory daoF = DAOFactory.getFactory();
+		CVFormDAO cvdao = daoF.getCVFormDAO();
+		Map<String, Object> queries = new HashMap<String, Object>();
+		queries.put("age", 30);
+		queries.put("education", "high");
+		queries.put("post", "post");
+		queries.put("work_expirience", 10);
+		List<CVForm> cvs = cvdao.getCVForm(queries);
+		for (CVForm form : cvs) {
+			System.out.println(form);
+		}
 
 	}
 
