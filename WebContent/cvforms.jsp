@@ -9,6 +9,17 @@
 <body>
 	<h1>CV Forms</h1>
 	<hr />
+	<br />
+	<form action="" method="post">
+		Поиск резюме по критерию:  
+		<select>
+			<option>ID</option>
+			<option>Должность</option>
+			<option>Опыт работы</option>
+			<option></option>
+		</select>
+		<input type="submit" name="find" value="Найти">
+	</form>
 	<a href="main.jsp">На главную</a>
 </body>
 </html>
