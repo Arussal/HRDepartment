@@ -11,9 +11,8 @@
 	<h1>Application Forms</h1>
 	<hr />
 	
-	<a href="<c:url value="appControllerServlet">
-		<c:param name="createApp" value="createApp"/></c:url>">Создать</a>
 	<form action="appControllerServlet" method="post">
+			<input type="submit" name="createApp" value="Создать" />
 			<input type="submit" name="editApp" value="Редактировать" />
 			<input type="submit" name="deleteApp" value="Удалить" />
 

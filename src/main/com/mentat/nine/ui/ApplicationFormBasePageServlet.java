@@ -17,15 +17,15 @@ import main.com.mentat.nine.domain.ApplicationForm;
 /**
  * Servlet implementation class ApplicationFormsServlet
  */
-@WebServlet("/applicationsServlet")
-public class ApplicationFormsServlet extends HttpServlet {
+@WebServlet("/applicationBaseServlet")
+public class ApplicationFormBasePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	private List<ApplicationForm> apps;
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ApplicationFormsServlet() {
+    public ApplicationFormBasePageServlet() {
         super();
     }
 

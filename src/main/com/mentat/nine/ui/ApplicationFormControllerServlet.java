@@ -77,8 +77,8 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	}
 
 	
-	private void performTask(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException, PersistException {
+	private void performTask(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException, PersistException {
 
 		request.setCharacterEncoding("UTF8");
 		
@@ -116,7 +116,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		ApplicationForm appForm = getDataFromForm(request, response);
 		appDao.createApplicationForm(appForm);
 		
-		forward("applicationsServlet", request, response);
+		forward("applicationBaseServlet", request, response);
 		
 	}
 
@@ -218,7 +218,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			appDao.deleteApplicationForm(appForm);
 		}
 		
-		forward("applicationsServlet", request, response);
+		forward("applicationBaseServlet", request, response);
 	}
 	
 	
@@ -254,7 +254,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		appForm.setId(id);
 		appDao.updateApplicationForm(appForm);
 		
-		forward("applicationsServlet", request, response);
+		forward("applicationBaseServlet", request, response);
 	}
 	
 	

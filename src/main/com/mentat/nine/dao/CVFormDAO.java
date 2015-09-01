@@ -121,7 +121,6 @@ public class CVFormDAO {
 					throw new PersistException("Was created more than one persist with id = " + id);
 				}
 				createdCV = cvForms.get(0);
-				System.out.println("ID  inn CVdao " + createdCV.getId());
 				log.info("return new CVForm with id " + id);
 			} catch (SQLException e) {
 				log.error(" can't return new CVForm with id " + id);
@@ -331,7 +330,6 @@ public class CVFormDAO {
 			}
 					
 			String selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
-			System.out.println(selectSql);
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();

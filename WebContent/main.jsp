@@ -10,8 +10,8 @@
 	<h1>HRDepartment</h1>
 	<hr />
 	<div id="button">
-		<a href="applicationsServlet">Картотека вакансий</a><br/><br/>
-		<a href="cvforms.jsp">Поиск резюме</a><br/><br/>
+		<a href="applicationBaseServlet">Картотека вакансий</a><br/><br/>
+		<a href="cvformBaseServlet">Картотека резюме</a><br/><br/>
 		<a href="candidates.jsp">Поиск кандидата</a><br/><br/>
 		<a href="employees.jsp">Картотека сотрудников</a>
 	</div>

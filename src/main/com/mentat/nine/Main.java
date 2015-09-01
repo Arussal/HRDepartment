@@ -127,7 +127,7 @@ public class Main {
 //			cdao.deleteCandidate(cand);
 //		}
 //		edao.deleteEmployee(employee);
-	*/
+	
 		DAOFactory daoF = DAOFactory.getFactory();
 		CVFormDAO cvdao = daoF.getCVFormDAO();
 		Map<String, Object> queries = new HashMap<String, Object>();
@@ -139,7 +139,7 @@ public class Main {
 		for (CVForm form : cvs) {
 			System.out.println(form);
 		}
-
+		 */
 	}
 
 }
