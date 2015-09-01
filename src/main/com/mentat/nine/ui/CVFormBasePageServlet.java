@@ -1,6 +1,7 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,9 @@ public class CVFormBasePageServlet extends HttpServlet {
 			throws ServletException, PersistException, IOException {
 		createFilterFinder(request);
 		List<CVForm> cvList = null;
+		if (request.getAttribute("noIncomeList") != null) {
+			cvList = new ArrayList<CVForm>();
+		}
 		if (request.getAttribute("cvIncomeList") != null) {
 			cvList = (List<CVForm>)request.getAttribute("cvIncomeList");
 		} 
@@ -92,18 +96,33 @@ public class CVFormBasePageServlet extends HttpServlet {
 		educationCVSet.add(null);
 		expirienceCVSet.add(null);
 		
-		idCVSet.add("не указано");
-		ageCVSet.add("не указано");
-		postCVSet.add("не указано");
-		educationCVSet.add("не указано");
-		expirienceCVSet.add("не указано");
-		
 		for (CVForm cv : cvList) {
-			idCVSet.add(String.valueOf(cv.getId()));
-			ageCVSet.add(String.valueOf(cv.getAge()));
-			postCVSet.add(cv.getPost());
-			educationCVSet.add(cv.getEducation());
-			expirienceCVSet.add(String.valueOf(cv.getWorkExpirience()));
+			if (cv.getId() == null) {
+				idCVSet.add("не указано");
+			} else {
+				idCVSet.add(String.valueOf(cv.getId()));
+			}
+			if (cv.getAge() == null) {
+				ageCVSet.add("не указано");
+			} else {
+				ageCVSet.add(String.valueOf(cv.getAge()));
+			}
+			if (cv.getPost() == null) {
+				postCVSet.add("не указано");
+			} else {
+				postCVSet.add(cv.getPost());
+			}
+			if (cv.getEducation() == null) {
+				educationCVSet.add("не указано");
+			} else {
+				educationCVSet.add(cv.getEducation());
+			}
+			if (cv.getWorkExpirience() == null) {
+				expirienceCVSet.add("не указано");
+			} else {
+				expirienceCVSet.add(String.valueOf(cv.getWorkExpirience()));
+			}
+
 		}
 		
 		request.setAttribute("idCVSet", idCVSet);

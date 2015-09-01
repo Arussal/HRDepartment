@@ -63,7 +63,7 @@ public class CVFormControllerServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
 			throws PersistException, ServletException, IOException {
-		response.setCharacterEncoding("UTF-8");
+		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request);
 		
@@ -143,7 +143,7 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 
 		if (!postParameter.equals("")) {
-			if (idParameter.equals("не указано")) {
+			if (postParameter.equals("не указано")) {
 				parameters.put("post", null);
 			} else {
 				parameters.put("post", postParameter);
@@ -151,7 +151,7 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 
 		if (!educationParameter.equals("")) {
-			if (idParameter.equals("не указано")) {
+			if (educationParameter.equals("не указано")) {
 				parameters.put("education", null);
 			} else {
 				parameters.put("education", educationParameter);
@@ -159,20 +159,20 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 
 		if (!expirienceParameter.equals("")) {
-			if (idParameter.equals("не указано")) {
+			if (expirienceParameter.equals("не указано")) {
 				parameters.put("work_expirience", null);
 			} else {
 				parameters.put("work_expirience", expirienceParameter);
 			}
 		}
-
-		for (String key : parameters.keySet()) {
-			System.out.println(key + "=" + parameters.get(key));
+	
+		List<CVForm> cvList = cvDao.getCVForm(parameters);
+		if (0 == cvList.size()) {
+			request.setAttribute("noIncomeList", "noIncomeList");
+			forward("cvformBaseServlet", request, response);
 		}
-			
-	//	List<CVForm> cvList = cvDao.getCVForm(parameters);
-	//	request.setAttribute("cvIncomeList", cvList);
-	//	forward("cvformBaseServlet", request, response);
+		request.setAttribute("cvIncomeList", cvList);
+		forward("cvformBaseServlet", request, response);
 		
 	}
 
