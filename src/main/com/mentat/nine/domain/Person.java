@@ -13,8 +13,8 @@ public class Person {
 
 	protected Integer id;
 	protected String name;
-	protected int age;
-	protected int workExpirience;
+	protected Integer age;
+	protected Integer workExpirience;
 	protected Set<String> skills;
 	protected String education;
 	protected String phone;
@@ -54,20 +54,20 @@ public class Person {
 		this.name = name;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
-	public int getWorkExpirience() {
+	public Integer getWorkExpirience() {
 		return workExpirience;
 	}
 
 
-	public void setWorkExpirience(int workExpirience) {
+	public void setWorkExpirience(Integer workExpirience) {
 		this.workExpirience = workExpirience;
 	}
 

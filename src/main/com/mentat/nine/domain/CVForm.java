@@ -9,7 +9,7 @@ package main.com.mentat.nine.domain;
  */
 public class CVForm extends Person{
 
-	private int desiredSalary;
+	private Integer desiredSalary;
 	private String additionalInfo;
 	
 	/**
@@ -19,13 +19,10 @@ public class CVForm extends Person{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public int getDesiredSalary() {
+	public Integer getDesiredSalary() {
 		return desiredSalary;
 	}
-	public void setDesiredSalary(int desiredSalary) {
-		if (desiredSalary < 0) {
-			throw new IllegalArgumentException();
-		}
+	public void setDesiredSalary(Integer desiredSalary) {
 		this.desiredSalary = desiredSalary;
 	}
 	

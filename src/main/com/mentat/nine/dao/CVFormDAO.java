@@ -318,18 +318,24 @@ public class CVFormDAO {
 		try {
 			log.trace("get CVForms with different query parameters");
 			StringBuilder selectBuilder = new StringBuilder();
+			String selectSql = "";
 			String selectPhrase = getSelectQuery();
 			selectBuilder.append(selectPhrase);
 			selectBuilder.append(" WHERE ");
 			for (String key : queries.keySet()) {
 				selectBuilder.append(key);
-				selectBuilder.append("='");
-				selectBuilder.append(queries.get(key));
-				selectBuilder.append("'");
-				selectBuilder.append(" AND ");
+				if (queries.get(key) == null) {
+					selectBuilder.append(" is null");
+					selectSql = selectBuilder.toString();
+				} else {
+					selectBuilder.append("='");
+					selectBuilder.append(queries.get(key));
+					selectBuilder.append("'");
+					selectBuilder.append(" AND ");
+					selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+				}
 			}
-					
-			String selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+			
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -513,14 +519,26 @@ public class CVFormDAO {
 				CVForm cv = new CVForm();
 				cv.setId(rs.getInt("id"));
 				cv.setName(rs.getString("name"));
-				cv.setAge(rs.getInt("age"));
+				if (rs.getString("age") == null) {
+					cv.setAge(null);
+				} else {
+					cv.setAge(rs.getInt("age"));
+				}
 				cv.setEducation(rs.getString("education"));
 				cv.setEmail(rs.getString("email"));
 				cv.setPhone(rs.getString("phone"));
 				cv.setPost(rs.getString("Post"));
 				skill = rs.getString("skills");
-				cv.setWorkExpirience(rs.getInt("work_expirience"));
-				cv.setDesiredSalary(rs.getInt("desired_salary"));
+				if (rs.getString("work_expirience") == null) {
+					cv.setWorkExpirience(null);
+				} else {
+					cv.setWorkExpirience(rs.getInt("work_expirience"));
+				}
+				if (rs.getString("desired_salary") == null) {
+					cv.setDesiredSalary(null);
+				} else {
+					cv.setDesiredSalary(rs.getInt("desired_salary"));
+				}
 				cv.setAdditionalInfo(rs.getString("additional_info"));
 				String[] skillArray = skill.split(";");
 				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
