@@ -308,7 +308,7 @@ public class CVFormDAO {
 	}
 
 	
-	public List<CVForm> getCVForm(Map<String, Object> queries) throws PersistException {
+	public List<CVForm> getCVForm(Map<String, List<String>> queries) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
@@ -321,19 +321,23 @@ public class CVFormDAO {
 			String selectSql = "";
 			String selectPhrase = getSelectQuery();
 			selectBuilder.append(selectPhrase);
-			selectBuilder.append(" WHERE ");
-			for (String key : queries.keySet()) {
-				selectBuilder.append(key);
-				if (queries.get(key) == null) {
-					selectBuilder.append(" is null");
-					selectSql = selectBuilder.toString();
-				} else {
-					selectBuilder.append("='");
-					selectBuilder.append(queries.get(key));
-					selectBuilder.append("'");
-					selectBuilder.append(" AND ");
-					selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+			if (queries.size() != 0) {
+				selectBuilder.append(" WHERE ");
+				for (String key : queries.keySet()) {
+					selectBuilder.append(key);
+					if (queries.get(key).get(0) == null) {
+						selectBuilder.append(" is null");
+						selectSql = selectBuilder.toString();
+					} else {
+						selectBuilder.append(queries.get(key).get(1)+"'");
+						selectBuilder.append(queries.get(key).get(0));
+						selectBuilder.append("'");
+						selectBuilder.append(" AND ");
+						selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+					}
 				}
+			} else {
+				selectSql = selectBuilder.toString();
 			}
 			
 			connection = daoFactory.createConnection();

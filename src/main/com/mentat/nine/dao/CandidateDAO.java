@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -368,6 +370,63 @@ public class CandidateDAO {
 		}
 		return candidates;
 	}
+	
+	
+	public Set<Candidate> getCandidates(Map<String, List<String>> queries) 
+			throws PersistException {
+
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		Set<Candidate> candidates = null;
+		
+		try {
+			log.trace("get Candidates with different query parameters");
+			StringBuilder selectBuilder = new StringBuilder();
+			String selectSql = "";
+			String selectPhrase = getSelectQuery();
+			selectBuilder.append(selectPhrase);
+			if (queries.size() != 0) {
+				selectBuilder.append(" WHERE ");
+				for (String key : queries.keySet()) {
+					selectBuilder.append(key);
+					if (queries.get(key).get(0) == null) {
+						selectBuilder.append(" is null");
+						selectSql = selectBuilder.toString();
+					} else {
+						selectBuilder.append(queries.get(key).get(1)+"'");
+						selectBuilder.append(queries.get(key).get(0));
+						selectBuilder.append("'");
+						selectBuilder.append(" AND ");
+						selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+					}
+				}
+			} else {
+				selectSql = selectBuilder.toString();
+			}
+			
+			connection = daoFactory.createConnection();
+			log.trace("create connection");
+			statement = connection.createStatement();
+			log.trace("create statement");
+			rs = statement.executeQuery(selectSql);
+			log.trace("resultset got");
+			candidates = parseResultSet(rs);
+			if (candidates.size() < 1) {
+				log.warn("no Candidates with different query parameters");
+				throw new PersistException("No Candidates with different query parameters");
+			}
+		} catch (SQLException e) {
+			log.error("can't get Candidates with different query parameters");
+			throw new PersistException();
+		} finally {
+			Closer.close(rs, statement, connection);
+		}
+		
+		return candidates;
+		
+	}
+
 
 	private String getCreateQuery() {
 		String sql = "INSERT INTO candidate (name, age, education, email, phone, \n"
