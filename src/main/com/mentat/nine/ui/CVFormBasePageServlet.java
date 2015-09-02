@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -63,68 +64,86 @@ public class CVFormBasePageServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, PersistException, IOException {
-		createFilterFinder(request);
+
 		List<CVForm> cvList = null;
-		if (request.getAttribute("noIncomeList") != null) {
-			cvList = new ArrayList<CVForm>();
-		}
 		if (request.getAttribute("cvIncomeList") != null) {
 			cvList = (List<CVForm>)request.getAttribute("cvIncomeList");
+			createFilterFinder(request, cvList);
 		} 
 		else {
-			cvList = getAllCV();	
+			cvList = getAllCV();
+			createFilterFinder(request, cvList);
 		}
 		request.setAttribute("cvList", cvList);
 		forward("cvforms.jsp", request, response);
 	}
 	
 	
-	private void createFilterFinder(HttpServletRequest request) throws PersistException{
+	private void createFilterFinder(HttpServletRequest request, List<CVForm> cvList) throws PersistException{
 		
+		List<String> comparableList = new ArrayList<String>();
+		comparableList.add("меньше или равно");
+		comparableList.add("меньше");
+		comparableList.add("равно");
+		comparableList.add("больше");
+		comparableList.add("больше или равно");
 		
-		List<CVForm> cvList = cvDao.getAllCVForms();
+		Set<Integer> originIDSet = new TreeSet<Integer>();
+		Set<Integer> originAgeSet = new TreeSet<Integer>();
+		Set<Integer> originExpirienceSet = new TreeSet<Integer>();
 		
+		//form drop-down lists for filter by category
 		Set<String> idCVSet = new LinkedHashSet<String>();
 		Set<String> ageCVSet = new LinkedHashSet<String>();
-		Set<String> postCVSet = new LinkedHashSet<String>();
-		Set<String> educationCVSet = new LinkedHashSet<String>();
+		Set<String> postCVSet = new TreeSet<String>();
+		Set<String> educationCVSet = new TreeSet<String>();
 		Set<String> expirienceCVSet = new LinkedHashSet<String>();
 		
-		idCVSet.add(null);
-		ageCVSet.add(null);
-		postCVSet.add(null);
-		educationCVSet.add(null);
-		expirienceCVSet.add(null);
+		idCVSet.add("");
+		ageCVSet.add("");
+		postCVSet.add("");
+		educationCVSet.add("");
+		expirienceCVSet.add("");
 		
 		for (CVForm cv : cvList) {
 			if (cv.getId() == null) {
-				idCVSet.add("не указано");
+				idCVSet.add(" не указано");
 			} else {
-				idCVSet.add(String.valueOf(cv.getId()));
+				originIDSet.add(cv.getId());
 			}
 			if (cv.getAge() == null) {
-				ageCVSet.add("не указано");
+				ageCVSet.add(" не указано");
 			} else {
-				ageCVSet.add(String.valueOf(cv.getAge()));
+				originAgeSet.add(cv.getAge());
 			}
 			if (cv.getPost() == null) {
-				postCVSet.add("не указано");
+				postCVSet.add(" не указано");
 			} else {
 				postCVSet.add(cv.getPost());
 			}
 			if (cv.getEducation() == null) {
-				educationCVSet.add("не указано");
+				educationCVSet.add(" не указано");
 			} else {
 				educationCVSet.add(cv.getEducation());
 			}
 			if (cv.getWorkExpirience() == null) {
-				expirienceCVSet.add("не указано");
+				expirienceCVSet.add(" не указано");
 			} else {
-				expirienceCVSet.add(String.valueOf(cv.getWorkExpirience()));
+				originExpirienceSet.add(cv.getWorkExpirience());
 			}
-
 		}
 		
+		for (Integer item : originIDSet) {
+			idCVSet.add(String.valueOf(item));
+		}
+		for (Integer item : originAgeSet) {
+			ageCVSet.add(String.valueOf(item));
+		}
+		for (Integer item : originExpirienceSet) {
+			expirienceCVSet.add(String.valueOf(item));
+		}
+		
+		request.setAttribute("comparableList", comparableList);
 		request.setAttribute("idCVSet", idCVSet);
 		request.setAttribute("ageCVSet", ageCVSet);
 		request.setAttribute("postCVSet", postCVSet);

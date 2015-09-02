@@ -19,13 +19,29 @@
 		Неправильный формат данных в поле - <c:out value="${item}" /><br />
 		</c:forEach>
 	</c:if>
+	
 	<c:if test="${not empty nothingToEditError}">
 	Ошибка ввода данных: выбрано 0 записей для редактирования<br /><br />
+	<a href="applicationBaseServlet">Назад</a>
 	</c:if>
 	<c:if test="${not empty tooMuchToEditError}">
 	Ошибка ввода данных: выбрано записей для редактирования - <c:out value="${appCountToEdit}" /><br />
 	Необходимо выбрать одну запись<br /><br />
+	<a href="applicationBaseServlet">Назад</a>
 	</c:if>
+	
+	<c:if test="${not empty noOneCVToDelete}">
+	Ошибка ввода данных: выбрано 0 записей для удаления<br />
+	Необходимо выбрать одну запись<br /><br />
+	<a href="cvformBaseServlet">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty noOneCandidateToDelete}">
+	Ошибка ввода данных: выбрано 0 записей для удаления<br />
+	Необходимо выбрать одну запись<br /><br />
+	<a href="candidateBaseServlet">Назад</a>
+	</c:if>
+	
 	<br /><br />
 	<a href="main.jsp">На главную</a> 
 </body>

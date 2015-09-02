@@ -8,7 +8,7 @@
 <title>HRDepatment - cv forms</title>
 </head>
 <body>
-	<h1>CV Forms</h1>
+	<h1>Резюме</h1>
 	<hr />
 	<br />
 	<form action="cvformControllerServlet" method="post">
@@ -16,8 +16,9 @@
 		<table>
 			<tr>
 				<td>ID</td>
+				<td></td>
 				<td>		
-					<select name="id">
+					<select name="id" style="width:100px">
 						<c:forEach var="idCV" items="${idCVSet}">
 						<option><c:out value="${idCV}"></c:out></option>
 						</c:forEach>
@@ -26,8 +27,15 @@
 			</tr>
 			<tr>
 				<td>Возраст</td>
+				<td>
+					<select name="ageComparable" style="width:150px">
+						<c:forEach var="comparator" items="${comparableList}">
+						<option><c:out value="${comparator}"></c:out></option>
+						</c:forEach>
+					</select>
+				</td>
 				<td>		
-					<select name="age">
+					<select name="age" style="width:100px">
 						<c:forEach var="ageCV" items="${ageCVSet}">
 						<option><c:out value="${ageCV}"></c:out></option>
 						</c:forEach>
@@ -36,8 +44,9 @@
 			</tr>
 			<tr>
 				<td>Должность</td>
+				<td></td>
 				<td>		
-					<select name="post">
+					<select name="post"  style="width:100px">
 						<c:forEach var="postCV" items="${postCVSet}">
 						<option><c:out value="${postCV}"></c:out></option>
 						</c:forEach>
@@ -46,8 +55,9 @@
 			</tr>
 			<tr>
 				<td>Образование</td>
+				<td></td>
 				<td>		
-					<select name="education">
+					<select name="education" style="width:100px">
 						<c:forEach var="educationCV" items="${educationCVSet}">
 						<option><c:out value="${educationCV}"></c:out></option>
 						</c:forEach>
@@ -56,8 +66,15 @@
 			</tr>
 			<tr>
 				<td>Опыт работы</td>
+				<td>
+					<select name="expirienceComparable" style="width:150px">
+						<c:forEach var="comparator" items="${comparableList}">
+						<option><c:out value="${comparator}"></c:out></option>
+						</c:forEach>
+					</select>
+				</td>
 				<td>		
-					<select name="expirience">
+					<select name="expirience" style="width:100px">
 						<c:forEach var="expirienceCV" items="${expirienceCVSet}">
 						<option><c:out value="${expirienceCV}" ></c:out></option>
 						</c:forEach>

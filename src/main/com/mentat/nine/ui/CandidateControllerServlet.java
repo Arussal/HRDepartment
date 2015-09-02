@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,27 +13,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import main.com.mentat.nine.dao.CVFormDAO;
+import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.Candidate;
 
 /**
  * Servlet implementation class CandidateControllerServlet
  */
-@WebServlet("/cvformControllerServlet")
-public class CVFormControllerServlet extends HttpServlet {
+@WebServlet("/candidateControllerServlet")
+public class CandidateControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private CVFormDAO cvDao;
+	private CandidateDAO candDao;
        
     /**
      * @throws PersistException 
      * @see HttpServlet#HttpServlet()
      */
-    public CVFormControllerServlet() throws PersistException {
+    public CandidateControllerServlet() throws PersistException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		cvDao = daoFactory.getCVFormDAO();
+        candDao = daoFactory.getCandidateDAO();
     }
 
 	/**
@@ -47,7 +48,7 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 	}
 
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -59,69 +60,43 @@ public class CVFormControllerServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	
 
-	private void performTask(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+	
+	private void performTask(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException, PersistException {
 		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request);
 		
 		if (1 == action) {
-			deleteCV(request, response);
+			deleteCandidate(request, response);
 		}
 		if (2 == action) {
-			findCV(request, response);
+			findCandidate(request, response);
 		}
 		if (3 == action) {
-			forward("/cvformBaseServlet", request, response);
+			forward("/candidateBaseServlet", request, response);
 		}
 	}
 
-
+	
 	private int checkAction(HttpServletRequest request) {
-		if (request.getParameter("deleteCV") != null) {
+		
+		if (request.getParameter("deleteCandidate") != null) {
 			return 1;
 		} 
-		if (request.getParameter("findCV") != null) {
+		if (request.getParameter("findCandidate") != null) {
 			return 2;
 		}
-		if (request.getParameter("showAllCV") != null) {
+		if (request.getParameter("showAllCandidates") != null) {
 			return 3;
 		}
 		return 0;
 	}
 	
-	
-	private void deleteCV(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
-		List<Integer> idList = new ArrayList<Integer>();
-		Map<String, String[]> parameters = request.getParameterMap();
-		for (String key : parameters.keySet()) {
-			if (key.equals("cvId")){
-				for (String values : parameters.get(key)) {
-					idList.add(Integer.parseInt(values));
-				}
-			}
-		}
-		
-		if (idList.size() == 0) {
-			request.setAttribute("noOneCVToDelete", "noOneCVToDelete");
-			forward("error.jsp", request, response);
-		}
-		
-		for (Integer id : idList) {
-			CVForm cv = cvDao.getCVFormById(id);
-			cvDao.deleteCVForm(cv);
-		}
-		
-		forward("cvformBaseServlet", request, response);
-	}
-	
-	
 
-	private void findCV(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+	private void findCandidate(HttpServletRequest request, 	HttpServletResponse response) 
+			throws ServletException, IOException, PersistException {
 		
 		Map<String, List<String>> parameters = new HashMap<String, List<String>>();
 		String idParameter = request.getParameter("id");
@@ -196,9 +171,9 @@ public class CVFormControllerServlet extends HttpServlet {
 			}
 		}
 	
-		List<CVForm> cvList = cvDao.getCVForm(parameters);
-		request.setAttribute("cvIncomeList", cvList);
-		forward("cvformBaseServlet", request, response);
+		Set<Candidate> candList = candDao.getCandidates(parameters);
+		request.setAttribute("candIncomeList", candList);
+		forward("candidateBaseServlet", request, response);
 		
 	}
 
@@ -218,6 +193,34 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 		return conditionOperator;
 	}
+	
+	
+	private void deleteCandidate(HttpServletRequest request, HttpServletResponse response) 
+			throws PersistException, NumberFormatException, ServletException, IOException {
+		
+		List<Integer> idList = new ArrayList<Integer>();
+		Map<String, String[]> parameters = request.getParameterMap();
+		for (String key : parameters.keySet()) {
+			if (key.equals("candId")){
+				for (String values : parameters.get(key)) {
+					idList.add(Integer.parseInt(values));
+				}
+			}
+		}
+		
+		if (idList.size() == 0) {
+			request.setAttribute("noOneCandidateToDelete", "noOneCandidateToDelete");
+			forward("error.jsp", request, response);
+		}
+		
+		for (Integer id : idList) {
+			Candidate cand = candDao.getCandidateById(id);
+			candDao.deleteCandidate(cand);
+		}
+		
+		forward("candidateBaseServlet", request, response);
+	}
+		
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
