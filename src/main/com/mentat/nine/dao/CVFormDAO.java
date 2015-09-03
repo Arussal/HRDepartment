@@ -436,6 +436,8 @@ public class CVFormDAO {
 				log.trace("try to delete CVForm with id " + cv.getId());
 			}
 			String sqlDelete = getDeleteQuery() + " WHERE id = " + cv.getId();
+			System.out.println(sqlDelete); 						//// 
+			System.out.println("in cvDao.delete"); 						//// 
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();

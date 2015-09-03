@@ -8,7 +8,7 @@
 <title>HRDeparmtent - create application form</title>
 </head>
 <body>
-	<h1>New Application Form</h1>
+	<h1>Новая вакансия</h1>
 	<hr/>
 
 	<form action="appControllerServlet" method="post">

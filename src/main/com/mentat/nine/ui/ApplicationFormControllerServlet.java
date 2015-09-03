@@ -24,7 +24,10 @@ import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
+import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.HRDepartment;
+import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
 import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
@@ -89,6 +92,8 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			deleteApp(request, response);
 		} else if (3 == action) {
 			editApp(request, response);
+		} else {
+			findNewCandidate(request, response);
 		}
 		
 	}
@@ -235,7 +240,6 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 					}
 				}
 			}
-			System.out.println(idList.size());
 			if (0 == idList.size()) {
 				request.setAttribute("nothingToEditError", "nothingToEditError");
 				forward("error.jsp", request, response);
@@ -258,6 +262,42 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	}
 	
 	
+
+	private void findNewCandidate(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException, PersistException {
+
+		List<Integer> idList = new ArrayList<Integer>();
+		Map<String, String[]> parameters = request.getParameterMap();
+		for (String key : parameters.keySet()) {
+			if (key.equals("appId")){
+				for (String values : parameters.get(key)) {
+					idList.add(Integer.parseInt(values));
+				}
+			}
+		}
+		if (0 == idList.size()) {
+			request.setAttribute("noOneCandidateSelected", "noOneCandidateSelected");
+			forward("error.jsp", request, response);
+		} else if (idList.size() > 1) {
+			request.setAttribute("appCountToEdit", idList.size());
+			request.setAttribute("tooMuchToFindCandidateError", "tooMuchToFindCandidateError");
+			forward("error.jsp", request, response);
+		}
+		ApplicationForm appForm = appDao.getApplicationFormById(idList.get(0));
+		HRDepartment hrDep = new HRDepartment();
+		Map <Candidate, CVForm> candidates = null;
+		try {
+			candidates = hrDep.findCandidates(appForm);
+		} catch (NoSuitableCandidateException e) {
+			request.setAttribute("noOneCandidate", "noOneCandidate");
+			forward("error.jsp", request, response);
+		}
+		hrDep.changeCVStatusToCandidate(candidates);
+		request.setAttribute("candidates", candidates);
+		forward("new_candidate.jsp", request, response);
+			
+	}
+
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
