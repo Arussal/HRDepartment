@@ -10,7 +10,7 @@ import java.util.Set;
 
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.Employees;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.HRDepartment;
 
@@ -49,13 +49,13 @@ public class CandidateTest {
 		String email = "email@gmail.com";
 		int desiredSalary = 10000;
 		String additionalInfo = "addition";
-		CVForm cv = candidate.formCVForm(name, age, skills, education, phone, email, 
+		Employees cv = candidate.formCVForm(name, age, skills, education, phone, email, 
 				desiredSalary, additionalInfo, additionalInfo, desiredSalary);
 		assertNotNull(cv);
 	}
 
 	/**
-	 * Test method for {@link main.com.mentat.nine.domain.Candidate#sendCVForm(main.com.mentat.nine.domain.CVForm, 
+	 * Test method for {@link main.com.mentat.nine.domain.Candidate#sendCVForm(main.com.mentat.nine.domain.Employees, 
 	 * main.com.mentat.nine.domain.HRDepartment)}.
 	 * @throws PersistException 
 	 */
@@ -63,7 +63,7 @@ public class CandidateTest {
 	public void testSendCVForm() throws PersistException {
 		HRDepartment hrDep = new HRDepartment();
 		hrDep.setCvDao(cvDao);
-		CVForm cvMock = mock(CVForm.class);
+		Employees cvMock = mock(Employees.class);
 		Candidate candidate = new Candidate();
 		candidate.sendCVForm(cvMock, hrDep);
 		verify(cvDao).createCVForm(cvMock);

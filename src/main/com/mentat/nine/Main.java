@@ -27,7 +27,7 @@ import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
-import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.Employees;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
