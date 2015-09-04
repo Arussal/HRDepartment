@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -413,6 +415,60 @@ public class EmployeeDAO {
 		}
 	}
 
+	
+	public Set<Employee> getEmployees(Map<String, List<String>> queries) throws PersistException {
+		
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet rs = null;
+		Set<Employee> employees = null;
+		
+		try {
+			log.trace("get employees with different query parameters");
+			StringBuilder selectBuilder = new StringBuilder();
+			String selectSql = "";
+			String selectPhrase = getSelectQuery();
+			selectBuilder.append(selectPhrase);
+			if (queries.size() != 0) {
+				selectBuilder.append(" WHERE ");
+				for (String key : queries.keySet()) {
+					selectBuilder.append(key);
+					if (queries.get(key).get(0) == null) {
+						selectBuilder.append(" is null");
+						selectSql = selectBuilder.toString();
+					} else {
+						selectBuilder.append(queries.get(key).get(1)+"'");
+						selectBuilder.append(queries.get(key).get(0));
+						selectBuilder.append("'");
+						selectBuilder.append(" AND ");
+						selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
+					}
+				}
+			} else {
+				selectSql = selectBuilder.toString();
+			}
+			
+			connection = daoFactory.createConnection();
+			log.trace("create connection");
+			statement = connection.createStatement();
+			log.trace("create statement");
+			rs = statement.executeQuery(selectSql);
+			log.trace("resultset got");
+			employees = parseResultSet(rs);
+			if (employees.size() < 1) {
+				log.warn("no employees with different query parameters");
+				throw new PersistException("No employees with different query parameters");
+			}
+		} catch (SQLException e) {
+			log.error("can't get employees with different query parameters");
+			throw new PersistException();
+		} finally {
+			Closer.close(rs, statement, connection);
+		}
+		
+		return employees;
+	}
+	
 	
 	public Set<Employee> getAllEmployees() throws PersistException {
 		
