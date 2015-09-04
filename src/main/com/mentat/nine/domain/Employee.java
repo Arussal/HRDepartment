@@ -18,7 +18,7 @@ public class Employee extends Person{
 	private String post;
 	private Date hireDate;
 	private Date fireDate;
-	private int salary;
+	private Integer salary;
 	private Department department;
 	
 	/**
@@ -54,11 +54,11 @@ public class Employee extends Person{
 		this.fireDate = fireDate;
 	}
 
-	public int getSalary() {
+	public Integer getSalary() {
 		return salary;
 	}
 
-	public void setSalary(int salary) {
+	public void setSalary(Integer salary) {
 		if (salary < 0) {
 			throw new IllegalArgumentException();
 		}

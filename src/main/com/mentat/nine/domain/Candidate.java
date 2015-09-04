@@ -30,9 +30,9 @@ public class Candidate extends Person{
 	public Candidate() {
 	}
 	
-	public CVForm formCVForm(String name, int age, Set<String> skills, String education, String phone, 
+	public Employees formCVForm(String name, int age, Set<String> skills, String education, String phone, 
 			String email, int desiredSalary, String additionalInfo, String post, int workExpirience) {
-		CVForm cv = new CVForm();
+		Employees cv = new Employees();
 		cv.setName(name);
 		cv.setAge(age);
 		cv.setSkills(skills);
@@ -49,7 +49,7 @@ public class Candidate extends Person{
 		return cv;
 	}
 	
-	public void sendCVForm(CVForm form, HRDepartment hr) throws PersistException{
+	public void sendCVForm(Employees form, HRDepartment hr) throws PersistException{
 		hr.addCVForm(form);
 	}
 }
