@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.Employees;
 
 /**
  * Servlet implementation class CandidateControllerServlet
@@ -65,9 +65,9 @@ public class CVFormBasePageServlet extends HttpServlet {
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, PersistException, IOException {
 
-		List<CVForm> cvList = null;
+		List<Employees> cvList = null;
 		if (request.getAttribute("cvIncomeList") != null) {
-			cvList = (List<CVForm>)request.getAttribute("cvIncomeList");
+			cvList = (List<Employees>)request.getAttribute("cvIncomeList");
 			createFilterFinder(request, cvList);
 		} 
 		else {
@@ -79,7 +79,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 	}
 	
 	
-	private void createFilterFinder(HttpServletRequest request, List<CVForm> cvList) throws PersistException{
+	private void createFilterFinder(HttpServletRequest request, List<Employees> cvList) throws PersistException{
 		
 		List<String> comparableList = new ArrayList<String>();
 		comparableList.add("меньше или равно");
@@ -105,7 +105,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 		educationCVSet.add("");
 		expirienceCVSet.add("");
 		
-		for (CVForm cv : cvList) {
+		for (Employees cv : cvList) {
 			if (cv.getId() == null) {
 				idCVSet.add(" не указано");
 			} else {
@@ -152,8 +152,8 @@ public class CVFormBasePageServlet extends HttpServlet {
 	}
 	
 	
-	private List<CVForm> getAllCV() throws PersistException{
-		List<CVForm> cvList = cvDao.getAllCVForms();
+	private List<Employees> getAllCV() throws PersistException{
+		List<Employees> cvList = cvDao.getAllCVForms();
 		return cvList;
 	}
 	

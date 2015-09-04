@@ -151,7 +151,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		}
 		
 		HRDepartment hrDep = new HRDepartment();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date parsedDate = null;
 		try {
 			parsedDate = sdf.parse(date);

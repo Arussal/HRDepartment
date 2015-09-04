@@ -10,7 +10,7 @@
 <body>
 	<h1>Оформить кандидата в штат</h1>
 	<hr/>
-	<form action="" method="post">
+	<form action="/candidateControllerServlet" method="post">
 	<table>
 		<tr>
 			<td>Отдел</td>
@@ -23,11 +23,11 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Зарплата</td>
+			<td>Зарплата, грн</td>
 			<td><input type="text" name="salaryInput"/></td>
 		</tr>
 		<tr>
-			<td>Дата</td>
+			<td>Дата (гггг-мм-дд)</td>
 			<td><input type="text" name="dateInput"/></td>
 		</tr>
 	</table>

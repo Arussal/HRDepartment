@@ -1,7 +1,10 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +17,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import main.com.mentat.nine.dao.CandidateDAO;
+import main.com.mentat.nine.dao.DepartmentDAO;
+import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Candidate;
+import main.com.mentat.nine.domain.Department;
+import main.com.mentat.nine.domain.Employee;
 import main.com.mentat.nine.domain.HRDepartment;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * Servlet implementation class CandidateControllerServlet
@@ -26,7 +36,16 @@ import main.com.mentat.nine.domain.HRDepartment;
 @WebServlet("/candidateControllerServlet")
 public class CandidateControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+    
+	static {
+		LogConfig.loadLogConfig();
+	}
+	
+	private static Logger log = Logger.getLogger(CandidateControllerServlet.class);
+	
 	private CandidateDAO candDao;
+	private DepartmentDAO depDao;
+	private EmployeeDAO empDao;
        
     /**
      * @throws PersistException 
@@ -36,6 +55,8 @@ public class CandidateControllerServlet extends HttpServlet {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
         candDao = daoFactory.getCandidateDAO();
+        depDao = daoFactory.getDepartmentDAO();
+        empDao = daoFactory.getEmployeeDAO();
     }
 
 	/**
@@ -77,7 +98,7 @@ public class CandidateControllerServlet extends HttpServlet {
 		} else if (3 == action) {
 			forward("/candidateBaseServlet", request, response);
 		} else {
-			hireEmployee();
+			hireEmployee(request, response);
 		}
 	}
 
@@ -216,29 +237,102 @@ public class CandidateControllerServlet extends HttpServlet {
 	}
 		
 	
-	private void hireEmployee(HttpServletRequest request, HttpServletResponse response) throws PersistException {
+	private void hireEmployee(HttpServletRequest request, HttpServletResponse response) 
+			throws PersistException, ServletException, IOException {
+		
+		List<Department> departments = depDao.getAllDepartments();
 		
 		if (request.getParameter("hireCandidate") != null) {
 			List<Integer> idList = selectedItems(request);
 			HRDepartment hrDep = new HRDepartment();
 			
 			if (idList.size() == 0) {
-				request.setAttribute("noOneCandidateToHire", "noOneCandidateToHire");
+				request.setAttribute("noOneCandidateToHire", "noOneCandidateToHire");		//
+				forward("error.jsp", request, response);
+			} 
+			if (idList.size() > 1) {
+				request.setAttribute("noOneCandidateToHire", "noOneCandidateToHire");		//
 				forward("error.jsp", request, response);
 			}
 			
-			for (Integer id : idList) {
-				Candidate cand = candDao.getCandidateById(id);
-				String salary = request.getParameter("salaryInput");
-				String hireDate = request.getParameter("dateInput");
-				String department = request.getParameter("department");
-				hrDep.hireEmployee(cand, salary, cand.getPost(), hireDate, department);
+			Candidate cand = candDao.getCandidateById(idList.get(0));
+			
+			boolean isEmptyFields = checkEmptyFields(request);
+			
+			String salary = request.getParameter("salaryInput");
+			String hireDate = request.getParameter("dateInput");
+			String department = request.getParameter("department");
+			
+			Map<String, String> intData = new HashMap<String, String>();
+			intData.put("salary", salary);
+			
+			boolean isWrongData = checkWrongDataFields(intData, request);
+			
+			if (isEmptyFields | isWrongData) {
+				request.setAttribute("wrongData", "wrongData");
+				forward("error.jsp", request, response);
 			}
-		
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date parsedDate = null;
+			try {
+				parsedDate = sdf.parse(hireDate);
+			} catch (ParseException e) {
+				log.warn("can't parse Form's date");
+			}
+			int parsedSalary = Integer.parseInt(salary);
+			
+			Department parsedDepartment = null;
+			for (Department dpmnt : departments) {
+				if (dpmnt.getName().equals(department)) {
+					parsedDepartment = dpmnt;
+				}
+			}
+			
+			Employee employee = hrDep.hireEmployee(cand, parsedSalary, cand.getPost(), 
+					parsedDate, parsedDepartment);
+			empDao.createEmployee(employee);
+			candDao.deleteCandidate(cand);
+			forward("candidateBaseServlet", request, response);
 		}
-		// TODO get department list and pass it to jsp
+		
+		request.setAttribute("departments", departments);
 		forward("hire_employee.jsp", request, response);
 		
+	}
+
+
+	private boolean checkEmptyFields(HttpServletRequest request) {
+		Map<String, String[]> parameters = request.getParameterMap();
+		List<String> emptyParameters = new ArrayList<String>();
+		for (String key : parameters.keySet()) {
+			String val = request.getParameter(key);
+			if (val.equals("")) {
+				emptyParameters.add(key);
+			}
+		}
+		if (emptyParameters.size() > 0) {
+			request.setAttribute("emptyFields", emptyParameters);
+			return true;
+		}
+		return false;
+	}
+
+	
+	private boolean checkWrongDataFields(Map<String, String> map, HttpServletRequest request) {
+		List<String> wrongFields = new ArrayList<String>();
+		for (String data : map.keySet()) {
+			try {
+				Integer.parseInt(map.get(data));
+			} catch (NumberFormatException e){
+				wrongFields.add(data);
+			}
+		}
+		if (wrongFields.size() > 0) {
+			request.setAttribute("wrongFields", wrongFields);
+			return true;
+		}
+		return false;
 	}
 	
 	

@@ -13,7 +13,10 @@
 		<a href="applicationBaseServlet">Картотека вакансий</a><br/><br/>
 		<a href="cvformBaseServlet">Картотека резюме</a><br/><br/>
 		<a href="candidateBaseServlet">Картотека кандидатов</a><br/><br/>
-		<a href="employees.jsp">Картотека сотрудников</a>
+		<a href="employeeBaseServlet">Картотека сотрудников</a>
+		<br/>
+		<br/>
+		<a href="main.jsp">Выйти из раздела</a>
 	</div>
 </body>
 </html>

@@ -14,7 +14,7 @@ import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.domain.ApplicationForm;
-import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.Employees;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
@@ -58,8 +58,8 @@ public class HRDepartmentTest {
 	
 	@Test
 	public void testAddCVForm() throws PersistException {
-		CVForm form = mock(CVForm.class);
-		CVForm cv1 = new CVForm();
+		Employees form = mock(Employees.class);
+		Employees cv1 = new Employees();
 		when(cvDao.createCVForm(form)).thenReturn(cv1);
 		assertEquals(cv1, hrDep.addCVForm(form));
 	}
