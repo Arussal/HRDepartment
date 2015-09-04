@@ -4,7 +4,6 @@
 package main.com.mentat.nine.domain;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
@@ -22,7 +21,7 @@ public interface HRManager {
 
 	public ApplicationForm createApplicationForm(ApplicationForm app) throws PersistException;
 	
-	public Map<Candidate, CVForm> findCandidates(ApplicationForm app) 
+	public Set<Candidate> findCandidates(ApplicationForm app) 
 			throws NoSuitableCandidateException, PersistException;
 	
 	public Candidate createCandidate(Candidate candidate) throws PersistException;
@@ -45,7 +44,7 @@ public interface HRManager {
 	
 	public CVForm addCVForm(CVForm form) throws PersistException;
 
-	void changeCVStatusToCandidate(Map<Candidate, CVForm> candidates)
+	void changeCVStatusToCandidate(Candidate candidate, CVForm cv)
 			throws PersistException;
 
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Candidate;
+import main.com.mentat.nine.domain.HRDepartment;
 
 /**
  * Servlet implementation class CandidateControllerServlet
@@ -70,16 +72,16 @@ public class CandidateControllerServlet extends HttpServlet {
 		
 		if (1 == action) {
 			deleteCandidate(request, response);
-		}
-		if (2 == action) {
+		} else if (2 == action) {
 			findCandidate(request, response);
-		}
-		if (3 == action) {
+		} else if (3 == action) {
 			forward("/candidateBaseServlet", request, response);
+		} else {
+			hireEmployee();
 		}
 	}
 
-	
+
 	private int checkAction(HttpServletRequest request) {
 		
 		if (request.getParameter("deleteCandidate") != null) {
@@ -198,15 +200,7 @@ public class CandidateControllerServlet extends HttpServlet {
 	private void deleteCandidate(HttpServletRequest request, HttpServletResponse response) 
 			throws PersistException, NumberFormatException, ServletException, IOException {
 		
-		List<Integer> idList = new ArrayList<Integer>();
-		Map<String, String[]> parameters = request.getParameterMap();
-		for (String key : parameters.keySet()) {
-			if (key.equals("candId")){
-				for (String values : parameters.get(key)) {
-					idList.add(Integer.parseInt(values));
-				}
-			}
-		}
+		List<Integer> idList = selectedItems(request);
 		
 		if (idList.size() == 0) {
 			request.setAttribute("noOneCandidateToDelete", "noOneCandidateToDelete");
@@ -221,6 +215,46 @@ public class CandidateControllerServlet extends HttpServlet {
 		forward("candidateBaseServlet", request, response);
 	}
 		
+	
+	private void hireEmployee(HttpServletRequest request, HttpServletResponse response) throws PersistException {
+		
+		if (request.getParameter("hireCandidate") != null) {
+			List<Integer> idList = selectedItems(request);
+			HRDepartment hrDep = new HRDepartment();
+			
+			if (idList.size() == 0) {
+				request.setAttribute("noOneCandidateToHire", "noOneCandidateToHire");
+				forward("error.jsp", request, response);
+			}
+			
+			for (Integer id : idList) {
+				Candidate cand = candDao.getCandidateById(id);
+				String salary = request.getParameter("salaryInput");
+				String hireDate = request.getParameter("dateInput");
+				String department = request.getParameter("department");
+				hrDep.hireEmployee(cand, salary, cand.getPost(), hireDate, department);
+			}
+		
+		}
+		// TODO get department list and pass it to jsp
+		forward("hire_employee.jsp", request, response);
+		
+	}
+	
+	
+	private List<Integer> selectedItems(ServletRequest request){
+		List<Integer> idList = new ArrayList<Integer>();
+		Map<String, String[]> parameters = request.getParameterMap();
+		for (String key : parameters.keySet()) {
+			if (key.equals("candId")){
+				for (String values : parameters.get(key)) {
+					idList.add(Integer.parseInt(values));
+				}
+			}
+		}
+		return idList;
+	}
+	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {

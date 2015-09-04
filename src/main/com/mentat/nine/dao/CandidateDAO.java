@@ -137,7 +137,6 @@ public class CandidateDAO {
 			Closer.closeConnection(connection);
 		}
 		
-		System.out.println("Candidate created candidate (in candidateDao.create)" + createdCandidate);
 		return createdCandidate;
 	}
 

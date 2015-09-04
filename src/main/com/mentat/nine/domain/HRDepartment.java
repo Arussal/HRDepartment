@@ -5,6 +5,7 @@ package main.com.mentat.nine.domain;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,11 +66,10 @@ public class HRDepartment extends Department implements HRManager{
 	}
 
 	@Override
-	public Map<Candidate, CVForm> findCandidates(ApplicationForm app) 
+	public Set<Candidate> findCandidates(ApplicationForm app) 
 			throws NoSuitableCandidateException, PersistException {
 		
-		
-		Map<Candidate, CVForm> candidates = new HashMap<Candidate, CVForm>();
+		Set<Candidate> candidates = new HashSet<Candidate>();
 
 		Map<String, Boolean> conditions = new HashMap<String, Boolean>();
 		conditions.put("acceptAge", new Boolean(false));
@@ -127,9 +127,9 @@ public class HRDepartment extends Department implements HRManager{
 			candidate.setPost(cv.getPost());
 			candidate.setSkills(cv.getSkills());
 			candidate.setWorkExpirience(cv.getWorkExpirience());
-			candidate = createCandidate(candidate);
-			log.info("candidate created, id: " + candidate.getId());
-			candidates.put(candidate, cv);
+			candidates.add(candidate);
+			changeCVStatusToCandidate(candidate, cv); 
+		
 			log.trace("add candidate to set");
 		}
 			
@@ -142,14 +142,11 @@ public class HRDepartment extends Department implements HRManager{
 	
 	
 	@Override
-	public void changeCVStatusToCandidate(Map<Candidate, CVForm> candidates) 
+	public void changeCVStatusToCandidate(Candidate candidate, CVForm cv) 
 			throws PersistException {
-		for (Candidate candidate : candidates.keySet()) {
-			//candDao.createCandidate(candidate.getKey());
-			System.out.print(candidate + "=");   ///////////
-			System.out.println(candidates.get(candidate));   ///////////
-			//cvDao.deleteCVForm(candidate.getValue());
-		}
+			candDao.createCandidate(candidate);
+			cvDao.deleteCVForm(cv);
+		
 	}
 	
 	

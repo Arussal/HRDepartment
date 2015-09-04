@@ -93,7 +93,8 @@
 	
 	<form action="candidateControllerServlet" method="post">
 		<input type="submit" name="showAllCandidates" value="Показать все" />
-		<input type="submit" name="deleteCandidate" value="Удалить отмеченные" />
+		<input type="submit" name="deleteCandidate" value="Удалить" />
+		<input type="submit" name="hireEmployee" value="Оформить в штат" />
 		<br />
 		<br />
 		<table border="1">

@@ -19,8 +19,6 @@
 
 		<table border="1">
 			<tr>
-				<th></th>
-				<th>ID</th>
 				<th style="width:200px">ФИО</th>
 				<th>Возраст</th>
 				<th>Образование</th>
@@ -32,7 +30,6 @@
 			</tr>
 			<c:forEach var="cand" items="${candidates}">
 			<tr>
-				<td><c:out value="${cand.id}" /></td>
 				<td><c:out value="${cand.name}" /></td>
 				<td><c:out value="${cand.age}" /></td>
 				<td><c:out value="${cand.education}" /></td>
@@ -45,7 +42,7 @@
 		</table>
 	</form>
 	
-	<a href="applications.jsp">Назад</a> <a href="candidates.jsp">Перейти в раздел кандидатов</a> 
+	<a href="applications.jsp">Назад</a> <a href="candidateBaseServlet">Перейти в раздел кандидатов</a> 
 	<a href="main.jsp">На главную</a>
 </body>
 </html>

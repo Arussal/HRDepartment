@@ -24,7 +24,6 @@ import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
-import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.HRDepartment;
 import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
@@ -285,15 +284,15 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		}
 		ApplicationForm appForm = appDao.getApplicationFormById(idList.get(0));
 		HRDepartment hrDep = new HRDepartment();
-		Map <Candidate, CVForm> candidates = null;
+		Set<Candidate> findedCandidates = null;
 		try {
-			candidates = hrDep.findCandidates(appForm);
+			findedCandidates = hrDep.findCandidates(appForm);
 		} catch (NoSuitableCandidateException e) {
 			request.setAttribute("noOneCandidate", "noOneCandidate");
 			forward("error.jsp", request, response);
 		}
-		hrDep.changeCVStatusToCandidate(candidates);
-		request.setAttribute("candidates", candidates);
+		
+		request.setAttribute("candidates", findedCandidates);
 		forward("new_candidate.jsp", request, response);
 			
 	}
