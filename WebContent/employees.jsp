@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
- <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -150,9 +150,8 @@
 	<br />
 	<form action="employeeControllerServlet" method="post">
 		<input type="submit" name="showAllEmployees" value="Показать все" />
-		<input type="submit" name="editEmployee" value="Редактировать" />	
+		<input type="submit" name="editEmployee" value="Редактировать" />
 		<input type="submit" name="fireEmployee" value="Уволить из штата" />
-		<input type="submit" name="hireEmployee" value="Принять в штат" />
 
 		<br />
 		<br />
@@ -176,7 +175,7 @@
 			</tr>
 			<c:forEach var="emp" items="${empList}">
 			<tr>
-				<td><input type="checkbox" name="candId" value="${emp.id}"></td>
+				<td><input type="checkbox" name="empId" value="${emp.id}"></td>
 				<td><c:out value="${emp.id}" /></td>
 				<td><c:out value="${emp.name}" /></td>
 				<td><c:out value="${emp.age}" /></td>

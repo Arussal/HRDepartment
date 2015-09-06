@@ -8,7 +8,7 @@
 <title>HRDepartment - edit application</title>
 </head>
 <body>
-<h1>Edit Application Form</h1>
+<h1>Редактировать вакансию</h1>
 	<hr/>
 
 	<form action="appControllerServlet" method="post">

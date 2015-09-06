@@ -1,6 +1,7 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -191,10 +194,18 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private boolean checkWrongDataFields(Map<String, String> map, HttpServletRequest request) {
 		List<String> wrongFields = new ArrayList<String>();
 		for (String data : map.keySet()) {
-			try {
-				Integer.parseInt(map.get(data));
-			} catch (NumberFormatException e){
-				wrongFields.add(data);
+			if (data.equals("fireDate") || data.equals("hireDate")) {
+				Pattern p = Pattern.compile("[1950-99]^[2000-15]-[1-12]-[1-31]");
+				Matcher m = p.matcher(map.get(data));
+				if (!m.matches()) {
+					wrongFields.add(data);
+				}
+			} else {
+				try {
+					Integer.parseInt(map.get(data));
+				} catch (NumberFormatException e){
+					wrongFields.add(data);
+				}
 			}
 		}
 		if (wrongFields.size() > 0) {
@@ -203,7 +214,6 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		}
 		return false;
 	}
-
 	
 	private void deleteApp(HttpServletRequest request, HttpServletResponse response) 
 			throws PersistException, ServletException, IOException {
