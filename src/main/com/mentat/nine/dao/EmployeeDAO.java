@@ -532,6 +532,7 @@ public class EmployeeDAO {
 			String skill = "";
 			while (rs.next()) {
 				Employee employee = new Employee();
+				
 				employee.setId(rs.getInt("id"));
 				employee.setName(rs.getString("name"));
 				employee.setAge(rs.getInt("age"));
@@ -547,13 +548,15 @@ public class EmployeeDAO {
 				String[] skillArray = skill.split(";");
 				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
 				employee.setSkills(skills);
-
+				
 				DepartmentDAO departmentDao = new DepartmentDAO();
 				Department department = 
 						departmentDao.getDepartmentById(Integer.parseInt(rs.getString("id_department")));
 
 				employee.setDepartment(department);
+
 				log.trace("parsed Employee entity");
+
 				employees.add(employee);
 			}
 		} catch (SQLException e) {

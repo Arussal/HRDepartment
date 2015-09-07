@@ -32,7 +32,8 @@ public class DAOFactory {
 	
 	private static Logger log = Logger.getLogger(DAOFactory.class);
 	
-	public final static String PATH = "C:\\workspace\\HRDepartment\\resources\\postgres.properties";
+	// TODO make relative path
+	public final static String PATH = "C:\\workspace\\HRDepartment\\resources\\postgres.properties"; 
 	
 	private static DAOFactory daoFactory;	
 	private String user;
