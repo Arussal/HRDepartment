@@ -1,1 +1,1 @@
-Simple study application which imitates the HRDepartment
+Simple 3-tier study application which imitates the HRDepartment
