@@ -20,13 +20,13 @@
 		</c:forEach>
 	</c:if>
 	
-	<c:if test="${not empty nothingToEditError}">
+	<c:if test="${not empty nothingSelectedError}">
 	Ошибка ввода данных: выбрано 0 записей для редактирования<br />
 	Надо же выбрать что-то одно<br /><br />
 	<a href="applicationBaseServlet">Назад</a>
 	</c:if>
-	<c:if test="${not empty tooMuchToEditError}">
-	Ошибка ввода данных: выбрано записей для редактирования - <c:out value="${appCountToEdit}" /><br />
+	<c:if test="${not empty tooManySelectedError}">
+	Ошибка ввода данных: выбрано записей для редактирования - <c:out value="${selectedCount}" /><br />
 	Надо же выбрать что-то одно<br /><br />
 	<a href="applicationBaseServlet">Назад</a>
 	</c:if>
@@ -47,16 +47,6 @@
 	Найдено 0 новых кандидатов<br />
 	Заходите позже<br /><br />
 	<a href="candidateBaseServlet">Назад</a>
-	</c:if>
-	<c:if test="${not empty noOneCandidateSelected}">
-	Ошибка ввода данных: выбрано 0 записей для поиска<br />
-	Надо же выбрать хоть что-то<br /><br />
-	<a href="applicationBaseServlet">Назад</a>
-	</c:if>
-	<c:if test="${not empty tooMuchToFindCandidateError}">
-	Ошибка ввода данных: выбрано записей для поиска - <c:out value="${appCountToEdit}" /><br />
-	Надо же выбрать что-то одно<br /><br />
-	<a href="applicationBaseServlet">Назад</a>
 	</c:if>
 	
 	<br /><br />

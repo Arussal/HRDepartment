@@ -129,81 +129,40 @@ public class CVFormControllerServlet extends HttpServlet {
 		String postParameter = request.getParameter("post");
 		String educationParameter = request.getParameter("education");
 		String expirienceParameter = request.getParameter("expirience");
+			
+		String ageSymbol = request.getParameter("ageComparable");
+		String expirienceSymbol = request.getParameter("expirienceComparable");
 		
-
-		if (!idParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (idParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("id", queryParameters);
-			} else {
-				queryParameters.add(idParameter);
-				queryParameters.add("=");
-				parameters.put("id", queryParameters);
-			}
-		}
-
-		if (!ageParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (ageParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("age", queryParameters);
-			} else {
-				queryParameters.add(ageParameter);
-				queryParameters.add(conditionConvert(request.getParameter("ageComparable")));
-				parameters.put("age", queryParameters);
-			}
-		}
-
-		if (!postParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (postParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("post", queryParameters);
-			} else {
-				queryParameters.add(postParameter);
-				queryParameters.add(conditionConvert("="));
-				parameters.put("post", queryParameters);
-			}
-		}
-
-		if (!educationParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (educationParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("education", queryParameters);
-			} else {
-				queryParameters.add(educationParameter);
-				queryParameters.add(conditionConvert("="));
-				parameters.put("education", queryParameters);
-			}
-		}
-
-		if (!expirienceParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (expirienceParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("work_expirience", queryParameters);
-			} else {
-				queryParameters.add(expirienceParameter);
-				queryParameters.add(conditionConvert(request.getParameter("expirienceComparable")));
-				parameters.put("work_expirience", queryParameters);
-			}
-		}
+		addToParameterMap(parameters, idParameter, "id", "=");
+		addToParameterMap(parameters, ageParameter, "id", ageSymbol);
+		addToParameterMap(parameters, postParameter, "post", "=");
+		addToParameterMap(parameters, educationParameter, "id", "=");
+		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
 	
 		List<Employees> cvList = cvDao.getCVForm(parameters);
 		request.setAttribute("cvIncomeList", cvList);
-		forward("cvformBaseServlet", request, response);
+		forward("cvformBaseServlet", request, response);		
+	}
+	
+	
+	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, String symbol) {
 		
+		if (!parameter.equals("")) {
+			List<String> queryParameters = new ArrayList<String>();
+			if (parameter.equals("не указано")) {
+				queryParameters.add(null);
+				queryParameters.add("is");
+				map.put(field, queryParameters);
+			} else {
+				queryParameters.add(parameter);
+				queryParameters.add(convertCondition(symbol));
+				map.put(field, queryParameters);
+			}
+		}
 	}
 
 	
-	private String conditionConvert(String condition) {
+	private String convertCondition(String condition) {
 		String conditionOperator = "";
 		if (condition.equals("меньше или равно")) {
 			conditionOperator = "<=";

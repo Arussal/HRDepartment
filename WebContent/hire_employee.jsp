@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDepartment - fire employee</title>
+<title>Hire employee - HRDepartment</title>
 </head>
 <body>
 	<h1>Оформить кандидата в штат</h1>
@@ -27,8 +27,24 @@
 			<td><input type="text" name="salaryInput"/></td>
 		</tr>
 		<tr>
-			<td>Дата (гггг-мм-дд)</td>
-			<td><input type="text" name="dateInput"/></td>
+			<td>Дата</td>
+			<td>
+				<select name="year">
+					<c:forEach var="item" items="${years}">
+						<option selected="${item}"><c:out value="${item}"/></option>
+					</c:forEach>
+				</select>
+				<select name="month">
+					<c:forEach var="item" items="${months}">
+						<option selected="${item}"><c:out value="${item}"/></option>
+					</c:forEach>
+				</select>
+				<select name="day">
+					<c:forEach var="item" items="${days}">
+						<option selected="${item}"><c:out value="${item}"/></option>
+					</c:forEach>
+				</select>
+			</td>
 		</tr>
 	</table>
 	<input type="submit" name="hireCandidate" value="Оформить"/>

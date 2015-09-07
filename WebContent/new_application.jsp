@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDeparmtent - create application form</title>
+<title>Create application form - HRDepartment</title>
 </head>
 <body>
 	<h1>Новая вакансия</h1>
@@ -13,9 +13,25 @@
 
 	<form action="appControllerServlet" method="post">
 	<table>
-		<tr>        
-			<td>Дата (гггг-мм-дд):</td>
-			<td><input type="text" name="date" /></td>
+		<tr>
+			<td>Дата:</td>
+			<td>
+				<select name="year">
+					<c:forEach var="item" items="${years}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+				<select name="month">
+					<c:forEach var="item" items="${months}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+				<select name="day">
+					<c:forEach var="item" items="${days}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+			</td>
 		</tr>
 		<tr>	
 			<td>Возраст, лет:</td>

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDepatment - cv forms</title>
+<title>CVForms - HRDepatment</title>
 </head>
 <body>
 	<h1>Резюме</h1>

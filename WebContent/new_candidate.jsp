@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDeparmtent - new candidates</title>
+<title>New candidate - HRDepartment</title>
 </head>
 <body>
 	<h1>Новые кандидаты</h1>

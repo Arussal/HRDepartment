@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDepartment - application forms</title>
+<title>Application forms - HRDepartment</title>
 </head>
 <body>
 	<h1>Вакансии</h1>

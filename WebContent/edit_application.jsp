@@ -5,18 +5,34 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDepartment - edit application</title>
+<title>Edit application - HRDepartment</title>
 </head>
 <body>
 <h1>Редактировать вакансию</h1>
 	<hr/>
 
 	<form action="appControllerServlet" method="post">
+	<input type="hidden" name="id"  value="${app.id}"/>
 	<table>
-		<tr>        
-			<td>Дата (гггг-мм-дд):</td>
-			<td><input type="hidden" name="id" value="${app.id}"/>
-			<input type="text" name="date" value="${app.date}"/></td>
+		<tr>
+			<td>Дата:</td>
+			<td>
+				<select name="year">
+					<c:forEach var="item" items="${years}">
+						<option selected="${item}"><c:out value="${item}"/></option>
+					</c:forEach>
+				</select>
+				<select name="month">
+					<c:forEach var="item" items="${months}">
+						<option selected="${item}"><c:out value="${item}"/></option>
+					</c:forEach>
+				</select>
+				<select name="day">
+					<c:forEach var="item" items="${days}">
+						<option selected="${item}"><c:out value="${item}"/></option>
+					</c:forEach>
+				</select>
+			</td>
 		</tr>
 		<tr>	
 			<td>Возраст, лет:</td>

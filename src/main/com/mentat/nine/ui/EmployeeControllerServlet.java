@@ -64,7 +64,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 		try {
 			performTask(request, response);
 		} catch (PersistException e) {
-			// TODO Auto-generated catch block
+			// TODO logger
 			e.printStackTrace();
 		}
 	}
@@ -76,7 +76,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 		try {
 			performTask(request, response);
 		} catch (PersistException e) {
-			// TODO Auto-generated catch block
+			// TODO logger
 			e.printStackTrace();
 		}
 	}
@@ -126,128 +126,43 @@ public class EmployeeControllerServlet extends HttpServlet {
 		String hireDateParameter = request.getParameter("hireDate");
 		String fireDateParameter = request.getParameter("fireDate");
 		
-		if (!idParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (idParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("id", queryParameters);
-			} else {
-				queryParameters.add(idParameter);
-				queryParameters.add("=");
-				parameters.put("id", queryParameters);
-			}
-		}
-
-		if (!ageParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (ageParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("age", queryParameters);
-			} else {
-				queryParameters.add(ageParameter);
-				queryParameters.add(convertCondition(request.getParameter("ageComparable")));
-				parameters.put("age", queryParameters);
-			}
-		}
-
-		if (!postParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (postParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("post", queryParameters);
-			} else {
-				queryParameters.add(postParameter);
-				queryParameters.add(convertCondition("="));
-				parameters.put("post", queryParameters);
-			}
-		}
-
-		if (!educationParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (educationParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("education", queryParameters);
-			} else {
-				queryParameters.add(educationParameter);
-				queryParameters.add(convertCondition("="));
-				parameters.put("education", queryParameters);
-			}
-		}
-
-		if (!expirienceParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (expirienceParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("work_expirience", queryParameters);
-			} else {
-				queryParameters.add(expirienceParameter);
-				queryParameters.add(convertCondition(request.getParameter("expirienceComparable")));
-				parameters.put("work_expirience", queryParameters);
-			}
-		}
+		String ageSymbol = request.getParameter("ageComparable");
+		String expirienceSymbol = request.getParameter("expirienceComparable");
+		String salarySymbol = request.getParameter("salaryComparable");
+		String hireDateSymbol = request.getParameter("hireDateComparable");
+		String fireDateSymbol = request.getParameter("fireDateComparable");
 		
-		if (!departmentParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (departmentParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("department", queryParameters);
-			} else {
-				queryParameters.add(departmentParameter);
-				queryParameters.add(convertCondition("="));
-				parameters.put("department", queryParameters);
-			}
-		}
-		
-		if (!salaryParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (salaryParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("salary", queryParameters);
-			} else {
-				queryParameters.add(salaryParameter);
-				queryParameters.add(convertCondition(request.getParameter("salaryComparable")));
-				parameters.put("salary", queryParameters);
-			}
-		}
-		
-		if (!hireDateParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (expirienceParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("hireDate", queryParameters);
-			} else {
-				queryParameters.add(hireDateParameter);
-				queryParameters.add(convertCondition(request.getParameter("hireDateComparable")));
-				parameters.put("hireDate", queryParameters);
-			}
-		}
-		
-		if (!fireDateParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (expirienceParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("fireDate", queryParameters);
-			} else {
-				queryParameters.add(fireDateParameter);
-				queryParameters.add(convertCondition(request.getParameter("fireDateComparable")));
-				parameters.put("fireDate", queryParameters);
-			}
-		}
+		addToParameterMap(parameters, idParameter, "id", "=");
+		addToParameterMap(parameters, ageParameter, "id", ageSymbol);
+		addToParameterMap(parameters, postParameter, "post", "=");
+		addToParameterMap(parameters, educationParameter, "education", "=");
+		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
+		addToParameterMap(parameters, departmentParameter, "department", "=");
+		addToParameterMap(parameters, salaryParameter, "salary", salarySymbol);
+		addToParameterMap(parameters, hireDateParameter, "hireDate", hireDateSymbol);
+		addToParameterMap(parameters, fireDateParameter, "fireDate", fireDateSymbol);
 	
 		Set<Employee> employees = empDao.getEmployees(parameters);
 		request.setAttribute("empIncomeList", employees);
 		forward("employeeBaseServlet", request, response);
 	}
 
+	
+	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, String symbol) {
+		
+		if (!parameter.equals("")) {
+			List<String> queryParameters = new ArrayList<String>();
+			if (parameter.equals("не указано")) {
+				queryParameters.add(null);
+				queryParameters.add("is");
+				map.put(field, queryParameters);
+			} else {
+				queryParameters.add(parameter);
+				queryParameters.add(convertCondition(symbol));
+				map.put(field, queryParameters);
+			}
+		}
+	}
 	
 	private String convertCondition(String condition) {
 		String conditionOperator = "";
@@ -452,7 +367,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 		try {
 			fireDate = dateFormat.parse(date);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
+			// TODO logger
 			e.printStackTrace();
 		}
 		Set<Employee> empList = getSelectedEmployees(idList);
@@ -474,6 +389,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 		}
 		return empList;
 	}
+	
 
 	private void setDateFields(HttpServletRequest request) {
 		List<Integer> years = new ArrayList<Integer>();
@@ -520,7 +436,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
-			request.setAttribute("countToEdit", idList.size());
+			request.setAttribute("selectedCount", idList.size());
 			request.setAttribute("tooManySelectedError", "tooManySelectedError");
 			forward("error.jsp", request, response);
 		}

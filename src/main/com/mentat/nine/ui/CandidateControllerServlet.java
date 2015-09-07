@@ -1,9 +1,12 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,8 +69,7 @@ public class CandidateControllerServlet extends HttpServlet {
 		try {
 			performTask(request, response);
 		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("doGet error");
 		}
 	}
 
@@ -79,8 +81,7 @@ public class CandidateControllerServlet extends HttpServlet {
 		try {
 			performTask(request, response);
 		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("doPost error");
 		}
 	}
 
@@ -128,80 +129,40 @@ public class CandidateControllerServlet extends HttpServlet {
 		String educationParameter = request.getParameter("education");
 		String expirienceParameter = request.getParameter("expirience");
 		
-
-		if (!idParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (idParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("id", queryParameters);
-			} else {
-				queryParameters.add(idParameter);
-				queryParameters.add("=");
-				parameters.put("id", queryParameters);
-			}
-		}
-
-		if (!ageParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (ageParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("age", queryParameters);
-			} else {
-				queryParameters.add(ageParameter);
-				queryParameters.add(conditionConvert(request.getParameter("ageComparable")));
-				parameters.put("age", queryParameters);
-			}
-		}
-
-		if (!postParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (postParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("post", queryParameters);
-			} else {
-				queryParameters.add(postParameter);
-				queryParameters.add(conditionConvert("="));
-				parameters.put("post", queryParameters);
-			}
-		}
-
-		if (!educationParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (educationParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("education", queryParameters);
-			} else {
-				queryParameters.add(educationParameter);
-				queryParameters.add(conditionConvert("="));
-				parameters.put("education", queryParameters);
-			}
-		}
-
-		if (!expirienceParameter.equals("")) {
-			List<String> queryParameters = new ArrayList<String>();
-			if (expirienceParameter.equals("не указано")) {
-				queryParameters.add(null);
-				queryParameters.add("is");
-				parameters.put("work_expirience", queryParameters);
-			} else {
-				queryParameters.add(expirienceParameter);
-				queryParameters.add(conditionConvert(request.getParameter("expirienceComparable")));
-				parameters.put("work_expirience", queryParameters);
-			}
-		}
+		String ageSymbol = request.getParameter("ageComparable");
+		String expirienceSymbol = request.getParameter("expirienceComparable");
+		
+		addToParameterMap(parameters, idParameter, "id", "=");
+		addToParameterMap(parameters, ageParameter, "age", ageSymbol);
+		addToParameterMap(parameters, postParameter, "post", "=");
+		addToParameterMap(parameters, educationParameter, "education", "=");
+		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
 	
 		Set<Candidate> candList = candDao.getCandidates(parameters);
 		request.setAttribute("candIncomeList", candList);
 		forward("candidateBaseServlet", request, response);
 		
 	}
+	
+	
+	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, String symbol) {
+		
+		if (!parameter.equals("")) {
+			List<String> queryParameters = new ArrayList<String>();
+			if (parameter.equals("не указано")) {
+				queryParameters.add(null);
+				queryParameters.add("is");
+				map.put(field, queryParameters);
+			} else {
+				queryParameters.add(parameter);
+				queryParameters.add(convertCondition(symbol));
+				map.put(field, queryParameters);
+			}
+		}
+	}
 
 	
-	private String conditionConvert(String condition) {
+	private String convertCondition(String condition) {
 		String conditionOperator = "";
 		if (condition.equals("меньше или равно")) {
 			conditionOperator = "<=";
@@ -222,11 +183,8 @@ public class CandidateControllerServlet extends HttpServlet {
 			throws PersistException, NumberFormatException, ServletException, IOException {
 		
 		List<Integer> idList = selectedItems(request);
-		
-		if (idList.size() == 0) {
-			request.setAttribute("noOneCandidateToDelete", "noOneCandidateToDelete");
-			forward("error.jsp", request, response);
-		}
+			
+		makeErrorNoOneSelectedItem(idList, request, response);
 		
 		for (Integer id : idList) {
 			Candidate cand = candDao.getCandidateById(id);
@@ -246,21 +204,14 @@ public class CandidateControllerServlet extends HttpServlet {
 			List<Integer> idList = selectedItems(request);
 			HRDepartment hrDep = new HRDepartment();
 			
-			if (idList.size() == 0) {
-				request.setAttribute("noOneCandidateToHire", "noOneCandidateToHire");		//
-				forward("error.jsp", request, response);
-			} 
-			if (idList.size() > 1) {
-				request.setAttribute("noOneCandidateToHire", "noOneCandidateToHire");		//
-				forward("error.jsp", request, response);
-			}
+			makeErrorNoOneSelectedItem(idList, request, response);
+			makeErrorTooManySelectedItem(idList,request, response);
 			
 			Candidate cand = candDao.getCandidateById(idList.get(0));
 			
 			boolean isEmptyFields = checkEmptyFields(request);
 			
 			String salary = request.getParameter("salaryInput");
-			String hireDate = request.getParameter("dateInput");
 			String department = request.getParameter("department");
 			
 			Map<String, String> intData = new HashMap<String, String>();
@@ -273,12 +224,22 @@ public class CandidateControllerServlet extends HttpServlet {
 				forward("error.jsp", request, response);
 			}
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String year = request.getParameter("year");
+			String month = request.getParameter("month");
+			String day = request.getParameter("day");
+			boolean correctDate = checkCorrectInputDateFields(month, day);
+			if (!correctDate) {
+				request.setAttribute("wrongData", "wrongData");
+				forward("error.jsp", request, response);
+			}
+			String date = year + "-" + month + "-" + day;
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Date parsedDate = null;
 			try {
-				parsedDate = sdf.parse(hireDate);
+				parsedDate = dateFormat.parse(date);
 			} catch (ParseException e) {
-				log.warn("can't parse Form's date");
+				// TODO logger
+				e.printStackTrace();
 			}
 			int parsedSalary = Integer.parseInt(salary);
 			
@@ -296,11 +257,23 @@ public class CandidateControllerServlet extends HttpServlet {
 			forward("candidateBaseServlet", request, response);
 		}
 		
+		setDateFields(request);
 		request.setAttribute("departments", departments);
 		forward("hire_employee.jsp", request, response);
 		
 	}
 
+
+	private boolean checkCorrectInputDateFields(String month, String day) {
+		String[] shortMonths = {"2", "4", "6", "9", "11"};
+		List<String> shortM = Arrays.asList(shortMonths);
+		if (shortM.contains(month)) {
+			if (Integer.parseInt(day) == 31) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	private boolean checkEmptyFields(HttpServletRequest request) {
 		Map<String, String[]> parameters = request.getParameterMap();
@@ -347,6 +320,46 @@ public class CandidateControllerServlet extends HttpServlet {
 			}
 		}
 		return idList;
+	}
+	
+	
+	private void setDateFields(HttpServletRequest request) {
+		List<Integer> years = new ArrayList<Integer>();
+		List<Integer> months = new ArrayList<Integer>();
+		List<Integer> days = new ArrayList<Integer>();
+		
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		for (int i = 1950; i < currentYear + 1; i++) {
+			years.add(i);
+		}
+		for (int i = 1; i < 13; i++) {
+			months.add(i);
+		}
+		for (int i = 1; i < 32; i++) {
+			days.add(i);
+		}
+		
+		request.setAttribute("years", years);
+		request.setAttribute("months", months);
+		request.setAttribute("days", days);
+	}
+	
+	
+	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
+			HttpServletResponse response) throws ServletException, IOException {
+		if (0 == idList.size()) {
+			request.setAttribute("nothingSelectedError", "nothingSelectedError");
+			forward("error.jsp", request, response);
+		}
+	}
+	
+	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
+			HttpServletResponse response) throws ServletException, IOException {
+		if (idList.size() > 1) {
+			request.setAttribute("selectedCount", idList.size());
+			request.setAttribute("tooManySelectedError", "tooManySelectedError");
+			forward("error.jsp", request, response);
+		}
 	}
 	
 	
