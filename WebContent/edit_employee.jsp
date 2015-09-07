@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDepartment - edit employee</title>
+<title>Edit employee - HRDepartment</title>
 </head>
 <body>
 <h1>Редактировать данные о сотруднике</h1>

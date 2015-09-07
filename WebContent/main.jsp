@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>HRDepartment - home page</title>
+<title>Manager page - HRDepartment</title>
 </head>
 <body>
 	<h1>HRDepartment</h1>

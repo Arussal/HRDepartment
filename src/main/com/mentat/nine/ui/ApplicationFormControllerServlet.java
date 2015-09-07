@@ -6,14 +6,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -117,6 +116,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			throws ServletException, IOException, PersistException {
 
 		if (request.getParameter("createApp") != null) {
+			setDateFields(request);
 			forward("new_application.jsp", request, response);
 		}
 
@@ -133,7 +133,6 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 				
 		boolean isEmptyFields = checkEmptyFields(request);
 
-		String date = request.getParameter("date");
 		String age = request.getParameter("age");
 		String education = request.getParameter("education");
 		String requirements = request.getParameter("requirements");
@@ -141,37 +140,71 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		String salary = request.getParameter("salary");
 		String workExpirience = request.getParameter("expirience");
 		
+		//delete '[' and ']' symbols from requirements to avoid double symbols
+		String formattedRequirements = "";
+		if (request.getParameter("edit") != null ) {
+			formattedRequirements = requirements.substring(1, requirements.length()-1);
+		} else {
+			formattedRequirements = requirements;
+		}
+		
+		//get data from dataFields
+		String year = request.getParameter("year");
+		String month = request.getParameter("month");
+		String day = request.getParameter("day");
+		boolean correctDate = checkCorrectInputDateFields(month, day);
+		if (!correctDate) {
+			request.setAttribute("wrongDate", "wrongData");
+			forward("error.jsp", request, response);
+		}
+		String date = year + "-" + month + "-" + day;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date parsedDate = null;
+		try {
+			parsedDate = dateFormat.parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//check fields with numbers
 		Map<String, String> intData = new HashMap<String, String>();
 		intData.put("age", age);
 		intData.put("salary", salary);
 		intData.put("workExpirience", workExpirience);
 		
-		boolean isWrongData = checkWrongDataFields(intData, request);
+		boolean isWrongFields = checkWrongDataFields(intData, request);
 		
-		if (isEmptyFields | isWrongData) {
-			request.setAttribute("wrongData", "wrongData");
+		if (isEmptyFields | isWrongFields) {
+			request.setAttribute("wrongFields", "wrongFields");
 			forward("error.jsp", request, response);
 		}
 		
 		HRDepartment hrDep = new HRDepartment();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date parsedDate = null;
-		try {
-			parsedDate = sdf.parse(date);
-		} catch (ParseException e) {
-			log.warn("can't parse Form's date");
-		}
+		
 		int parsedAge = Integer.parseInt(age);
 		int parsedSalary = Integer.parseInt(salary);
 		int parsedWorkExpirience = Integer.parseInt(workExpirience);
-		Set<String> parsedRequirements = new HashSet<String>(Arrays.asList(requirements.split(";")));
+		Set<String> parsedRequirements = new HashSet<String>(Arrays.asList(formattedRequirements.split(";")));
 		ApplicationForm appForm = hrDep.formApplicationForm(parsedAge, education, 
 				parsedRequirements, post, parsedSalary, parsedWorkExpirience, parsedDate);
 		
 		return appForm;
 	}
 	
-
+	//if the Days corresponding to the Months
+	private boolean checkCorrectInputDateFields(String month, String day) {
+		String[] shortMonths = {"2", "4", "6", "9", "11"};
+		List<String> shortM = Arrays.asList(shortMonths);
+		if (shortM.contains(month)) {
+			if (Integer.parseInt(day) == 31) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	//if there is no empty fields
 	private boolean checkEmptyFields(HttpServletRequest request) 
 			throws ServletException, IOException {
 		
@@ -190,22 +223,14 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		return false;
 	}
 	
-	
+	//if there is correct data in fields
 	private boolean checkWrongDataFields(Map<String, String> map, HttpServletRequest request) {
 		List<String> wrongFields = new ArrayList<String>();
 		for (String data : map.keySet()) {
-			if (data.equals("fireDate") || data.equals("hireDate")) {
-				Pattern p = Pattern.compile("[1950-99]^[2000-15]-[1-12]-[1-31]");
-				Matcher m = p.matcher(map.get(data));
-				if (!m.matches()) {
-					wrongFields.add(data);
-				}
-			} else {
-				try {
-					Integer.parseInt(map.get(data));
-				} catch (NumberFormatException e){
-					wrongFields.add(data);
-				}
+			try {
+				Integer.parseInt(map.get(data));
+			} catch (NumberFormatException e){
+				wrongFields.add(data);
 			}
 		}
 		if (wrongFields.size() > 0) {
@@ -217,15 +242,8 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 	private void deleteApp(HttpServletRequest request, HttpServletResponse response) 
 			throws PersistException, ServletException, IOException {
-		List<Integer> idList = new ArrayList<Integer>();
-		Map<String, String[]> parameters = request.getParameterMap();
-		for (String key : parameters.keySet()) {
-			if (key.equals("appId")){
-				for (String values : parameters.get(key)) {
-					idList.add(Integer.parseInt(values));
-				}
-			}
-		}
+		
+		List<Integer> idList = getSelectedAppFormsId(request, "appId");
 		
 		for (Integer id : idList) {
 			ApplicationForm appForm = appDao.getApplicationFormById(id);
@@ -240,24 +258,13 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			throws PersistException, ServletException, IOException {
 						
 		if (request.getParameter("editApp") != null) {
-			List<Integer> idList = new ArrayList<Integer>();
-			Map<String, String[]> parameters = request.getParameterMap();
-			for (String key : parameters.keySet()) {
-				if (key.equals("appId")){
-					for (String values : parameters.get(key)) {
-						idList.add(Integer.parseInt(values));
-					}
-				}
-			}
-			if (0 == idList.size()) {
-				request.setAttribute("nothingToEditError", "nothingToEditError");
-				forward("error.jsp", request, response);
-			} else if (idList.size() > 1) {
-				request.setAttribute("appCountToEdit", idList.size());
-				request.setAttribute("tooMuchToEditError", "tooMuchToEditError");
-				forward("error.jsp", request, response);
-			}
+			List<Integer> idList = getSelectedAppFormsId(request, "appId");
+	
+			makeErrorNoOneSelectedItem(idList, request, response);
+			makeErrorTooManySelectedItem(idList,request, response);
+			
 			ApplicationForm appForm = appDao.getApplicationFormById(idList.get(0));
+			setDateFields(request);
 			request.setAttribute("app", appForm);
 			forward("edit_application.jsp", request, response);
 		}
@@ -275,23 +282,11 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private void findNewCandidate(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException, PersistException {
 
-		List<Integer> idList = new ArrayList<Integer>();
-		Map<String, String[]> parameters = request.getParameterMap();
-		for (String key : parameters.keySet()) {
-			if (key.equals("appId")){
-				for (String values : parameters.get(key)) {
-					idList.add(Integer.parseInt(values));
-				}
-			}
-		}
-		if (0 == idList.size()) {
-			request.setAttribute("noOneCandidateSelected", "noOneCandidateSelected");
-			forward("error.jsp", request, response);
-		} else if (idList.size() > 1) {
-			request.setAttribute("appCountToEdit", idList.size());
-			request.setAttribute("tooMuchToFindCandidateError", "tooMuchToFindCandidateError");
-			forward("error.jsp", request, response);
-		}
+		List<Integer> idList = getSelectedAppFormsId(request, "appId");
+		
+		makeErrorNoOneSelectedItem(idList, request, response);
+		makeErrorTooManySelectedItem(idList,request, response);
+		
 		ApplicationForm appForm = appDao.getApplicationFormById(idList.get(0));
 		HRDepartment hrDep = new HRDepartment();
 		Set<Candidate> findedCandidates = null;
@@ -308,10 +303,65 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	}
 
 	
+	private void setDateFields(HttpServletRequest request) {
+		List<Integer> years = new ArrayList<Integer>();
+		List<Integer> months = new ArrayList<Integer>();
+		List<Integer> days = new ArrayList<Integer>();
+		
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+			years.add(currentYear);
+		
+		int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+		for (int i = currentMonth; i < 13; i++) {
+			months.add(i);
+		}
+		for (int i = 1; i < 32; i++) {
+			days.add(i);
+		}
+		
+		request.setAttribute("years", years);
+		request.setAttribute("months", months);
+		request.setAttribute("days", days);
+	}
+	
+	
+	private List<Integer> getSelectedAppFormsId(HttpServletRequest request, String parameter) 
+			throws PersistException {
+	
+		List<Integer> idList = new ArrayList<Integer>();
+		Map<String, String[]> parameters = request.getParameterMap();
+		for (String key : parameters.keySet()) {
+			if (key.equals(parameter)){
+				for (String values : parameters.get(key)) {
+					idList.add(Integer.parseInt(values));
+				}
+			}
+		}
+		return idList;
+	}
+	
+	
+	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
+			HttpServletResponse response) throws ServletException, IOException {
+		if (0 == idList.size()) {
+			request.setAttribute("nothingSelectedError", "nothingSelectedError");
+			forward("error.jsp", request, response);
+		}
+	}
+	
+	
+	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
+			HttpServletResponse response) throws ServletException, IOException {
+		if (idList.size() > 1) {
+			request.setAttribute("selectedCount", idList.size());
+			request.setAttribute("tooManySelectedError", "tooManySelectedError");
+			forward("error.jsp", request, response);
+		}
+	}
+	
+	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		request.getRequestDispatcher(path).forward(request, response);
 	}
-		
-
 }
