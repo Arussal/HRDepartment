@@ -9,7 +9,7 @@
 <body>
 	<h1>Смена пароля</h1>
 	<hr/>
-	<form action="/hrManager" method="post">
+	<form action="hrManagerServlet" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>

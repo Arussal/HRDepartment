@@ -9,7 +9,7 @@
 <body>
 	<h1>Вход в раздел</h1>
 	<hr />
-	<form action="/hrManager" method="post">
+	<form action="hrManagerServlet" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>

@@ -41,7 +41,7 @@ public class ManagerDAO {
 		try {
 			//check if this Manager already persist
 			try {
-				String selectSql = getSelectQuery() + " WHERE login = " + manager.getLogin();
+				String selectSql = getSelectQuery() + " WHERE login = " + "'" + manager.getLogin() + "'";
 				connection = daoFactory.createConnection();
 				statement = connection.createStatement();
 				rs = statement.executeQuery(selectSql);
@@ -116,7 +116,7 @@ public class ManagerDAO {
 		Manager selectedManager = null;
 		
 		try {
-			String selectSql = getSelectQuery() + " WHERE login = " + login; 
+			String selectSql = getSelectQuery() + " WHERE login = " + "'" + login + "'"; 
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(selectSql);
@@ -154,7 +154,7 @@ public class ManagerDAO {
 		Connection connection = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
-		String updateSql = getUpdateQuery();
+		String updateSql = getUpdateQuery() + " WHERE login = " + "'" + manager.getLogin() + "'";
 		
 		try {
 			connection = daoFactory.createConnection();

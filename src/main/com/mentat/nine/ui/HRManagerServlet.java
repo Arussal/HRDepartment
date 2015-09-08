@@ -1,7 +1,7 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,7 +20,7 @@ import main.com.mentat.nine.domain.util.LogConfig;
 /**
  * Servlet implementation class HRManagerServlet
  */
-@WebServlet("/hrManager")
+@WebServlet("/hrManagerServlet")
 public class HRManagerServlet extends HttpServlet {
 	
 	static {
@@ -57,7 +57,8 @@ public class HRManagerServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		try {
 			performTask(request, response);
 		} catch (PersistException e) {
@@ -67,15 +68,16 @@ public class HRManagerServlet extends HttpServlet {
 	}
 
 	
-	private void performTask(HttpServletRequest request, HttpServletResponse response) throws PersistException, ServletException, IOException {
-		try {
-			request.setCharacterEncoding("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			log.error("enconding UTF-8 not set");
-		}
+	private void performTask(HttpServletRequest request, HttpServletResponse response) 
+			throws PersistException, ServletException, IOException {
+		
+		request.setCharacterEncoding("UTF-8");
+		
 		int action = checkAction(request);
 		if (1 == action) {
 			enter(request, response);
+		} else if (2 == action) {
+			changePassword(request, response);
 		} else {
 			registrate(request, response);
 		}
@@ -86,7 +88,9 @@ public class HRManagerServlet extends HttpServlet {
 
 		if (request.getParameter("enter") != null) {
 			return 1;
-		} 
+		} else if (request.getParameter("changePassword") != null) {
+			return 2;
+		}
 		return 0;
 	}
 
@@ -111,36 +115,123 @@ public class HRManagerServlet extends HttpServlet {
 	
 	
 	private void registrate(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 		 
 		if (request.getParameter("registration")!= null) {
 			forward("manager_registration.jsp", request, response);
 		}
-		
+				
 		String login = request.getParameter("login");
 		String password = request.getParameter("password");
 		String confirmedPassword = request.getParameter("confirmPassword");
+		
+		boolean registrationConditions = checkRegistrationData(login, password, confirmedPassword, request);
+		
+		if (registrationConditions) {
+			Manager manager = new Manager();
+			manager.setLogin(login);
+			manager.setPassword(password);
+			try {
+				mngrDao.createManager(manager);
+			} catch (PersistException e) {
+				
+			}
+			request.setAttribute("successManagerRegistration", "successManagerRegistration");
+			forward("manager_success_operation.jsp", request, response);
+		} else {
+			request.setAttribute("notSuccessManagerRegistration", "notSuccessManagerRegistration");
+			forward("error.jsp", request, response);
+		}
+	}
+
+
+	private boolean checkRegistrationData(String login, String password,
+			String confirmedPassword, HttpServletRequest request) {
+		
+		boolean condition = true;
+		
+		if (request.getParameter("changePassword") == null) {
+			List<Manager> managers = null;
+			try {
+				managers = mngrDao.getAllManagers();
+			} catch (PersistException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			for (Manager searchedManager : managers) {
+				if (searchedManager.getLogin().equalsIgnoreCase(login)) {
+					request.setAttribute("existUserError", "existUserError");
+					condition = false;
+				}
+			}
+		}
+		
 		if (login.equals("") || password.equals("")) {
 			request.setAttribute("emptyLoginFields", "emptyLoginFields");
-			forward("error.jsp", request, response);
-		} else if (login.length() < 6 || login.length() > 10) {
+			condition = false;
+		} 
+		if (login.length() < 6 || login.length() > 10) {
 			request.setAttribute("incorrectLogin", "incorrectLogin");
-			forward("error.jsp", request, response);
-		} else if (password.length() < 8 || password.length() > 14) {
+			condition = false;
+		} 
+		if (password.contains(" ")) {	
+			request.setAttribute("passwordSpaceError", "passwordSpaceError");
+			condition = false;
+		}
+		if (login.contains(" ")) {	
+			request.setAttribute("loginSpaceError", "loginSpaceError");
+			condition = false;
+		}
+		if (password.length() < 8 || password.length() > 14) {
 			request.setAttribute("incorrectPassword", "incorrectPassword");
-			forward("error.jsp", request, response);
-		} else if (!password.equals(confirmedPassword)) {
+			condition = false;
+		}
+		if (!password.equals(confirmedPassword)) {
 			request.setAttribute("notEqualsPassword", "notEqualsPassword");
+			condition = false;
+		}
+		return condition;
+	}
+
+	private void changePassword(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException, PersistException {
+	
+		String login = request.getParameter("login");
+		String oldPassword = request.getParameter("oldPassword");
+		String newPassword = request.getParameter("newPassword");
+		String repeatePassword = request.getParameter("repeatePassword");
+		
+		Manager manager = null;
+		try {
+			manager = mngrDao.getManagerByLogin(login);
+		} catch (PersistException e) {
+			if (manager == null) {
+				request.setAttribute("managerNotFound", "managerNotFound");
+				forward("error.jsp", request, response);
+			}
+		}
+		dsagfdsgfsdfg//T
+		if (manager != null) {
+			if (oldPassword.equals(manager.getPassword())) {
+				boolean registrationConditions = checkRegistrationData(login, newPassword, repeatePassword, request);
+				if (registrationConditions) {
+					manager.setPassword(newPassword);
+					mngrDao.updateManager(manager);
+					request.setAttribute("successChangePassword", "successChangePassword");
+					forward("manager_success_operation.jsp", request, response);
+				} else {
+					forward("error.jsp", request, response);
+				}
+			} else {
+				request.setAttribute("passwordNotFound", "passwordNotFound");
+				forward("error.jsp", request, response);
+			}
+		} else {
+			request.setAttribute("managerNotFound", "managerNotFound");
 			forward("error.jsp", request, response);
 		}
 		
-		Manager manager = new Manager();
-		manager.setLogin(login);
-		manager.setPassword(password);
-		mngrDao.createManager(manager);
-		forward("manager_success_registration.jsp", request, response);
 	}
-	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {

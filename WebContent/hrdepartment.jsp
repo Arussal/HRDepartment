@@ -7,13 +7,15 @@
 <title>Manager page - HRDepartment</title>
 </head>
 <body>
-	<h1>Manager Page - HRDepartment</h1>
+	<h1>Кабинет отдела кадров</h1>
 	<hr />
 	<div id="button">
 		<a href="applicationBaseServlet">Картотека вакансий</a><br/><br/>
 		<a href="cvformBaseServlet">Картотека резюме</a><br/><br/>
 		<a href="candidateBaseServlet">Картотека кандидатов</a><br/><br/>
 		<a href="employeeBaseServlet">Картотека сотрудников</a>
+		<br/>
+		<br/>
 		<br/>
 		<br/>
 		<a href="main.jsp">Выйти из раздела</a>

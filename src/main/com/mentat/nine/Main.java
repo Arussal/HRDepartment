@@ -119,14 +119,14 @@ public class Main {
 		}
 
 
-//		adao.deleteApplicationForm(af);
-//		cvdao.deleteCVForm(cv);
-//		cvdao.deleteCVForm(cv1);
-//		ddao.deleteDepartment(department);
-//		for (Candidate cand : candidates) {
-//			cdao.deleteCandidate(cand);
-//		}
-//		edao.deleteEmployee(employee);
+		adao.deleteApplicationForm(af);
+		cvdao.deleteCVForm(cv);
+		cvdao.deleteCVForm(cv1);
+		ddao.deleteDepartment(department);
+		for (Candidate cand : candidates) {
+			cdao.deleteCandidate(cand);
+		}
+		edao.deleteEmployee(employee);
 	
 		DAOFactory daoF = DAOFactory.getFactory();
 		CVFormDAO cvdao = daoF.getCVFormDAO();

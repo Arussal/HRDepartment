@@ -4,12 +4,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Registration - Manager - HRDepartment</title>
 </head>
 <body>
 	<h1>Регистрация нового менеджера</h1>
 	<hr/>
-	<form action="/hrManager" method="post">
+	<form action="hrManagerServlet" method="post">
 		<table>
 			<tr>
 				<td>Логин (6-10 смволов)</td>
@@ -24,7 +24,7 @@
 				<td><input type="password" name="confirmPassword"/></td>
 			</tr>
 			<tr>
-				<td><input type="submit" name="changePassword" value="Cменить пароль"></td>
+				<td><input type="submit" name="completeRegistration" value="Зарегистрироваться"></td>
 			</tr>
 		</table>
 	</form>
