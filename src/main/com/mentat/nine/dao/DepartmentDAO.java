@@ -248,7 +248,7 @@ public class DepartmentDAO{
 		Connection connection = null;
 		PreparedStatement pStatement = null;
 		
-		// check if there is Department entity
+		// check if there is Department entry
 		if (null == department) {
 			throw new IllegalArgumentException();
 		}
@@ -263,7 +263,7 @@ public class DepartmentDAO{
 		}			
 			
 		
-		// update Department entity
+		// update Department entry
 		try {
 			if (log.isTraceEnabled()) {
 				log.trace("try to update Department with id " + department.getId());
@@ -405,6 +405,11 @@ public class DepartmentDAO{
 		return departments;
 	}
 	
+	/**
+	 * @param statement
+	 * @param department
+	 * @throws PersistException
+	 */
 	private void prepareStatementForInsert(PreparedStatement statement,
 			Department department) throws PersistException {
 		try {

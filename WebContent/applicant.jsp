@@ -4,10 +4,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Home Page - HRDepartment</title>
+<title>Applicant Page - HRDepartment</title>
 </head>
 <body>
-	<h2><a href="hrdepartment_login.jsp">Раздел менеджера по кадрам</a></h2>
-	<h2><a href="applicant_login.jsp">Раздел соискателя</a></h2>
+	
+	<a href="main.jsp">Выйти из раздела</a>
 </body>
 </html>

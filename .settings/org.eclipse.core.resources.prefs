@@ -1,4 +1,8 @@
 eclipse.preferences.version=1
+encoding//WebContent/applicant_login.jsp=UTF-8
+encoding//WebContent/changePasswordManager.jsp=UTF-8
 encoding//WebContent/edit_employee.jsp=UTF-8
+encoding//WebContent/main.jsp=UTF-8
+encoding//WebContent/manager_registration.jsp=UTF-8
 encoding//WebContent/new_application.jsp=UTF-8
 encoding//WebContent/new_candidate.jsp=UTF-8

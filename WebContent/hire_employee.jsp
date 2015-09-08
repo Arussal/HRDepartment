@@ -49,5 +49,8 @@
 	</table>
 	<input type="submit" name="hireCandidate" value="Оформить"/>
 	</form>
+	<br />
+	<br />
+	<a href="employeeBaseServlet">Назад</a> <a href="hrdepartment.jsp">На главную</a>
 </body>
 </html>

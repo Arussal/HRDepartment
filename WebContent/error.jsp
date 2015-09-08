@@ -8,7 +8,7 @@
 <title>HRDepartment - error</title>
 </head>
 <body>
-	<h1>Error!</h1>
+	<h1>Ошибка!</h1>
 	<hr />
 	<c:if test="${not empty wrongData}">
 	Ошибка ввода данных:<br /><br />
@@ -49,7 +49,39 @@
 	<a href="candidateBaseServlet">Назад</a>
 	</c:if>
 	
-	<br /><br />
-	<a href="main.jsp">На главную</a> 
+	<c:if test="${not empty managerNotFound}">
+	Менеджер с таким логином отсутствует<br />
+	Станьте им!<br />
+	<a href="manager_registration.jsp">Зарегестрироваться</a><br />
+	<br />
+	<br />
+	<a href="hrdepartment_login.jsp">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty passwordNotFound}">
+	Неправильный пароль! Повторите попытку<br />
+	<a href="hrdepartment_login.jsp">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty emptyLoginFields}">
+	Пустое поля логина/пароля/повторного пароля! Введите все данные<br />
+	<a href="manager_registration.jsp">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty incorrectLogin}">
+	Неправильное количество символов логина! Логин должен содержать от 6 до 10 символов<br />
+	<a href="manager_registration.jsp">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty incorrectPassword}">
+	Неправильное количество символов пароля! Пароль должен содержать от 8 до 14 символов<br />
+	<a href="manager_registration.jsp">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty notEqualsPassword}">
+	Пароль и "подтверждение пароля" не совпадают! Введите одинаковые пароли<br />
+	<a href="manager_registration.jsp">Назад</a>
+	</c:if>
+	
 </body>
 </html>

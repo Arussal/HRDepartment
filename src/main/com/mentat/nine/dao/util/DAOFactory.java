@@ -16,6 +16,7 @@ import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.DepartmentDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
+import main.com.mentat.nine.dao.ManagerDAO;
 import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -129,5 +130,8 @@ public class DAOFactory {
 		return new EmployeeDAO();
 	}
 
+	public ManagerDAO getManagerDAO() throws PersistException {
+		return new ManagerDAO();
+	}
 
 }

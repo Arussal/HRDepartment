@@ -43,6 +43,6 @@
 	</form>
 	
 	<a href="applications.jsp">Назад</a> <a href="candidateBaseServlet">Перейти в раздел кандидатов</a> 
-	<a href="main.jsp">На главную</a>
+	<a href="hrdepartment.jsp">На главную</a>
 </body>
 </html>

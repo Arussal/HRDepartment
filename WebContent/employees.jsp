@@ -193,6 +193,6 @@
 			</c:forEach>
 		</table>
 	</form>
-	<a href="main.jsp">На главную</a>
+	<a href="hrdepartment.jsp">На главную</a>
 </body>
 </html>

@@ -79,6 +79,8 @@
 			</c:forEach>
 		</table>
 	</form>
-	<a href="employeeBaseServlet">Назад</a> <a href="main.jsp">На главную</a>
+	<br />
+	<br />
+	<a href="employeeBaseServlet">Назад</a> <a href="hrdepartment.jsp">На главную</a>
 </body>
 </html>

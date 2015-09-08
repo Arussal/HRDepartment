@@ -63,7 +63,6 @@
 	</table>
 	</form>
 	<br />
-	<a href="applicationsServlet">Назад</a> <a href="main.jsp">На главную</a>
-	
+	<a href="applicationsServlet">Назад</a> <a href="hrdepartment.jsp">На главную</a>
 </body>
 </html>
