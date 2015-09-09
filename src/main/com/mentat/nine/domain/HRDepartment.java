@@ -57,7 +57,7 @@ public class HRDepartment extends Department implements HRManager{
 	}
 		
 	@Override
-	public Employees addCVForm(Employees form) throws PersistException {
+	public CVForm addCVForm(CVForm form) throws PersistException {
 		if (null == form) {
 			log.error("CVForm is null");
 			throw new IllegalArgumentException();
@@ -79,11 +79,11 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptPost", new Boolean(false));
 		conditions.put("acceptSalary", new Boolean(false));
 		
-		List<Employees> cvs = cvDao.getAllCVForms();
+		List<CVForm> cvs = cvDao.getAllCVForms();
 		log.trace("check conditions to find candidate");
 		
 		
-		outer: for (Employees cv : cvs) {
+		outer: for (CVForm cv : cvs) {
 
 			// set "false" flag to all conditions
 			for (Entry<String, Boolean> condition : conditions.entrySet()) {
@@ -142,7 +142,7 @@ public class HRDepartment extends Department implements HRManager{
 	
 	
 	@Override
-	public void changeCVStatusToCandidate(Candidate candidate, Employees cv) 
+	public void changeCVStatusToCandidate(Candidate candidate, CVForm cv) 
 			throws PersistException {
 			candDao.createCandidate(candidate);
 			cvDao.deleteCVForm(cv);

@@ -96,19 +96,27 @@ public class HRManagerServlet extends HttpServlet {
 
 
 	private void enter(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		String login = request.getParameter("login");
-		Manager manager = mngrDao.getManagerByLogin(login);
-		if (null != manager) { 
-			String password = request.getParameter("password");
-			if (manager.getPassword().equals(password)) {
-				forward("hrdepartment.jsp", request, response);
-			} else {
-				request.setAttribute("passwordNotFound", "passwordNotFound");
+		
+		Manager manager = null;
+		try {
+			manager = mngrDao.getManagerByLogin(login);
+		} catch (PersistException e) {
+			if (null == manager) {
+				log.error("manager with login " + login + " not found");
+				request.setAttribute("managerNotFound", "managerNotFound");
+				request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
 				forward("error.jsp", request, response);
 			}
+		}
+		
+		String password = request.getParameter("password");
+		if (manager.getPassword().equals(password)) {
+			forward("hrdepartment.jsp", request, response);
 		} else {
-			request.setAttribute("managerNotFound", "managerNotFound");
+			request.setAttribute("passwordNotFound", "passwordNotFound");
+			request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
 			forward("error.jsp", request, response);
 		}
 	}
@@ -205,29 +213,27 @@ public class HRManagerServlet extends HttpServlet {
 		try {
 			manager = mngrDao.getManagerByLogin(login);
 		} catch (PersistException e) {
-			if (manager == null) {
+			if (null == manager) {
+				log.error("manager with login " + login + " not found");
 				request.setAttribute("managerNotFound", "managerNotFound");
 				forward("error.jsp", request, response);
 			}
 		}
-		dsagfdsgfsdfg//T
-		if (manager != null) {
-			if (oldPassword.equals(manager.getPassword())) {
-				boolean registrationConditions = checkRegistrationData(login, newPassword, repeatePassword, request);
-				if (registrationConditions) {
-					manager.setPassword(newPassword);
-					mngrDao.updateManager(manager);
-					request.setAttribute("successChangePassword", "successChangePassword");
-					forward("manager_success_operation.jsp", request, response);
-				} else {
-					forward("error.jsp", request, response);
-				}
+		
+		if (oldPassword.equals(manager.getPassword())) {
+			boolean registrationConditions = checkRegistrationData(login, newPassword, repeatePassword, request);
+			if (registrationConditions) {
+				manager.setPassword(newPassword);
+				mngrDao.updateManager(manager);
+				request.setAttribute("successChangePassword", "successChangePassword");
+				forward("manager_success_operation.jsp", request, response);
 			} else {
-				request.setAttribute("passwordNotFound", "passwordNotFound");
+				request.setAttribute("notSuccessManagerOperation", "notSuccessManagerOperation");
 				forward("error.jsp", request, response);
 			}
 		} else {
-			request.setAttribute("managerNotFound", "managerNotFound");
+			request.setAttribute("notSuccessManagerOperation", "notSuccessManagerOperation");
+			request.setAttribute("passwordNotFound", "passwordNotFound");
 			forward("error.jsp", request, response);
 		}
 		

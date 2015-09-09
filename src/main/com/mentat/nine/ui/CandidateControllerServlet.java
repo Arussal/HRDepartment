@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,7 +121,7 @@ public class CandidateControllerServlet extends HttpServlet {
 	
 
 	private void findCandidate(HttpServletRequest request, 	HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 		
 		Map<String, List<String>> parameters = new HashMap<String, List<String>>();
 		String idParameter = request.getParameter("id");
@@ -138,7 +139,15 @@ public class CandidateControllerServlet extends HttpServlet {
 		addToParameterMap(parameters, educationParameter, "education", "=");
 		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
 	
-		Set<Candidate> candList = candDao.getCandidates(parameters);
+		Set<Candidate> candList = null;
+		try {
+			candList = candDao.getCandidates(parameters);
+		} catch (PersistException e) {
+			log.warn("no one Candidate with different query parameters found");
+		}
+		if (null == candList) {
+			candList = new HashSet<Candidate>();
+		}
 		request.setAttribute("candIncomeList", candList);
 		forward("candidateBaseServlet", request, response);
 		

@@ -42,9 +42,9 @@ public interface HRManager {
 	public void changePost(Employee employee, String post) 
 			throws NoSuchEmployeeException, PersistException;
 	
-	public Employees addCVForm(Employees form) throws PersistException;
+	public CVForm addCVForm(CVForm form) throws PersistException;
 
-	void changeCVStatusToCandidate(Candidate candidate, Employees cv)
+	void changeCVStatusToCandidate(Candidate candidate, CVForm cv)
 			throws PersistException;
 
 }

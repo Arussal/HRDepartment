@@ -12,16 +12,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.Employees;
+import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
  * Servlet implementation class CandidateControllerServlet
  */
 @WebServlet("/cvformControllerServlet")
 public class CVFormControllerServlet extends HttpServlet {
+	
+	static {
+		LogConfig.loadLogConfig();
+	}
+	
+	private static Logger log = Logger.getLogger(CVFormControllerServlet.class);
+	
 	private static final long serialVersionUID = 1L;
 	private CVFormDAO cvDao;
        
@@ -39,12 +49,7 @@ public class CVFormControllerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 
@@ -52,17 +57,12 @@ public class CVFormControllerServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request);
@@ -94,7 +94,7 @@ public class CVFormControllerServlet extends HttpServlet {
 	
 	
 	private void deleteCV(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		List<Integer> idList = new ArrayList<Integer>();
 		Map<String, String[]> parameters = request.getParameterMap();
 		for (String key : parameters.keySet()) {
@@ -111,8 +111,17 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 		
 		for (Integer id : idList) {
-			Employees cv = cvDao.getCVFormById(id);
-			cvDao.deleteCVForm(cv);
+			CVForm cv = null;
+			try {
+				cv = cvDao.getCVFormById(id);
+			} catch (PersistException e) {
+				log.error("can't get cv with id " + id);
+			}
+			try {
+				cvDao.deleteCVForm(cv);
+			} catch (PersistException e) {
+				log.error("can't delete cv with id " + id);
+			}
 		}
 		
 		forward("cvformBaseServlet", request, response);
@@ -121,7 +130,7 @@ public class CVFormControllerServlet extends HttpServlet {
 	
 
 	private void findCV(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		
 		Map<String, List<String>> parameters = new HashMap<String, List<String>>();
 		String idParameter = request.getParameter("id");
@@ -134,12 +143,21 @@ public class CVFormControllerServlet extends HttpServlet {
 		String expirienceSymbol = request.getParameter("expirienceComparable");
 		
 		addToParameterMap(parameters, idParameter, "id", "=");
-		addToParameterMap(parameters, ageParameter, "id", ageSymbol);
+		addToParameterMap(parameters, ageParameter, "age", ageSymbol);
 		addToParameterMap(parameters, postParameter, "post", "=");
-		addToParameterMap(parameters, educationParameter, "id", "=");
+		addToParameterMap(parameters, educationParameter, "education", "=");
 		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
 	
-		List<Employees> cvList = cvDao.getCVForm(parameters);
+		List<CVForm> cvList = null;
+		try {
+			cvList = cvDao.getCVForm(parameters);
+		} catch (PersistException e) {
+			log.warn("no one candidate with different parameters found");
+		}
+		
+		if (null == cvList) {
+			cvList = new ArrayList<CVForm>();
+		}
 		request.setAttribute("cvIncomeList", cvList);
 		forward("cvformBaseServlet", request, response);		
 	}

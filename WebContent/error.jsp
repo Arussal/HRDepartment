@@ -56,12 +56,12 @@
 	<a href="manager_registration.jsp">Зарегестрироваться</a><br />
 	<br />
 	<br />
-	<a href="hrdepartment_login.jsp">Назад</a>
 	</c:if>
 	
 	<c:if test="${not empty passwordNotFound}">
 	Неправильный пароль! Повторите попытку<br />
-	<a href="hrdepartment_login.jsp">Назад</a>
+	<br />
+	<br />
 	</c:if>
 	
 	
@@ -97,6 +97,14 @@
 	
 	<c:if test="${not empty notSuccessManagerRegistration}">
 	<a href="manager_registration.jsp">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty notSuccessManagerOperation}">
+	<a href="changePasswordManager.jsp">Назад</a>
+	</c:if>
+	
+		<c:if test="${not empty notSuccessManagerLoginOperation}">
+	<a href="hrdepartment_login.jsp">Назад</a>
 	</c:if>
 	
 

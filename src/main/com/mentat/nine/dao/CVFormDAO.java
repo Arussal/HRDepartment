@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.Employees;
+import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.util.LogConfig;
 
 /**
@@ -40,9 +40,9 @@ public class CVFormDAO {
 		daoFactory = DAOFactory.getFactory();
 	}
 
-	public Employees createCVForm(Employees cv) throws PersistException {
+	public CVForm createCVForm(CVForm cv) throws PersistException {
 		
-		Employees createdCV = null;
+		CVForm createdCV = null;
 		Connection connection = null;
 		Statement statement = null;
 		PreparedStatement pStatement = null;
@@ -63,7 +63,7 @@ public class CVFormDAO {
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
 				log.trace("resultset got");
-				List<Employees> cvList = parseResultSet(rs);
+				List<CVForm> cvList = parseResultSet(rs);
 				if (cvList.size() != 0) {
 					log.warn("CVForm is already persist, id " + cv.getId());
 					throw new PersistException("CVForm is already persist, id " + cv.getId());
@@ -115,7 +115,7 @@ public class CVFormDAO {
 				log.trace("statement created");
 				rs = statement.executeQuery(sqlSelect);
 				log.trace("resulset got");
-				List<Employees> cvForms = parseResultSet(rs);
+				List<CVForm> cvForms = parseResultSet(rs);
 				if (null == cvForms || cvForms.size() != 1) {
 					log.warn("more than one CVForm with id " + id);
 					throw new PersistException("Was created more than one persist with id = " + id);
@@ -137,14 +137,14 @@ public class CVFormDAO {
 	}
 
 	
-	public Employees getCVFormById(int id) throws PersistException {
+	public CVForm getCVFormById(int id) throws PersistException {
 
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvList = null;
+		List<CVForm> cvList = null;
 		
-		Employees cv = new Employees();
+		CVForm cv = new CVForm();
 
 		try {
 			log.trace("try to get CVForm with id " + id);
@@ -177,12 +177,12 @@ public class CVFormDAO {
 	}
 
 	
-	public List<Employees> getCVFormByPost(String post) throws PersistException {
+	public List<CVForm> getCVFormByPost(String post) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvForms = null;
+		List<CVForm> cvForms = null;
 		
 		try {
 			log.trace("get CVForms with post " + post);
@@ -209,13 +209,13 @@ public class CVFormDAO {
 	}
 
 
-	public List<Employees> geyCVFormByWorkExpirience(int workExpirience)
+	public List<CVForm> geyCVFormByWorkExpirience(int workExpirience)
 			throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvForms = null;
+		List<CVForm> cvForms = null;
 		
 		try {
 			log.trace("get CVForms with workExpirience " + workExpirience);
@@ -242,13 +242,13 @@ public class CVFormDAO {
 	}
 
 
-	public List<Employees> getCVFormByEducation(String education)
+	public List<CVForm> getCVFormByEducation(String education)
 			throws PersistException {
 
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvForms = null;
+		List<CVForm> cvForms = null;
 		
 		try {
 			log.trace("get CVForms with education " + education);
@@ -275,13 +275,13 @@ public class CVFormDAO {
 	}
 
 
-	public List<Employees> geyCVFormByDesiredSalary(int desiredSalary)
+	public List<CVForm> geyCVFormByDesiredSalary(int desiredSalary)
 			throws PersistException {
 
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvForms = null;
+		List<CVForm> cvForms = null;
 		
 		try {
 			log.trace("get CVForms with desiredSalary " + desiredSalary);
@@ -308,12 +308,12 @@ public class CVFormDAO {
 	}
 
 	
-	public List<Employees> getCVForm(Map<String, List<String>> queries) throws PersistException {
+	public List<CVForm> getCVForm(Map<String, List<String>> queries) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvForms = null;
+		List<CVForm> cvForms = null;
 		
 		try {
 			log.trace("get CVForms with different query parameters");
@@ -361,7 +361,7 @@ public class CVFormDAO {
 		return cvForms;
 	}
 
-	public void updateCVForm(Employees cv) throws PersistException {
+	public void updateCVForm(CVForm cv) throws PersistException {
 
 		Connection connection = null;
 		PreparedStatement pStatement = null;
@@ -375,7 +375,7 @@ public class CVFormDAO {
 			log.warn("CVForm with id " + cv.getId() + " is not persist");
 			throw new PersistException("CVForm does not persist yet");
 		}
-		Employees selectedApp = this.getCVFormById(cv.getId());
+		CVForm selectedApp = this.getCVFormById(cv.getId());
 		if (null == selectedApp) {
 			log.warn("CVForm with id " + cv.getId() + " is not persist");
 			throw new PersistException("CVForm does not persist yet");
@@ -410,7 +410,7 @@ public class CVFormDAO {
 	}
 
 
-	public void deleteCVForm(Employees cv) throws PersistException {
+	public void deleteCVForm(CVForm cv) throws PersistException {
 				
 		Connection connection = null;
 		Statement statement = null;
@@ -423,7 +423,7 @@ public class CVFormDAO {
 			log.warn("CVForm with id " + cv.getId() + " is not persist");
 			throw new PersistException("CVForm does not persist yet");
 		}
-		Employees selectedCVForm = this.getCVFormById(cv.getId());
+		CVForm selectedCVForm = this.getCVFormById(cv.getId());
 		if (null == selectedCVForm) {
 			log.warn("CVForm with id " + cv.getId() + " is not persist");
 			throw new PersistException("CVForm does not persist yet");
@@ -456,12 +456,12 @@ public class CVFormDAO {
 	}
 
 
-	public List<Employees> getAllCVForms() throws PersistException {
+	public List<CVForm> getAllCVForms() throws PersistException {
 
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Employees> cvForms = null;
+		List<CVForm> cvForms = null;
 		String sqlSelect = getSelectQuery();
 		
 		try {
@@ -514,13 +514,13 @@ public class CVFormDAO {
 		return sql;
 	}
 	
-	private List<Employees> parseResultSet(ResultSet rs) throws PersistException {
-		List<Employees> cvForms = new ArrayList<Employees>();
+	private List<CVForm> parseResultSet(ResultSet rs) throws PersistException {
+		List<CVForm> cvForms = new ArrayList<CVForm>();
 
 		try {
 			String skill = "";
 			while (rs.next()) {
-				Employees cv = new Employees();
+				CVForm cv = new CVForm();
 				cv.setId(rs.getInt("id"));
 				cv.setName(rs.getString("name"));
 				if (rs.getString("age") == null) {
@@ -558,7 +558,7 @@ public class CVFormDAO {
 	}
 	
 	private void prepareStatementForInsert(PreparedStatement statement,
-			Employees cv) throws PersistException {
+			CVForm cv) throws PersistException {
 		String skills = convertString(cv.getSkills());
 		try {
 			statement.setString(1, cv.getName());

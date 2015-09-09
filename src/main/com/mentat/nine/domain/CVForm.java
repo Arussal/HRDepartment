@@ -7,7 +7,7 @@ package main.com.mentat.nine.domain;
  * @author Ruslan
  *
  */
-public class Employees extends Person{
+public class CVForm extends Person{
 
 	private Integer desiredSalary;
 	private String additionalInfo;
@@ -15,7 +15,7 @@ public class Employees extends Person{
 	/**
 	 * 
 	 */
-	public Employees() {
+	public CVForm() {
 		// TODO Auto-generated constructor stub
 	}
 	
