@@ -49,11 +49,21 @@
 	<a href="candidateBaseServlet">Назад</a>
 	</c:if>
 	
+	
+	
+	<c:if test="${not empty noUsersFoundError}">
+		Пользователей не найдено<br />
+	</c:if>
 
-	<c:if test="${not empty managerNotFound}">
-	Менеджер с таким логином отсутствует<br />
+	<c:if test="${not empty userNotFound}">
+	Пользователь с таким логином отсутствует<br />
 	Станьте им!<br />
-	<a href="manager_registration.jsp">Зарегестрироваться</a><br />
+		<c:if test="${not empty notSuccessApplicantLoginOperation}">
+			<a href="applicant_registration.jsp">Зарегестрироваться</a><br />
+		</c:if>
+		<c:if test="${not empty notSuccessManagerLoginOperation}">
+			<a href="manager_registration.jsp">Зарегестрироваться</a><br />
+		</c:if>
 	<br />
 	<br />
 	</c:if>
@@ -68,46 +78,67 @@
 	<!-- block for registration -->
 		
 	<c:if test="${not empty emptyLoginFields}">
-	Пустое поля логина/пароля/повторного пароля! Введите все данные<br />	
+		Пустое поля логина/пароля/повторного пароля! Введите все данные<br />	
+	</c:if>
+	
+	<c:if test="${not empty emptyNameFields}">
+		Пустое поля имени/фамилии/отчества! Введите все данные<br />	
 	</c:if>
 	
 	<c:if test="${not empty incorrectLogin}">
-	Неправильное количество символов логина! Логин должен содержать от 6 до 10 символов<br />
+		Неправильное количество символов логина! Логин должен содержать от 6 до 10 символов<br />
 	</c:if>
 	
 	<c:if test="${not empty incorrectPassword}">
-	Неправильное количество символов пароля! Пароль должен содержать от 8 до 14 символов<br />
+		Неправильное количество символов пароля! Пароль должен содержать от 8 до 14 символов<br />
 	</c:if>
 	
 	<c:if test="${not empty passwordSpaceError}">
-	В пароле присутствует символ пробела! Пароль не должен содержать пробел<br />
+		В пароле присутствует символ пробела! Пароль не должен содержать пробел<br />
 	</c:if>
 	
 	<c:if test="${not empty loginSpaceError}">
-	В логине присутствует символ пробела! Логин не должен содержать пробел<br />
+		В логине присутствует символ пробела! Логин не должен содержать пробел<br />
 	</c:if>
 	
 	<c:if test="${not empty existUserError}">
-	Пользватель с таким логином уже есть! Придумайте другой логин<br />
+		Пользватель с таким логином уже есть! Придумайте другой логин<br />
 	</c:if>
 	
 	<c:if test="${not empty notEqualsPassword}">
-	Пароль и "подтверждение пароля" не совпадают! Введите одинаковые пароли<br />
+		Пароль и "подтверждение пароля" не совпадают! Введите одинаковые пароли<br />
+	</c:if>
+	
+	<c:if test="${not empty notSuccessManagerCreateOperation}">
+		Менеджер не создан<br />
 	</c:if>
 	
 	<c:if test="${not empty notSuccessManagerRegistration}">
-	<a href="manager_registration.jsp">Назад</a>
+		<a href="manager_registration.jsp">Назад</a>
 	</c:if>
 	
 	<c:if test="${not empty notSuccessManagerOperation}">
-	<a href="changePasswordManager.jsp">Назад</a>
+		<a href="changePasswordManager.jsp">Назад</a>
 	</c:if>
 	
-		<c:if test="${not empty notSuccessManagerLoginOperation}">
-	<a href="hrdepartment_login.jsp">Назад</a>
+	<c:if test="${not empty notSuccessManagerLoginOperation}">
+		<a href="hrdepartment_login.jsp">Назад</a>
 	</c:if>
 	
-
+	<c:if test="${not empty notSuccessApplicantLoginOperation}">
+		<a href="applicant_login.jsp">Назад</a><br />
+	</c:if>
+	
+	<c:if test="${not empty notSuccessApplicantCreateOperation}">
+		Соискатель не создан<br />
+	</c:if>
+	
+	<c:if test="${not empty notSuccessApplicantRegistration}">
+		<a href="applicant_registration.jsp">Назад</a>
+	</c:if>
+		
+	
+	
 	
 </body>
 </html>

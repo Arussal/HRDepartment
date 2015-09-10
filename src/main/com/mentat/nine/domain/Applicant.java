@@ -12,6 +12,7 @@ public class Applicant {
 	private Integer id;
 	private String login;
 	private String password;
+	private String name;
 
 	public Applicant() {
 		super();
@@ -39,6 +40,14 @@ public class Applicant {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

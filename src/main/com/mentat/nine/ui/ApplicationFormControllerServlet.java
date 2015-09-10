@@ -129,7 +129,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 
 	
 	private ApplicationForm getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
+			throws ServletException, PersistException {
 		
 		ApplicationForm appForm = null;
 		boolean emptyFields = isEmptyFields(request);
@@ -209,8 +209,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	}
 	
 	//if there is no empty fields
-	private boolean isEmptyFields(HttpServletRequest request) 
-			throws ServletException, IOException {
+	private boolean isEmptyFields(HttpServletRequest request) {
 		
 		Map<String, String[]> parameters = request.getParameterMap();
 		List<String> emptyParameters = new ArrayList<String>();
@@ -359,7 +358,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 	
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException, IOException {
+			HttpServletResponse response) {
 		if (0 == idList.size()) {
 			request.setAttribute("nothingSelectedError", "nothingSelectedError");
 			forward("error.jsp", request, response);
@@ -368,7 +367,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 	
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException, IOException {
+			HttpServletResponse response) {
 		if (idList.size() > 1) {
 			request.setAttribute("selectedCount", idList.size());
 			request.setAttribute("tooManySelectedError", "tooManySelectedError");
@@ -377,8 +376,14 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	}
 	
 	
-	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		request.getRequestDispatcher(path).forward(request, response);
+	private void forward(String path, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			request.getRequestDispatcher(path).forward(request, response);
+		} catch (IOException e) {
+			log.error("Page - " + path + " - not found");
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

@@ -25,6 +25,7 @@
 			</tr>
 		</table>
 		<a href="changePasswordManager.jsp">Сменить пароль</a>
+		<a href="deleteManager.jsp">Удалить менеджера</a>
 	</form>
 	<br />
 	<a href="main.jsp">Назад</a>

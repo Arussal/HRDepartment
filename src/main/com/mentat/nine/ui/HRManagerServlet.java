@@ -105,7 +105,7 @@ public class HRManagerServlet extends HttpServlet {
 		} catch (PersistException e) {
 			if (null == manager) {
 				log.error("manager with login " + login + " not found");
-				request.setAttribute("managerNotFound", "managerNotFound");
+				request.setAttribute("userNotFound", "userNotFound");
 				request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
 				forward("error.jsp", request, response);
 			}
@@ -133,7 +133,7 @@ public class HRManagerServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		String confirmedPassword = request.getParameter("confirmPassword");
 		
-		boolean registrationConditions = checkRegistrationData(login, password, confirmedPassword, request);
+		boolean registrationConditions = isCorrectRegistrationData(login, password, confirmedPassword, request);
 		
 		if (registrationConditions) {
 			Manager manager = new Manager();
@@ -142,7 +142,9 @@ public class HRManagerServlet extends HttpServlet {
 			try {
 				mngrDao.createManager(manager);
 			} catch (PersistException e) {
-				
+				request.setAttribute("notSuccessManagerCreateOperation", "notSuccessManagerCreateOperation");
+				request.setAttribute("notSuccessManagerRegistration", "notSuccessManagerRegistration");
+				forward("error.jsp", request, response);	
 			}
 			request.setAttribute("successManagerRegistration", "successManagerRegistration");
 			forward("manager_success_operation.jsp", request, response);
@@ -153,7 +155,7 @@ public class HRManagerServlet extends HttpServlet {
 	}
 
 
-	private boolean checkRegistrationData(String login, String password,
+	private boolean isCorrectRegistrationData(String login, String password,
 			String confirmedPassword, HttpServletRequest request) {
 		
 		boolean condition = true;
@@ -163,8 +165,9 @@ public class HRManagerServlet extends HttpServlet {
 			try {
 				managers = mngrDao.getAllManagers();
 			} catch (PersistException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				if (null == managers) {
+					request.setAttribute("noUsersFoundError", "noUsersFoundError");
+				}
 			}
 			for (Manager searchedManager : managers) {
 				if (searchedManager.getLogin().equalsIgnoreCase(login)) {
@@ -221,7 +224,7 @@ public class HRManagerServlet extends HttpServlet {
 		}
 		
 		if (oldPassword.equals(manager.getPassword())) {
-			boolean registrationConditions = checkRegistrationData(login, newPassword, repeatePassword, request);
+			boolean registrationConditions = isCorrectRegistrationData(login, newPassword, repeatePassword, request);
 			if (registrationConditions) {
 				manager.setPassword(newPassword);
 				mngrDao.updateManager(manager);
