@@ -20,7 +20,7 @@
 				<td><input type="password" name="password"/></td>
 			</tr>
 			<tr>
-				<td><input type="submit" name="login" value="Войти"></td>
+				<td><input type="submit" name="enter" value="Войти"></td>
 				<td><input type="submit" name="registration" value="Зарегестрироваться"></td>
 				<td><input type="submit" name="delete" value="Удалить соискателя"></td>
 			</tr>

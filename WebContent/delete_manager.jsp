@@ -13,13 +13,14 @@
 	<form action="hrManager" method="post">
 		<table>
 			<tr>
-				<td colspan="2">Удалить менеджера <c:out value="${login}" /></td>
+				<td colspan="2">Удалить менеджера: <c:out value="${manager.login}" /></td>
 			</tr>
 			<tr>
 				<td><input type="submit" name="confirmDelete" value="OK"></td>
 				<td><input type="submit" name="cancel" value="ОТМЕНА"></td>
 			</tr>
 		</table>
+		<c:param name="manager" value="${manager}" />
 	</form>
 </body>
 </html>

@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import main.com.mentat.nine.dao.ManagerDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
+import main.com.mentat.nine.domain.Applicant;
 import main.com.mentat.nine.domain.Manager;
 import main.com.mentat.nine.domain.util.LogConfig;
 
@@ -78,6 +79,8 @@ public class HRManagerServlet extends HttpServlet {
 			enter(request, response);
 		} else if (2 == action) {
 			changePassword(request, response);
+		} else if (3 == action) {
+			deleteManager(request, response);
 		} else {
 			registrate(request, response);
 		}
@@ -164,17 +167,16 @@ public class HRManagerServlet extends HttpServlet {
 			List<Manager> managers = null;
 			try {
 				managers = mngrDao.getAllManagers();
+				for (Manager searchedManager : managers) {
+					if (searchedManager.getLogin().equalsIgnoreCase(login)) {
+						request.setAttribute("existUserError", "existUserError");
+						condition = false;
+					}
+				}
 			} catch (PersistException e1) {
-				if (null == managers) {
-					request.setAttribute("noUsersFoundError", "noUsersFoundError");
-				}
+				condition = true;
 			}
-			for (Manager searchedManager : managers) {
-				if (searchedManager.getLogin().equalsIgnoreCase(login)) {
-					request.setAttribute("existUserError", "existUserError");
-					condition = false;
-				}
-			}
+
 		}
 		
 		if (login.equals("") || password.equals("")) {
@@ -241,6 +243,49 @@ public class HRManagerServlet extends HttpServlet {
 		}
 		
 	}
+
+	
+	private void deleteManager(HttpServletRequest request, HttpServletResponse response)
+		throws ServletException, IOException {
+			
+	if (request.getParameter("delete") != null) {
+		String login = request.getParameter("login");
+		
+		Manager manager = null;
+		try {
+			manager = mngrDao.getManagerByLogin(login);
+		} catch (PersistException e) {
+			if (null == manager) {
+				log.error("manager with login " + login + " not found");
+				request.setAttribute("userNotFound", "userNotFound");
+				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+				forward("error.jsp", request, response);
+			}
+		}
+		
+		String password = request.getParameter("password");
+		if (manager.getPassword().equals(password)) {
+			request.setAttribute("manager", manager);
+			forward("delete_manager.jsp", request, response);
+		} else {
+			request.setAttribute("passwordNotFound", "passwordNotFound");
+			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+			forward("error.jsp", request, response);
+		}
+	}
+	
+	Manager manager = (Manager)request.getAttribute("manager");
+	try {
+		mngrDao.deleteManager(manager);
+		request.setAttribute("successManagerDeleteOperation", "successManagerDeleteOperation");
+		forward("manager_success_operation.jsp", request, response);
+	} catch (PersistException e) {
+		request.setAttribute("notSuccessManagerDeleteOperation", "notSuccessManagerDeleteOperation");
+		forward("error.jsp", request, response);
+	}
+	
+}
+	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {

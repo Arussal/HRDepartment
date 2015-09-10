@@ -22,10 +22,10 @@
 			<tr>
 				<td><input type="submit" name="enter" value="Войти"></td>
 				<td><input type="submit" name="registration" value="Зарегестрироваться"></td>
+				<td><input type="submit" name="delete" value="Удалить менеджера"></td>
 			</tr>
 		</table>
 		<a href="changePasswordManager.jsp">Сменить пароль</a>
-		<a href="deleteManager.jsp">Удалить менеджера</a>
 	</form>
 	<br />
 	<a href="main.jsp">Назад</a>

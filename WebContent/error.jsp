@@ -133,6 +133,16 @@
 		Соискатель не создан<br />
 	</c:if>
 	
+	<c:if test="${not empty notSuccessApplicantDeleteOperation}">
+		Соискатель не удлен<br />
+		<a href="applicant_login.jsp">Назад</a><br />
+	</c:if>
+	
+	<c:if test="${not empty notSuccessManagerDeleteOperation}">
+		Менеджер не удлен<br />
+		<a href="manager_login.jsp">Назад</a><br />
+	</c:if>
+	
 	<c:if test="${not empty notSuccessApplicantRegistration}">
 		<a href="applicant_registration.jsp">Назад</a>
 	</c:if>

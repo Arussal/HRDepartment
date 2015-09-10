@@ -228,14 +228,17 @@ public class ApplicantDAO {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<Applicant> applicants = null;
+		List<Applicant> applicants = new ArrayList<Applicant>();
 		
 		try {
 			String selectSql = getSelectQuery();
 			connection = daoFactory.createConnection();
 			statement = connection.createStatement();
 			rs = statement.executeQuery(selectSql);
-			applicants = parseResultSet(rs);
+			List<Applicant> parsedList = parseResultSet(rs);
+			if (parsedList != null) {
+				applicants = parsedList;
+			}
 			if (log.isTraceEnabled()) {
 				log.trace("get all applicants");
 			}

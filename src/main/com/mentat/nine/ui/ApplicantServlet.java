@@ -1,6 +1,7 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -56,6 +57,7 @@ public class ApplicantServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
 		int action = checkAction(request); 
 		if (1 == action) {
 			enter(request, response);
@@ -71,7 +73,7 @@ public class ApplicantServlet extends HttpServlet {
 
 	private int checkAction(HttpServletRequest request) {
 		
-		if (request.getParameter("login") != null) {
+		if (request.getParameter("enter") != null) {
 			return 1;
 		} else if (request.getParameter("changePassword") != null) {
 			return 2;
@@ -209,7 +211,7 @@ public class ApplicantServlet extends HttpServlet {
 			
 			String password = request.getParameter("password");
 			if (applicant.getPassword().equals(password)) {
-				request.setAttribute("name", applicant.getName());
+				request.setAttribute("applicant", applicant);
 				forward("delete_applicant.jsp", request, response);
 			} else {
 				request.setAttribute("passwordNotFound", "passwordNotFound");
@@ -218,7 +220,15 @@ public class ApplicantServlet extends HttpServlet {
 			}
 		}
 		
-		
+		Applicant applicant = (Applicant)request.getAttribute("applicant");
+		try {
+			aplcntDao.deleteApplicant(applicant);
+			request.setAttribute("successApplicantDeleteOperation", "successApplicantDeleteOperation");
+			forward("applicant_success_operation.jsp", request, response);
+		} catch (PersistException e) {
+			request.setAttribute("notSuccessApplicantDeleteOperation", "notSuccessApplicantDeleteOperation");
+			forward("error.jsp", request, response);
+		}
 		
 	}
 	
@@ -228,14 +238,14 @@ public class ApplicantServlet extends HttpServlet {
 		boolean condition = true;
 		
 		if (request.getParameter("changePassword") == null) {
-			List<Applicant> applicants = null;
+			List<Applicant> applicants = new ArrayList<Applicant>();;
 			try {
 				applicants = aplcntDao.getAllApplicants();
+				
 			} catch (PersistException e1) {
-				if (null == applicants) {
-					request.setAttribute("noUsersFoundError", "noUsersFoundError");
-				}
+				condition = true;
 			}
+
 			for (Applicant searchedApplicant : applicants) {
 				if (searchedApplicant.getLogin().equalsIgnoreCase(login)) {
 					request.setAttribute("existUserError", "existUserError");
