@@ -1,7 +1,6 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -9,11 +8,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.ApplicantDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
+import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Applicant;
 import main.com.mentat.nine.domain.util.LogConfig;
 
@@ -32,11 +33,13 @@ public class ApplicantServlet extends HttpServlet {
 	private ApplicantDAO aplcntDao;
        
     /**
+     * @throws PersistException 
      * @see HttpServlet#HttpServlet()
      */
-    public ApplicantServlet() {
+    public ApplicantServlet() throws PersistException {
         super();
-        // TODO Auto-generated constructor stub
+        DAOFactory daoFactory = DAOFactory.getFactory();
+        aplcntDao = daoFactory.getApplicantDAO();
     }
 
 	/**
@@ -64,21 +67,33 @@ public class ApplicantServlet extends HttpServlet {
 		} else if (2 == action) {
 			changePassword(request, response);
 		} else if (3 == action) {
+			goToDeletePage(request, response);
+		} else if (4 == action) {
 			deleteApplicant(request, response);
-		} else {
+		} else if (5 == action) {
+			goToRegistrationForm(request, response);
+		} else if (6 == action) {
 			registrate(request, response);
+		} else {
+			forward("applicant_login.jsp", request, response);
 		}
 	}	
 
-
+		
 	private int checkAction(HttpServletRequest request) {
 		
 		if (request.getParameter("enter") != null) {
 			return 1;
 		} else if (request.getParameter("changePassword") != null) {
 			return 2;
-		} else if ((request.getParameter("delete") != null) | (request.getParameter("confirmDelete") != null)) {
+		} else if (request.getParameter("delete") != null) {
 			return 3;
+		} else if (request.getParameter("confirmDelete") != null) {
+			return 4;
+		} else if (request.getParameter("registration") != null) {
+			return 5;	
+		} else if (request.getParameter("completeRegistration") != null) {
+			return 6;
 		}
 		return 0;
 	}
@@ -100,8 +115,11 @@ public class ApplicantServlet extends HttpServlet {
 			}
 		}
 		
+
 		String password = request.getParameter("password");
 		if (applicant.getPassword().equals(password)) {
+			HttpSession currentSession = request.getSession(true);
+			currentSession.setAttribute("applicant", applicant);
 			forward("applicant.jsp", request, response);
 		} else {
 			request.setAttribute("passwordNotFound", "passwordNotFound");
@@ -153,15 +171,11 @@ public class ApplicantServlet extends HttpServlet {
 		}
 		
 	}
-	
+
 	
 	private void registrate(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		if (request.getParameter("registration")!= null) {
-			forward("applicant_registration.jsp", request, response);
-		}
-				
+						
 		String login = request.getParameter("login");
 		String password = request.getParameter("password");
 		String confirmedPassword = request.getParameter("confirmPassword");
@@ -191,45 +205,56 @@ public class ApplicantServlet extends HttpServlet {
 	}	
 	
 	
-	private void deleteApplicant(HttpServletRequest request, HttpServletResponse response) 
+	private void goToRegistrationForm(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-		if (request.getParameter("delete") != null) {
-			String login = request.getParameter("login");
-			
-			Applicant applicant = null;
-			try {
-				applicant = aplcntDao.getApplicantByLogin(login);
-			} catch (PersistException e) {
-				if (null == applicant) {
-					log.error("applicant with login " + login + " not found");
-					request.setAttribute("userNotFound", "userNotFound");
-					request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-					forward("error.jsp", request, response);
-				}
-			}
-			
-			String password = request.getParameter("password");
-			if (applicant.getPassword().equals(password)) {
-				request.setAttribute("applicant", applicant);
-				forward("delete_applicant.jsp", request, response);
-			} else {
-				request.setAttribute("passwordNotFound", "passwordNotFound");
+			forward("applicant_registration.jsp", request, response);
+	}
+
+	
+	private void goToDeletePage(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		String login = request.getParameter("login");
+		
+		Applicant applicant = null;
+		try {
+			applicant = aplcntDao.getApplicantByLogin(login);
+		} catch (PersistException e) {
+			if (null == applicant) {
+				log.error("applicant with login " + login + " not found");
+				request.setAttribute("userNotFound", "userNotFound");
 				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
 				forward("error.jsp", request, response);
 			}
 		}
 		
-		Applicant applicant = (Applicant)request.getAttribute("applicant");
+		String password = request.getParameter("password");
+		if (applicant.getPassword().equals(password)) {
+			request.setAttribute("applicant", applicant);
+			forward("delete_applicant.jsp", request, response);
+		} else {
+			request.setAttribute("passwordNotFound", "passwordNotFound");
+			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+			forward("error.jsp", request, response);
+		}
+	}
+	
+	
+	private void deleteApplicant(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		String applicantLogin = request.getParameter("applicantLogin");
+
 		try {
+			Applicant applicant = aplcntDao.getApplicantByLogin(applicantLogin);
 			aplcntDao.deleteApplicant(applicant);
 			request.setAttribute("successApplicantDeleteOperation", "successApplicantDeleteOperation");
 			forward("applicant_success_operation.jsp", request, response);
 		} catch (PersistException e) {
 			request.setAttribute("notSuccessApplicantDeleteOperation", "notSuccessApplicantDeleteOperation");
-			forward("error.jsp", request, response);
+			forward("error.jsp", request, response);	
 		}
-		
 	}
 	
 	private boolean isCorrectRegistrationData(String login, String password,
@@ -238,12 +263,11 @@ public class ApplicantServlet extends HttpServlet {
 		boolean condition = true;
 		
 		if (request.getParameter("changePassword") == null) {
-			List<Applicant> applicants = new ArrayList<Applicant>();;
+			List<Applicant> applicants = null;
 			try {
 				applicants = aplcntDao.getAllApplicants();
-				
 			} catch (PersistException e1) {
-				condition = true;
+				
 			}
 
 			for (Applicant searchedApplicant : applicants) {

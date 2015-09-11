@@ -11,16 +11,9 @@
 	<h1>Подтвердить удаление</h1>
 	<hr />
 	<form action="applicantServlet" method="post">
-		<table>
-			<tr>
-				<td colspan="2">Удалить соискателя: <c:out value="${applicant.name}" /></td>
-			</tr>
-			<tr>
-				<td><input type="submit" name="confirmDelete" value="OK"></td>
-				<td><input type="submit" name="cancel" value="ОТМЕНА"></td>
-			</tr>
-		</table>
-		<c:param name="applicant" value="${applicant}" />
+		Удалить соискателя: <c:out value="${applicant.name}" /><input type="hidden" name="applicantLogin" value="${applicant.login}"/>
+		<input type="submit" name="confirmDelete" value="OK">
+		<input type="submit" name="cancel" value="ОТМЕНА">
 	</form>
 </body>
 </html>

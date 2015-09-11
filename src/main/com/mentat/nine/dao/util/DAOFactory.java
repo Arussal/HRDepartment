@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import main.com.mentat.nine.dao.ApplicantDAO;
 import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.CandidateDAO;
@@ -132,6 +133,10 @@ public class DAOFactory {
 
 	public ManagerDAO getManagerDAO() throws PersistException {
 		return new ManagerDAO();
+	}
+	
+	public ApplicantDAO getApplicantDAO() throws PersistException {
+		return new ApplicantDAO();
 	}
 
 }

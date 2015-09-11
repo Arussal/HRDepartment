@@ -203,12 +203,11 @@ public class ApplicantDAO {
 		
 		Connection connection = null;
 		Statement statement = null;
-		ResultSet rs = null;
-		String deleteSql = getDeleteQuery();
+		String deleteSql = getDeleteQuery() + " WHERE login = '" + applicant.getLogin() + "'";
 		
-		try {
+		try { 							
 			connection = daoFactory.createConnection();
-			statement = connection.prepareStatement(deleteSql);
+			statement = connection.createStatement();
 			int count = statement.executeUpdate(deleteSql);
 			if (1 != count) {
 				log.error("Deleted " + count + " Applicant entries");
@@ -218,7 +217,8 @@ public class ApplicantDAO {
 			log.error("can't delete Applicant entry");
 			throw new PersistException("can't delete Applicant entry");
 		} finally {
-			Closer.close(rs, statement, connection);
+			Closer.closeStatement(statement);
+			Closer.closeConnection(connection);
 		}
 	}
 	
@@ -268,7 +268,7 @@ public class ApplicantDAO {
 	
 	
 	public String getDeleteQuery() {
-		return "DELETE * FROM applicant";
+		return "DELETE FROM applicant";
 	}
 	
 

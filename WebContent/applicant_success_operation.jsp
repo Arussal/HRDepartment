@@ -9,7 +9,7 @@
 </head>
 <body>
 	<c:if test="${not empty successApplicantRegistration}">
-		<h1>Регистрация успешно выполнена</h1>
+	<h1>Регистрация успешно выполнена</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
 		<a href="applicant_login.jsp">Войти в систему</a>
@@ -25,5 +25,6 @@
 		<hr />
 		<a href="main.jsp">Войти из раздела</a>
 	</c:if>
+
 </body>
 </html>

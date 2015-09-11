@@ -231,7 +231,10 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		List<String> wrongFields = new ArrayList<String>();
 		for (String data : map.keySet()) {
 			try {
-				Integer.parseInt(map.get(data));
+				int value = Integer.parseInt(map.get(data));
+				if (value < 0) {
+					wrongFields.add(data);	
+				}
 			} catch (NumberFormatException e){
 				wrongFields.add(data);
 			}
