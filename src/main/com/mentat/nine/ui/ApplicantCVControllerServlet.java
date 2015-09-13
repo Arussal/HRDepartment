@@ -41,7 +41,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private static Logger log = Logger.getLogger(ApplicantCVControllerServlet.class);
     
 	private CVFormApplicantDAO cvApplicantDao;
-
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -74,7 +73,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		int action = checkActiion(request);
 		if (1 == action) {
-			forward("applicant_createCV.jsp", request, response);
+			forward(WebPath.APPLICANT_CREATE_CV_JSP, request, response);
 		} else if (2 == action) {
 			createNewCV(request, response);
 		} else if (3 == action) {
@@ -121,13 +120,15 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
 	}
 	
 
 	private void editCV(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		
+		WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_BASE_PAGE);
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
 		
@@ -278,12 +279,13 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				newCV.setDesiredSalary(parsedSalary);
 				
 			} else {
-				request.setAttribute("wrongFields", "wrongFields");
+				WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_CREATE_CV);
+				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			
-			request.setAttribute("emptyFields", "emptyFields");
+			WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_CREATE_CV);
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
@@ -311,15 +313,16 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private boolean isEmptyFields(HttpServletRequest request) {
 		
 		Map<String, String[]> parameters = request.getParameterMap();
-		List<String> emptyParameters = new ArrayList<String>();
+		List<String> emptyFieldsList = new ArrayList<String>();
 		for (String key : parameters.keySet()) {
 			String val = request.getParameter(key);
 			if (val.equals("")) {
-				emptyParameters.add(key);
+				emptyFieldsList.add(key);
 			}
 		}
-		if (emptyParameters.size() > 0) {
-			request.setAttribute("emptyFields", emptyParameters);
+		if (emptyFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request,  WebAttributes.EMPTY_FIELDS_LIST);
+			request.setAttribute("emptyFieldsList", emptyFieldsList);
 			return true;
 		}
 		return false;
@@ -328,20 +331,21 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
 	private boolean isWrongDataFields(Map<String, String> map, HttpServletRequest request) {
 		
-		List<String> wrongFields = new ArrayList<String>();
+		List<String> wrongFieldsList = new ArrayList<String>();
 		for (String data : map.keySet()) {
 			try {
 				int value = Integer.parseInt(map.get(data));
 				if (value < 0) {
-					wrongFields.add(data);	
+					wrongFieldsList.add(data);	
 				}
 			} catch (NumberFormatException e){
-				wrongFields.add(data);
+				wrongFieldsList.add(data);
 			}
 		}
 		
-		if (wrongFields.size() > 0) {
-			request.setAttribute("wrongFields", wrongFields);
+		if (wrongFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA_FIELDS_LIST);
+			request.setAttribute("wrongFieldsList", wrongFieldsList);
 			return true;
 		}
 		return false;
@@ -351,7 +355,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException {
 		if (0 == idList.size()) {
-			request.setAttribute("nothingSelectedError", "nothingSelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -360,8 +364,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException {
 		if (idList.size() > 1) {
-			request.setAttribute("selectedCount", idList.size());
-			request.setAttribute("tooManySelectedError", "tooManySelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.TOO_MANY_ITEMS_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}

@@ -10,31 +10,44 @@
 <body>
 	<h1>Ошибка!</h1>
 	<hr />
-	<c:if test="${not empty wrongData}">
-	Ошибка ввода данных:<br /><br />
-		<c:forEach var="item" items="${emptyFields}">
-		Пустое поле - <c:out value="${item}" /><br />
-		</c:forEach>
-		<c:forEach var="item" items="${wrongFields}">
-		Неправильный формат данных в поле - <c:out value="${item}" /><br />
-		</c:forEach>
+	<c:if test="${not empty WRONG_DATA}">
+		<c:if test="${not empty EMPTY_FIELDS_LIST}">
+			<c:forEach var="item" items="${emptyFieldsList}">
+			Пустое поле - <c:out value="${item}" /><br />
+			</c:forEach>
+		</c:if>
+		<c:if test="${not empty WRONG_DATA_FIELDS_LIST}">
+			<c:forEach var="item" items="${wrongFieldsList}">
+			Неправильный формат данных в поле - <c:out value="${item}" /><br />
+			</c:forEach>
+		</c:if>
 	</c:if>
 	
-	<c:if test="${not empty nothingSelectedError}">
-	Ошибка ввода данных: выбрано 0 записей для редактирования<br />
-	Надо же выбрать что-то одно<br /><br />
-	<a href="applicationBaseServlet">Назад</a>
-	</c:if>
-	<c:if test="${not empty tooManySelectedError}">
-	Ошибка ввода данных: выбрано записей для редактирования - <c:out value="${selectedCount}" /><br />
-	Надо же выбрать что-то одно<br /><br />
-	<a href="applicationBaseServlet">Назад</a>
+	<c:if test="${not empty NO_ONE_ITEM_SELECTED}">
+		Ошибка ввода данных: выбрано 0 записей для редактирования<br />
+		Надо же выбрать хоть что-то<br /><br />
 	</c:if>
 	
+	<c:if test="${not empty TOO_MANY_ITEMS_SELECTED}">
+		Ошибка ввода данных: выбрано слишком много записей для редактирования<br />
+		Надо же выбрать что-то одно<br /><br />
+	</c:if>
+	
+	<c:if test="${not empty APPLICANT_BASE_PAGE_SERVLET}">
+		<a href="${APPLICANT_BASE_PAGE_SERVLET}">Назад</a>
+	</c:if>
+	
+	<c:if test="${not empty APPLICANT_CREATE_CV}">
+		<a href="${APPLICANT_CREATE_CV}">Назад</a>
+	</c:if>
+	
+	
+	
+	<!-- 
 	<c:if test="${not empty noOneCVToDelete}">
 	Ошибка ввода данных: выбрано 0 записей для удаления<br />
 	Надо же выбрать хоть что-то<br /><br />
-	<a href="cvformBaseServlet">Назад</a>
+	
 	</c:if>
 	
 	<c:if test="${not empty noOneCandidateToDelete}">
@@ -75,7 +88,6 @@
 	</c:if>
 	
 	
-	<!-- block for registration -->
 		
 	<c:if test="${not empty emptyLoginFields}">
 		Пустое поля логина/пароля/повторного пароля! Введите все данные<br />	
@@ -148,7 +160,7 @@
 	</c:if>
 		
 	
-	
+	 -->
 	
 </body>
 </html>

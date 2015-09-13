@@ -22,8 +22,8 @@ public class WebPath {
 	public static final String APPLICANT_MAIN_JSP = "applicant.jsp";
 	public static final String APPLICANT_LOGIN_JSP = "applicant_login.jsp";
 	public static final String APPLICANT_REGISTRATE_JSP = "applicant_registration.jsp";
-	public static final String APPLICANT_CREATE_CV_JSP = "main.jsp";
-	public static final String APPLICANT_EDIT_CV_JSP = "main.jsp";
+	public static final String APPLICANT_CREATE_CV_JSP = "applicant_createCV.jsp";
+	public static final String APPLICANT_EDIT_CV_JSP = "applicant_editCV.jsp";
 	public static final String APPLICANT_CHANGE_PASSWORD_JSP = "changeApplicantManager.jsp";
 	public static final String APPLICANT_SUCCESS_JSP = "applicant_success_operation.jsp";
 	public static final String APPLICANT_DELETE_JSP = "delete_applicant.jsp";
