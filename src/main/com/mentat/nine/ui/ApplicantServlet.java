@@ -124,7 +124,7 @@ public class ApplicantServlet extends HttpServlet {
 
 		String password = request.getParameter("password");
 		if (applicant.getPassword().equals(password)) {
-			HttpSession currentSession = request.getSession(true);
+			HttpSession currentSession = request.getSession(false);
 			currentSession.setAttribute("applicant", applicant);
 			goToMainPage(request, response);
 		} else {

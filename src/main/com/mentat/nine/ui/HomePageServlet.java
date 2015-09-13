@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.ui.util.WebPath;
 
@@ -28,7 +29,7 @@ public class HomePageServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		performTask(request, response);
+		performTask(request, response);	
 	}
 
 	/**
@@ -40,6 +41,8 @@ public class HomePageServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		HttpSession session = request.getSession(true);
+		WebPath.loadPathValues(session);
 		request.getRequestDispatcher(WebPath.HOME_PAGE_JSP).forward(request, response);
 	}
 }

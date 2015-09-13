@@ -193,11 +193,12 @@ public class ManagerDAO {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		String deleteSql = getDeleteQuery();
+		String deleteSql = getDeleteQuery() + " WHERE login = '" + manager.getLogin() + "'";
+		System.out.println(deleteSql);
 		
 		try {
 			connection = daoFactory.createConnection();
-			statement = connection.prepareStatement(deleteSql);
+			statement = connection.createStatement();
 			int count = statement.executeUpdate(deleteSql);
 			if (1 != count) {
 				log.error("Deleted " + count + " Manager entries");
@@ -254,7 +255,7 @@ public class ManagerDAO {
 	
 	
 	public String getDeleteQuery() {
-		return "DELETE * FROM manager";
+		return "DELETE FROM manager";
 	}
 	
 

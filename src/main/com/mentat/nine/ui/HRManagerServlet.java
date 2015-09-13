@@ -81,8 +81,14 @@ public class HRManagerServlet extends HttpServlet {
 			changePassword(request, response);
 		} else if (3 == action) {
 			deleteManager(request, response);
-		} else {
+		} else if (4 == action) {
+			confirmDeleteManager(request, response);
+		} else if (5 == action) {
+			forward(WebPath.MANAGER_REGISTRATE_JSP, request, response);
+		} else if (6 == action) {
 			registrate(request, response);
+		} else {
+			forward(WebPath.MANAGER_LOGIN_JSP, request, response);
 		}
 	}
 
@@ -93,6 +99,14 @@ public class HRManagerServlet extends HttpServlet {
 			return 1;
 		} else if (request.getParameter("changePassword") != null) {
 			return 2;
+		} else if (request.getParameter("delete") != null) {
+			return 3;
+		} else if (request.getParameter("confirmDelete") != null) {
+			return 4;
+		} else if (request.getParameter("registration") != null) {
+			return 5;
+		} else if (request.getParameter("completeRegistration") != null) {
+			return 6;
 		}
 		return 0;
 	}
@@ -127,11 +141,7 @@ public class HRManagerServlet extends HttpServlet {
 	
 	private void registrate(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		 
-		if (request.getParameter("registration")!= null) {
-			forward(WebPath.MANAGER_REGISTRATE_JSP, request, response);
-		}
-				
+		 				
 		String login = request.getParameter("login");
 		String password = request.getParameter("password");
 		String confirmedPassword = request.getParameter("confirmPassword");
@@ -248,7 +258,6 @@ public class HRManagerServlet extends HttpServlet {
 	private void deleteManager(HttpServletRequest request, HttpServletResponse response)
 		throws ServletException, IOException {
 			
-	if (request.getParameter("delete") != null) {
 		String login = request.getParameter("login");
 		
 		Manager manager = null;
@@ -274,18 +283,21 @@ public class HRManagerServlet extends HttpServlet {
 		}
 	}
 	
-	Manager manager = (Manager)request.getAttribute("manager");
-	try {
-		mngrDao.deleteManager(manager);
-		request.setAttribute("successManagerDeleteOperation", "successManagerDeleteOperation");
-		forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
-	} catch (PersistException e) {
-		request.setAttribute("notSuccessManagerDeleteOperation", "notSuccessManagerDeleteOperation");
-		forward(WebPath.ERROR_JSP, request, response);
+	
+	private void confirmDeleteManager(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		String managerLogin = request.getParameter("login");
+			try {
+				Manager manager = mngrDao.getManagerByLogin(managerLogin);
+				mngrDao.deleteManager(manager);
+				request.setAttribute("successManagerDeleteOperation", "successManagerDeleteOperation");
+				forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
+			} catch (PersistException e) {
+				request.setAttribute("notSuccessManagerDeleteOperation", "notSuccessManagerDeleteOperation");
+				forward(WebPath.ERROR_JSP, request, response);
+			}
 	}
-	
-}
-	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
