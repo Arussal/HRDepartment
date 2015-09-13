@@ -11,7 +11,7 @@
 	<h1>Кандидаты</h1>
 	<hr />
 	<br />
-	<form action="candidateControllerServlet" method="post">
+	<form action="${CANDIDATE_CONTROLLER_SERVLET}" method="post">
 		Поиск кандидата по критерию:
 		<table>
 			<tr>
@@ -84,14 +84,15 @@
 		</table>
 		<input type="submit" name="findCandidate" value="Найти"><br /><br />
 	</form>
-	<form action="applicationBaseServlet" method="post">
+	
+	<form action="${APPLICATION_BASE_PAGE_SERVLET}" method="post">
 		<input type="submit" name="findNewCandidate" value="Найти нового кандидата">
 	</form>
 	<br />
 	<hr />
 	<br />
 	
-	<form action="candidateControllerServlet" method="post">
+	<form action="${CANDIDATE_CONTROLLER_SERVLET}" method="post">
 		<input type="submit" name="showAllCandidates" value="Показать все" />
 		<input type="submit" name="deleteCandidate" value="Удалить" />
 		<input type="submit" name="hireEmployee" value="Оформить в штат" />
@@ -128,6 +129,6 @@
 	</form>
 	<br />
 	<br />
-	<a href="hrdepartment.jsp">На главную</a>
+	<a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

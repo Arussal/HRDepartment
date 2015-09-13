@@ -11,7 +11,7 @@
 	<h1>Мои резюме</h1>
 	<hr />
 	
-	<form action="applicantCVControllerServlet" method="post">
+	<form action="${APPLICANT_CONTROLLER_SERVLET}" method="post">
 			<input type="submit" name="createCV" value="Создать" />
 			<input type="submit" name="editCV" value="Редактировать" />
 			<input type="submit" name="deleteCV" value="Удалить" />
@@ -52,6 +52,6 @@
 	</form>
 
 	<br />	
-	<a href="main.jsp">Выйти из раздела</a>
+	<a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
 </body>
 </html>

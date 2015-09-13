@@ -11,7 +11,7 @@
 <h1>Редактировать резюме</h1>
 	<hr/>
 
-	<form action="applicantCVControllerServlet" method="post">
+	<form action="${APPLICANT_CONTROLLER_SERVLET}" method="post">
 	<input type="hidden" name="id"  value="${cv.id}"/>
 	<table>
 			<tr>
@@ -53,6 +53,6 @@
 	<input type="submit" name="saveChanges" value="Сохранить" />
 	</form>
 	<br />
-	<a href="applicantServlet">Назад</a>  <a href="main.jsp">Выйти из системы</a>
+	<a href="${APPLICANT_BASE_PAGE_SERVLET}">Назад</a>  <a href="${HOME_PAGE_JSP}">Выйти из системы</a>
 </body>
 </html>

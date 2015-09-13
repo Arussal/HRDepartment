@@ -9,7 +9,7 @@
 <body>
 	<h1>Вход в раздел</h1>
 	<hr />
-	<form action="hrManagerServlet" method="post">
+	<form action="${HR_MANAGER_SERVLET}" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>
@@ -25,7 +25,7 @@
 				<td><input type="submit" name="delete" value="Удалить менеджера"></td>
 			</tr>
 		</table>
-		<a href="changePasswordManager.jsp">Сменить пароль</a>
+		<a href="${MANAGER_CHANGE_PASSWORD_JSP}">Сменить пароль</a>
 	</form>
 	<br />
 	<a href="main.jsp">Назад</a>

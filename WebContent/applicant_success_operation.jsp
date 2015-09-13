@@ -12,18 +12,18 @@
 	<h1>Регистрация успешно выполнена</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
-		<a href="applicant_login.jsp">Войти в систему</a>
+		<a href="${APPLICANT_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
 	<c:if test="${not empty successChangePassword}">
 		<h1>Смена пароля успешно выполнено</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
-		<a href="applicant_login.jsp">Войти в систему</a>
+		<a href="${APPLICANT_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
 	<c:if test="${not empty successApplicantDeleteOperation}">
 		<h1>Соискатель успешно удален</h1>
 		<hr />
-		<a href="main.jsp">Войти из раздела</a>
+		<a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
 	</c:if>
 
 </body>

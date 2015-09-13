@@ -10,17 +10,15 @@
 <body>
 	<h1>Подтвердить удаление</h1>
 	<hr />
-	<form action="hrManager" method="post">
+	<form action="${HR_MANAGER_SERVLET}" method="post">
+	<input type="hidden" name="login" value="${manager.login}" />
 		<table>
 			<tr>
 				<td colspan="2">Удалить менеджера: <c:out value="${manager.login}" /></td>
 			</tr>
-			<tr>
-				<td><input type="submit" name="confirmDelete" value="OK"></td>
-				<td><input type="submit" name="cancel" value="ОТМЕНА"></td>
-			</tr>
 		</table>
-		<c:param name="manager" value="${manager}" />
+		<input type="submit" name="confirmDelete" value="OK" />
+		<input type="submit" name="cancel" value="ОТМЕНА" />
 	</form>
 </body>
 </html>

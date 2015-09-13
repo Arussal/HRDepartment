@@ -11,7 +11,7 @@
 <h1>Редактировать вакансию</h1>
 	<hr/>
 
-	<form action="appControllerServlet" method="post">
+	<form action="${APPLICATION_CONTROLLER_SERVLET}" method="post">
 	<input type="hidden" name="id"  value="${app.id}"/>
 	<table>
 		<tr>
@@ -64,6 +64,6 @@
 	</table>
 	</form>
 	<br />
-	<a href="applicationBaseServlet">Назад</a>  <a href="hrdepartment.jsp">На главную</a>
+	<a href="${APPLICATION_BASE_PAGE_SERVLET}">Назад</a>  <a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

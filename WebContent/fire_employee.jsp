@@ -10,7 +10,7 @@
 <body>
 	<h1>Уволить сотрудника</h1>
 	<hr />
-	<form action="employeeControllerServlet" method="post">
+	<form action="${EMPLOYEE_CONTROLLER_SERVLET}" method="post">
 		<table>
 		<tr>
 			<td>Задать дату увольнения:</td>
@@ -81,6 +81,6 @@
 	</form>
 	<br />
 	<br />
-	<a href="employeeBaseServlet">Назад</a> <a href="hrdepartment.jsp">На главную</a>
+	<a href="${EMPLOYEE_BASE_PAGE_SERVLET}">Назад</a> <a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

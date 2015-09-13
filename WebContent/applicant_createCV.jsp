@@ -9,7 +9,7 @@
 <body>
 	<h1>Создать новое резюме</h1>
 	<hr/>
-	<form action="applicantCVControllerServlet" method="post">
+	<form action="${APPLICANT_CONTROLLER_SERVLET}" method="post">
 		<table>
 			<tr>
 				<td>Возраст</td>

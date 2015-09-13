@@ -10,7 +10,7 @@
 <body>
 	<h1>Оформить кандидата в штат</h1>
 	<hr/>
-	<form action="/candidateControllerServlet" method="post">
+	<form action="${CANDIDATE_CONTROLLER_SERVLET}" method="post">
 	<table>
 		<tr>
 			<td>Отдел</td>
@@ -51,6 +51,6 @@
 	</form>
 	<br />
 	<br />
-	<a href="employeeBaseServlet">Назад</a> <a href="hrdepartment.jsp">На главную</a>
+	<a href="${EMPLOYEE_BASE_PAGE_SERVLET}">Назад</a> <a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

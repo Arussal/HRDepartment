@@ -9,7 +9,7 @@
 <body>
 	<h1>Смена пароля</h1>
 	<hr/>
-	<form action="applicantServlet" method="post">
+	<form action="${APPLICANT_BASE_PAGE_SERVLET}" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>
@@ -33,6 +33,6 @@
 		</table>
 	</form>
 	<br />
-	<a href="applicant_login.jsp">Назад</a> <a href="main.jsp">Выйти из раздела</a>
+	<a href="${APPLICANT_LOGIN_JSP}">Назад</a> <a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
 </body>
 </html>

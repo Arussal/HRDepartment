@@ -11,7 +11,7 @@
 	<h1>Вакансии</h1>
 	<hr />
 	
-	<form action="appControllerServlet" method="post">
+	<form action="${APPLICATION_CONTROLLER_SERVLET}" method="post">
 			<input type="submit" name="createApp" value="Создать" />
 			<input type="submit" name="editApp" value="Редактировать" />
 			<input type="submit" name="deleteApp" value="Удалить" />
@@ -48,6 +48,6 @@
 	</form>
 
 	<br />	
-	<a href="hrdepartment.jsp">На главную</a>
+	<a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

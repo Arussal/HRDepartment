@@ -15,7 +15,7 @@
 		Сотрудник: <c:out value="${emp.name}" />
 	</h2>
 	<br/>
-	<form action="employeeControllerServlet" method="post">
+	<form action="${EMPLOYEE_CONTROLLER_SERVLET}" method="post">
 		<table>
 		<tr>
 			<td>Возраст, лет:</td>
@@ -105,6 +105,6 @@
 	</table>
 	</form>
 	<br />
-	<a href="employeeBaseServlet">Назад</a>  <a href="hrdepartment.jsp">На главную</a>
+	<a href="${EMPLOYEE_BASE_PAGE_SERVLET}">Назад</a>  <a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

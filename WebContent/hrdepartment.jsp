@@ -18,7 +18,7 @@
 		<br/>
 		<br/>
 		<br/>
-		<a href="main.jsp">Выйти из раздела</a>
+		<a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
 	</div>
 </body>
 </html>

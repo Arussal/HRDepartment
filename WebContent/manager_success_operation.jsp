@@ -12,18 +12,18 @@
 		<h1>Регистрация успешно выполнена</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
-		<a href="hrdepartment_login.jsp">Войти в систему</a>
+		<a href="${MANAGER_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
 	<c:if test="${not empty successChangePassword}">
 		<h1>Смена пароля успешно выполнено</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
-		<a href="hrdepartment_login.jsp">Войти в систему</a>
+		<a href="${MANAGER_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
 	<c:if test="${not empty successManagerDeleteOperation}">
 		<h1>Менеджер успешно удален</h1>
 		<hr />
-		<a href="main.jsp">Войти из раздела</a>
+		<a href="${HOME_PAGE_JSP}">Войти из раздела</a>
 	</c:if>
 </body>
 </html>

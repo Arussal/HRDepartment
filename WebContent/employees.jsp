@@ -10,7 +10,7 @@
 <body>
 	<h1>Сотрудники</h1>
 	<hr />
-	<form action="employeeControllerServlet" method="post">
+	<form action="${EMPLOYEE_CONTROLLER_SERVLET}" method="post">
 		Поиск сотрудника по критерию:
 		<table>
 			<tr>
@@ -148,7 +148,7 @@
 	<br />
 	<hr />
 	<br />
-	<form action="employeeControllerServlet" method="post">
+	<form action="${EMPLOYEE_CONTROLLER_SERVLET}" method="post">
 		<input type="submit" name="showAllEmployees" value="Показать все" />
 		<input type="submit" name="editEmployee" value="Редактировать" />
 		<input type="submit" name="fireEmployee" value="Уволить из штата" />
@@ -193,6 +193,6 @@
 			</c:forEach>
 		</table>
 	</form>
-	<a href="hrdepartment.jsp">На главную</a>
+	<a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

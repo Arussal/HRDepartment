@@ -11,7 +11,7 @@
 	<h1>Новая вакансия</h1>
 	<hr/>
 
-	<form action="appControllerServlet" method="post">
+	<form action="${APPLICATION_CONTROLLER_SERVLET}" method="post">
 	<table>
 		<tr>
 			<td>Дата:</td>
@@ -63,6 +63,6 @@
 	</table>
 	</form>
 	<br />
-	<a href="applicationsServlet">Назад</a> <a href="hrdepartment.jsp">На главную</a>
+	<a href="${APPLICATION_BASE_PAGE_SERVLET}">Назад</a> <a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

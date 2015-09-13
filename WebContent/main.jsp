@@ -7,7 +7,7 @@
 <title>Home Page - HRDepartment</title>
 </head>
 <body>
-	<h2><a href="hrdepartment_login.jsp">Раздел менеджера по кадрам</a></h2>
-	<h2><a href="applicant_login.jsp">Раздел соискателя</a></h2>
+	<h2><a href="${MANAGER_LOGIN_JSP}">Раздел менеджера по кадрам</a></h2>
+	<h2><a href="${APPLICANT_LOGIN_JSP}">Раздел соискателя</a></h2>
 </body>
 </html>

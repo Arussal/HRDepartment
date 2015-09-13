@@ -11,7 +11,7 @@
 	<h1>Новые кандидаты</h1>
 	<hr/>
 
-	<form action="appControllerServlet" method="post">
+	<form action="${APPLICATION_CONTROLLER_SERVLET}" method="post">
 			<input type="submit" name="createApp" value="Создать" />
 			<input type="submit" name="editApp" value="Редактировать" />
 			<input type="submit" name="deleteApp" value="Удалить" />
@@ -42,7 +42,8 @@
 		</table>
 	</form>
 	
-	<a href="applications.jsp">Назад</a> <a href="candidateBaseServlet">Перейти в раздел кандидатов</a> 
-	<a href="hrdepartment.jsp">На главную</a>
+	<a href="${APPLICATION_BASE_PAGE_SERVLET}">Назад</a> 
+	<a href="${CANDIDATE_BASE_PAGE_SERVLET}">Перейти в раздел кандидатов</a> 
+	<a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

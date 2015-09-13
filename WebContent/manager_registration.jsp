@@ -9,7 +9,7 @@
 <body>
 	<h1>Регистрация нового менеджера</h1>
 	<hr/>
-	<form action="hrManagerServlet" method="post">
+	<form action="${HR_MANAGER_SERVLET}" method="post">
 		<table>
 			<tr>
 				<td>Логин (6-10 смволов)</td>
@@ -29,6 +29,6 @@
 		</table>
 	</form>
 	<br />
-	<a href="hrdepartment_login.jsp">Назад</a> <a href="main.jsp">Выйти из раздела</a>
+	<a href="${MANAGER_LOGIN_JSP}">Назад</a> <a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
 </body>
 </html>

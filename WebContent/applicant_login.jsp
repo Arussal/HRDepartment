@@ -9,7 +9,7 @@
 <body>
 	<h1>Вход в раздел</h1>
 	<hr />
-	<form action="applicantServlet" method="post">
+	<form action="${APPLICANT_BASE_PAGE_SERVLET}" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>
@@ -25,7 +25,7 @@
 				<td><input type="submit" name="delete" value="Удалить соискателя"></td>
 			</tr>
 		</table>
-		<a href="changeApplicantManager.jsp">Сменить пароль</a>
+		<a href="${APPLICANT_CHANGE_PASSWORD_JSP}">Сменить пароль</a>
 	</form>
 </body>
 </html>

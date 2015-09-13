@@ -11,7 +11,7 @@
 	<h1>Резюме</h1>
 	<hr />
 	<br />
-	<form action="cvformControllerServlet" method="post">
+	<form action="${CVFORM_CONTROLLER_SERVLET}" method="post">
 		Поиск резюме по критерию:
 		<table>
 			<tr>
@@ -88,7 +88,7 @@
 	<hr />
 	<br />
 	
-	<form action="cvformControllerServlet" method="post">
+	<form action="${CVFORM_CONTROLLER_SERVLET}" method="post">
 		<input type="submit" name="showAllCV" value="Показать все" />
 		<input type="submit" name="deleteCV" value="Удалить отмеченные" />
 		<br />
@@ -128,6 +128,6 @@
 	</form>
 	<br />
 	<br />
-	<a href="hrdepartment.jsp">На главную</a>
+	<a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>
