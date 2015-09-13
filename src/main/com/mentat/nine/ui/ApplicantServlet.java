@@ -13,10 +13,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.ApplicantDAO;
+import main.com.mentat.nine.dao.CVFormApplicantDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Applicant;
+import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.*;
 
 /**
  * Servlet implementation class ApplicantServlet
@@ -31,6 +34,7 @@ public class ApplicantServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private ApplicantDAO aplcntDao;
+	private CVFormApplicantDAO cvAplcntDao;
        
     /**
      * @throws PersistException 
@@ -40,6 +44,7 @@ public class ApplicantServlet extends HttpServlet {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
         aplcntDao = daoFactory.getApplicantDAO();
+        cvAplcntDao = daoFactory.getCVFormApplicantDAO();
     }
 
 	/**
@@ -60,6 +65,7 @@ public class ApplicantServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request); 
 		if (1 == action) {
@@ -75,7 +81,7 @@ public class ApplicantServlet extends HttpServlet {
 		} else if (6 == action) {
 			registrate(request, response);
 		} else {
-			forward("applicant_login.jsp", request, response);
+			goToMainPage(request, response);
 		}
 	}	
 
@@ -111,7 +117,7 @@ public class ApplicantServlet extends HttpServlet {
 				log.error("applicant with login " + login + " not found");
 				request.setAttribute("userNotFound", "userNotFound");
 				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
 		
@@ -120,11 +126,11 @@ public class ApplicantServlet extends HttpServlet {
 		if (applicant.getPassword().equals(password)) {
 			HttpSession currentSession = request.getSession(true);
 			currentSession.setAttribute("applicant", applicant);
-			forward("applicant.jsp", request, response);
+			goToMainPage(request, response);
 		} else {
 			request.setAttribute("passwordNotFound", "passwordNotFound");
 			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
@@ -144,7 +150,7 @@ public class ApplicantServlet extends HttpServlet {
 			if (null == applicant) {
 				log.error("applicant with login " + login + " not found");
 				request.setAttribute("userNotFound", "userNotFound");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
 		
@@ -155,19 +161,19 @@ public class ApplicantServlet extends HttpServlet {
 				try {
 					aplcntDao.updateApplicant(applicant);
 					request.setAttribute("successChangePassword", "successChangePassword");
-					forward("applicant_success_operation.jsp", request, response);
+					forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 				} catch (PersistException e) {
 					request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-					forward("error.jsp", request, response);
+					forward(WebPath.ERROR_JSP, request, response);
 				}
 			} else {
 				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
 			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
 			request.setAttribute("passwordNotFound", "passwordNotFound");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
 	}
@@ -191,24 +197,40 @@ public class ApplicantServlet extends HttpServlet {
 			applicant.setPassword(password);
 			applicant.setName(surname + " " + firstName + " " + secondName);
 			try {
-				aplcntDao.createApplicant(applicant);
+				applicant = aplcntDao.createApplicant(applicant);
 			} catch (PersistException e) {
 				request.setAttribute("notSuccessApplicantCreateOperation", "notSuccessApplicantCreateOperation");
-				forward("error.jsp", request, response);	
+				forward(WebPath.ERROR_JSP, request, response);	
 			}
 			request.setAttribute("successApplicantRegistration", "successApplicantRegistration");
-			forward("applicant_success_operation.jsp", request, response);
+			forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 		} else {
 			request.setAttribute("notSuccessApplicantRegistration", "notSuccessApplicantRegistration");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}	
+	
+	
+	private void goToMainPage(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		HttpSession session = request.getSession(false);
+		Applicant applicant = (Applicant) session.getAttribute("applicant");
+		try {
+			List<CVForm> cvList = cvAplcntDao.getCVFormByName(applicant.getName());
+			request.setAttribute("cvList", cvList);
+		} catch (PersistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		forward(WebPath.APPLICANT_MAIN_JSP, request, response);
+	}
 	
 	
 	private void goToRegistrationForm(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-			forward("applicant_registration.jsp", request, response);
+			forward(WebPath.APPLICANT_REGISTRATE_JSP, request, response);
 	}
 
 	
@@ -225,18 +247,18 @@ public class ApplicantServlet extends HttpServlet {
 				log.error("applicant with login " + login + " not found");
 				request.setAttribute("userNotFound", "userNotFound");
 				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
 		
 		String password = request.getParameter("password");
 		if (applicant.getPassword().equals(password)) {
 			request.setAttribute("applicant", applicant);
-			forward("delete_applicant.jsp", request, response);
+			forward(WebPath.APPLICANT_DELETE_JSP, request, response);
 		} else {
 			request.setAttribute("passwordNotFound", "passwordNotFound");
 			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
@@ -250,10 +272,10 @@ public class ApplicantServlet extends HttpServlet {
 			Applicant applicant = aplcntDao.getApplicantByLogin(applicantLogin);
 			aplcntDao.deleteApplicant(applicant);
 			request.setAttribute("successApplicantDeleteOperation", "successApplicantDeleteOperation");
-			forward("applicant_success_operation.jsp", request, response);
+			forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 		} catch (PersistException e) {
 			request.setAttribute("notSuccessApplicantDeleteOperation", "notSuccessApplicantDeleteOperation");
-			forward("error.jsp", request, response);	
+			forward(WebPath.ERROR_JSP, request, response);	
 		}
 	}
 	

@@ -367,7 +367,6 @@ public class EmployeeDAO {
 			Closer.closeStatement(pStatement);
 			Closer.closeConnection(connection);
 		}
-		
 	}
 	
 	public void deleteEmployee(Employee employee) throws PersistException {

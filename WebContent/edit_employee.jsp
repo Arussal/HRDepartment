@@ -47,13 +47,45 @@
 			<td>Опыт работы, лет:</td>
 			<td><input type="text" name="expirience" value="${emp.workExpirience}"/></td>
 		</tr>
-		<tr>        
-			<td>Дата оформления (гггг-мм-дд):</td>
-			<td><input type="text" name="hireDate" value="${emp.hireDate}"/></td>
+		<tr>
+			<td>Дата оформления:</td>
+			<td>
+				<select name="yearHire">
+					<c:forEach var="item" items="${years}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+				<select name="monthHire">
+					<c:forEach var="item" items="${months}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+				<select name="dayHire">
+					<c:forEach var="item" items="${days}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+			</td>
 		</tr>
-		<tr>        
-			<td>Дата увольнения (гггг-мм-дд):</td>
-			<td><input type="text" name="fireDate" value="${emp.fireDate}"/></td>
+		<tr>
+			<td>Дата увольнения:</td>
+			<td>
+				<select name="yearFire">
+					<c:forEach var="item" items="${years}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+				<select name="monthFire">
+					<c:forEach var="item" items="${months}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+				<select name="dayFire">
+					<c:forEach var="item" items="${days}">
+						<option><c:out value="${item}" /></option>
+					</c:forEach>
+				</select>
+			</td>
 		</tr>
 		<tr>
 			<td>E-mail:</td>
@@ -68,7 +100,7 @@
 			<td><input type="text" name="skills" value="${emp.skills}"/></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" name="edit" value="Сохранить"></td>
+			<td colspan="2"><input type="submit" name="saveEmployeeChanges" value="Сохранить"></td>
 		</tr>
 	</table>
 	</form>

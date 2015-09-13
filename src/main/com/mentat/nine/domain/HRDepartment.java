@@ -48,12 +48,28 @@ public class HRDepartment extends Department implements HRManager{
 	}
 	private static Logger log = Logger.getLogger(HRDepartment.class);
 	
-	public HRDepartment() throws PersistException {
+	public HRDepartment()  {
 		daoFactory = DAOFactory.getFactory();
-		appDao = daoFactory.getApplicationFormDAO();
-		candDao = daoFactory.getCandidateDAO();
-		cvDao = daoFactory.getCVFormDAO();
-		empDao = daoFactory.getEmployeeDAO();
+		try {
+			appDao = daoFactory.getApplicationFormDAO();
+		} catch (PersistException e) {
+			log.error("cant get ApplicationFormDAO");
+		}
+		try {
+			candDao = daoFactory.getCandidateDAO();
+		} catch (PersistException e) {
+			log.error("cant get CandidateDAO");
+		}
+		try {
+			cvDao = daoFactory.getCVFormDAO();
+		} catch (PersistException e) {
+			log.error("cant get CVFormDAO");
+		}
+		try {
+			empDao = daoFactory.getEmployeeDAO();
+		} catch (PersistException e) {
+			log.error("cant get EmployeeDAO");
+		}
 	}
 		
 	@Override

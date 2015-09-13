@@ -50,7 +50,7 @@ public class ApplicantDAO {
 		
 		
 		try {
-			//check if this Manager already persist
+			//check if this Applicant already persist
 			try {
 				String selectSql = getSelectQuery() + " WHERE login = " + "'" + applicant.getLogin() + "'";
 				connection = daoFactory.createConnection();
@@ -71,8 +71,10 @@ public class ApplicantDAO {
 				Closer.closeStatement(statement);
 			}
 			
+
+			
 			Integer id = null;
-			//create new Manager entry
+			//create new Applicant entry
 			try {
 				String createSql = getCreateQuery();
 				pStatement = connection.prepareStatement(createSql, Statement.RETURN_GENERATED_KEYS);
@@ -89,10 +91,9 @@ public class ApplicantDAO {
 			} finally {
 				Closer.closeResultSet(rs);
 				Closer.closeStatement(pStatement);
-			}
-			
+			}	
 				
-			//return created Manager entry
+			//return created Applicant entry
 			try {
 				String selectSql = getSelectQuery() + " WHERE id = " + id;
 				statement = connection.createStatement();

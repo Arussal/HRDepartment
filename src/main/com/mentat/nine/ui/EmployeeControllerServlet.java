@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
 import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class EmployeeControllerServlet
@@ -90,9 +92,11 @@ public class EmployeeControllerServlet extends HttpServlet {
 		if (1 == action) {
 			findEmployee(request, response);
 		} else if (2 == action) {
-			forward("employeeBaseServlet", request, response);
+			forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 		} else if (3 == action) {
 			editEmployee(request, response);
+		} else if (4 == action) {
+			saveEmployeeChanges(request, response);
 		} else {
 			fireEmployee(request, response);
 		}
@@ -104,9 +108,10 @@ public class EmployeeControllerServlet extends HttpServlet {
 			return 1;
 		} else if (request.getParameter("showAllEmployees") != null) {
 			return 2;
-		} else if ((request.getParameter("editEmployee") != null) || 
-				(request.getParameter("edit") != null)) {
+		} else if (request.getParameter("editEmployee") != null) {
 			return 3;
+		} else if (request.getParameter("saveEmployeeChanges") != null) {
+			return 4;
 		}
 		return 0;
 	}
@@ -132,19 +137,22 @@ public class EmployeeControllerServlet extends HttpServlet {
 		String hireDateSymbol = request.getParameter("hireDateComparable");
 		String fireDateSymbol = request.getParameter("fireDateComparable");
 		
+		Department department = depDao.getDepartmentByName(departmentParameter);
+	
+		
 		addToParameterMap(parameters, idParameter, "id", "=");
 		addToParameterMap(parameters, ageParameter, "id", ageSymbol);
 		addToParameterMap(parameters, postParameter, "post", "=");
 		addToParameterMap(parameters, educationParameter, "education", "=");
 		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
-		addToParameterMap(parameters, departmentParameter, "department", "=");
+		addToParameterMap(parameters, String.valueOf(department.getId()), "id_department", "=");
 		addToParameterMap(parameters, salaryParameter, "salary", salarySymbol);
 		addToParameterMap(parameters, hireDateParameter, "hireDate", hireDateSymbol);
 		addToParameterMap(parameters, fireDateParameter, "fireDate", fireDateSymbol);
 	
 		Set<Employee> employees = empDao.getEmployees(parameters);
 		request.setAttribute("empIncomeList", employees);
-		forward("employeeBaseServlet", request, response);
+		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 	}
 
 	
@@ -183,19 +191,23 @@ public class EmployeeControllerServlet extends HttpServlet {
 
 	private void editEmployee(HttpServletRequest request, HttpServletResponse response) 
 			throws PersistException, ServletException, IOException {
-		
-		if (request.getParameter("editEmployee") != null) {
-			List<Integer> idList = getSelectedItems(request);
 
-			makeErrorNoOneSelectedItem(idList, request, response);
-			makeErrorTooManySelectedItem(idList,request, response);
+		List<Integer> idList = getSelectedItems(request);
+
+		makeErrorNoOneSelectedItem(idList, request, response);
+		makeErrorTooManySelectedItem(idList,request, response);
 			
-			List<Department> departments = depDao.getAllDepartments();
-			request.setAttribute("departments", departments);
-			Employee employee = empDao.getEmployeeById(idList.get(0));
-			request.setAttribute("emp", employee);
-			forward("edit_employee.jsp", request, response); 
-		}
+		List<Department> departments = depDao.getAllDepartments();
+		request.setAttribute("departments", departments);
+		Employee employee = empDao.getEmployeeById(idList.get(0));
+		setDateFields(request);
+		request.setAttribute("emp", employee);
+		forward(WebPath.HR_EDIT_EMPLOYEE_JSP, request, response); 
+	}
+	
+	
+	public void saveEmployeeChanges(HttpServletRequest request, HttpServletResponse response) 
+			throws PersistException, ServletException, IOException {
 		
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		Employee nonUpdatedEmployee = empDao.getEmployeeById(id);
@@ -204,8 +216,8 @@ public class EmployeeControllerServlet extends HttpServlet {
 		updatedEmployee.setId(id);
 		updatedEmployee.setName(nonUpdatedEmployee.getName());
 		empDao.updateEmployee(updatedEmployee);
-		
-		forward("applicationBaseServlet", request, response);
+				
+		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 	}
 	
 	
@@ -226,94 +238,151 @@ public class EmployeeControllerServlet extends HttpServlet {
 	private Employee getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException, PersistException {
 				
-		boolean isEmptyFields = checkEmptyFields(request);
-
-		String age = request.getParameter("age");
-		String education = request.getParameter("education");
-		String post = request.getParameter("post");
-		String department = request.getParameter("department");
-		String salary = request.getParameter("salary");
-		String workExpirience = request.getParameter("expirience");
-		String hireDate = request.getParameter("hireDate");
-		String fireDate = request.getParameter("fireDate");
-		String email = request.getParameter("email");
-		String phone = request.getParameter("phone");
-		String skills = request.getParameter("skills");
-		
-		Map<String, String> intData = new HashMap<String, String>();
-		intData.put("age", age);
-		intData.put("salary", salary);
-		intData.put("hireDate", workExpirience);
-		intData.put("fireDate", workExpirience);
-		intData.put("workExpirience", workExpirience);
-		
-		boolean isWrongData = checkWrongDataFields(intData, request);
-		
-		if (isEmptyFields | isWrongData) {
-			request.setAttribute("wrongData", "wrongData");
-			forward("error.jsp", request, response);
-		}
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date parsedHireDate = null;
-		Date parsedFireDate = null;
-		try {
-			parsedHireDate = sdf.parse(hireDate);
-			parsedFireDate = sdf.parse(fireDate);
-		} catch (ParseException e) {
-			log.warn("can't parse Form's date");
-		}
-		int parsedAge = Integer.parseInt(age);
-		int parsedSalary = Integer.parseInt(salary);
-		int parsedWorkExpirience = Integer.parseInt(workExpirience);
-		
-		Department parsedDepartment = null;
-		List<Department> departments = depDao.getAllDepartments();
-		for (Department dep : departments) {
-			if (dep.getName().equals(department)) {
-				parsedDepartment = dep;
-			}
-		}
-		
-		Set<String> parsedSkills = new HashSet<String>(Arrays.asList(skills.split(";")));
-		
 		Employee employee = new Employee();
-		employee.setAge(parsedAge);
-		employee.setDepartment(parsedDepartment);
-		employee.setEducation(education);
-		employee.setEmail(email);
-		employee.setFireDate(parsedFireDate);
-		employee.setHireDate(parsedHireDate);
-		employee.setPhone(phone);
-		employee.setPost(post);
-		employee.setSalary(parsedSalary);
-		employee.setWorkExpirience(parsedWorkExpirience);
-		employee.setSkills(parsedSkills);
+		boolean emptyFields = isEmptyFields(request);
+		
+		if (!emptyFields) {
+			String age = request.getParameter("age");
+			String education = request.getParameter("education");
+			String post = request.getParameter("post");
+			String department = request.getParameter("department");
+			String salary = request.getParameter("salary");
+			String workExpirience = request.getParameter("expirience");
+			String email = request.getParameter("email");
+			String phone = request.getParameter("phone");
+			String skills = request.getParameter("skills");
+			
+			//delete '[' and ']' symbols from skills to avoid double symbols
+			String formattedSkills = skills;
+			if (skills.startsWith("[")) {
+				formattedSkills = skills.substring(1, skills.length());
+				skills = formattedSkills;
+			} 
+			if (skills.endsWith("]")) {
+				formattedSkills = skills.substring(0, skills.length()-1);
+				skills = formattedSkills;
+			}
+			
+			//get Hire Date from date Fields
+			String yearHire = request.getParameter("yearHire");
+			String monthHire = request.getParameter("monthHire");
+			String dayHire = request.getParameter("dayHire");
+			boolean correctHireDate = isCorrectInputDateFields(monthHire, dayHire);
+			if (!correctHireDate) {
+				request.setAttribute("wrongDate", "wrongData");
+				forward(WebPath.ERROR_JSP, request, response);
+			}
+			String hireDate = yearHire + "-" + monthHire + "-" + dayHire;
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date parsedHireDate = null;
+			try {
+				parsedHireDate = dateFormat.parse(hireDate);
+			} catch (ParseException e) {
+				log.error("can't parse date from Form");
+			}
+			
+			//get Fire Date from date Fields
+			String year = request.getParameter("yearFire");
+			String month = request.getParameter("monthFire");
+			String day = request.getParameter("dayFire");
+			boolean correctFireDate = isCorrectInputDateFields(month, day);
+			if (!correctFireDate) {
+				request.setAttribute("wrongDate", "wrongData");
+				forward(WebPath.ERROR_JSP, request, response);
+			}
+			String fireDate = year + "-" + month + "-" + day;
+			Date parsedFireDate = null;
+			try {
+				parsedFireDate = dateFormat.parse(fireDate);
+			} catch (ParseException e) {
+				log.error("can't parse date from Form");
+			}
+			
+			
+			Map<String, String> intData = new HashMap<String, String>();
+			intData.put("age", age);
+			intData.put("salary", salary);
+			intData.put("workExpirience", workExpirience);
+			
+			boolean wrongData = isWrongDataFields(intData, request);
+			
+			if (!wrongData) {
+			
+				int parsedAge = Integer.parseInt(age);
+				int parsedSalary = Integer.parseInt(salary);
+				int parsedWorkExpirience = Integer.parseInt(workExpirience);
+				
+				Department parsedDepartment = null;
+				List<Department> departments = depDao.getAllDepartments();
+				for (Department dep : departments) {
+					if (dep.getName().equals(department)) {
+						parsedDepartment = dep;
+					}
+				}
+
+				Set<String> parsedSkills = new HashSet<String>(Arrays.asList(skills.split(";")));
+				employee.setAge(parsedAge);
+				employee.setDepartment(parsedDepartment);
+				employee.setEducation(education);
+				employee.setEmail(email);
+				employee.setFireDate(parsedFireDate);
+				employee.setHireDate(parsedHireDate);
+				employee.setPhone(phone);
+				employee.setPost(post);
+				employee.setSalary(parsedSalary);
+				employee.setWorkExpirience(parsedWorkExpirience);
+				employee.setSkills(parsedSkills);
+			
+			} else {
+				request.setAttribute("wrongFields", "wrongFields");
+				forward(WebPath.ERROR_JSP, request, response);
+			}
+		} else {
+			
+			request.setAttribute("emptyFields", "emptyFields");
+			forward(WebPath.ERROR_JSP, request, response);
+		}
 		
 		return employee;
 	}
 	
 	
-	private boolean checkEmptyFields(HttpServletRequest request) {
+	private boolean isEmptyFields(HttpServletRequest request) {
+				
 		Map<String, String[]> parameters = request.getParameterMap();
 		List<String> emptyParameters = new ArrayList<String>();
 		for (String key : parameters.keySet()) {
-			String val = request.getParameter(key);
-			if (val.equals("")) {
-				emptyParameters.add(key);
-			}
+				String val = request.getParameter(key);
+				if (val.equals("")) {
+					emptyParameters.add(key);
+				}
 		}
-		if (emptyParameters.size() > 1) {
-			if (request.getParameter("fireDate") != null) {
-				request.setAttribute("emptyFields", emptyParameters);
-				return true;
+		if (emptyParameters.size() > 0) {
+			for (String emptyParameter : emptyParameters) {
+				if (!emptyParameter.endsWith("Fire")) {
+					request.setAttribute("emptyFields", emptyParameters);
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	
-	private boolean checkWrongDataFields(Map<String, String> map, HttpServletRequest request) {
+	//if the Days corresponding to the Months
+	private boolean isCorrectInputDateFields(String month, String day) {
+		String[] shortMonths = {"2", "4", "6", "9", "11"};
+		List<String> shortM = Arrays.asList(shortMonths);
+		if (shortM.contains(month)) {
+			if (Integer.parseInt(day) == 31) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	private boolean isWrongDataFields(Map<String, String> map, HttpServletRequest request) {
 		List<String> wrongFields = new ArrayList<String>();
 		for (String data : map.keySet()) {
 			if (data.equals("fireDate") || data.equals("hireDate")) {
@@ -348,7 +417,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			Set<Employee> empList = getSelectedEmployees(idList);
 			setDateFields(request);
 			request.setAttribute("empList", empList);
-			forward("fire_employee.jsp", request, response);
+			forward(WebPath.HR_FIRE_EMPLOYEE_JSP, request, response);
 		}
 		
 		List<Integer> idList = getSelectedItems(request);
@@ -359,7 +428,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 		boolean correctDate = checkCorrectInputDateFields(month, day);
 		if (!correctDate) {
 			request.setAttribute("wrongData", "wrongData");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 		String date = year + "-" + month + "-" + day;
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -375,7 +444,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			employee.setFireDate(fireDate);
 			empDao.updateEmployee(employee);
 		}
-		forward("employeeBaseServlet", request, response);
+		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 		
 	}
 	
@@ -407,9 +476,27 @@ public class EmployeeControllerServlet extends HttpServlet {
 			days.add(i);
 		}
 		
-		request.setAttribute("years", years);
-		request.setAttribute("months", months);
-		request.setAttribute("days", days);
+		Set<String> yearSet = new LinkedHashSet<String>();
+		Set<String> monthSet = new LinkedHashSet<String>();
+		Set<String> daySet = new LinkedHashSet<String>();
+		
+		yearSet.add("");
+		monthSet.add("");
+		daySet.add("");
+		
+		for (Integer year : years) {
+			yearSet.add(year.toString());
+		}
+		for (Integer month : months) {
+			monthSet.add(month.toString());
+		}
+		for (Integer day : days) {
+			daySet.add(day.toString());
+		}
+		
+		request.setAttribute("years", yearSet);
+		request.setAttribute("months", monthSet);
+		request.setAttribute("days", daySet);
 	}
 	
 	
@@ -429,18 +516,20 @@ public class EmployeeControllerServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
 			request.setAttribute("nothingSelectedError", "nothingSelectedError");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
+	
 	
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
 			request.setAttribute("selectedCount", idList.size());
 			request.setAttribute("tooManySelectedError", "tooManySelectedError");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
+	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {

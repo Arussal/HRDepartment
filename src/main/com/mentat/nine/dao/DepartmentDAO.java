@@ -183,7 +183,7 @@ public class DepartmentDAO{
 
 		try {
 			log.trace("get Departments with post " + name);
-			String sqlSelect = getSelectQuery() + " WHERE name = " + name;
+			String sqlSelect = getSelectQuery() + " WHERE name = '" + name + "'";
 			connection = daoFactory.createConnection();
 			log.trace("create connection");
 			statement = connection.createStatement();
@@ -217,7 +217,7 @@ public class DepartmentDAO{
 		List<Department> departments = null;
 		
 		try {
-			String sqlSelect = getSelectQuery() + " WHERE head = " + head;
+			String sqlSelect = getSelectQuery() + " WHERE head = '" + head + "'";
 			log.trace("get Department with id " + head);
 			connection = daoFactory.createConnection();
 			log.trace("create connection");

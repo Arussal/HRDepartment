@@ -21,6 +21,7 @@
 		<tr>
 				<th></th>
 				<th>ID</th>
+				<th>Статус отправки</th>
 				<th>Возраст</th>
 				<th>Образование</th>
 				<th>E-mail</th>
@@ -35,6 +36,7 @@
 			<tr>
 				<td><input type="checkbox" name="cvId" value="${cv.id}"></td>
 				<td><c:out value="${cv.id}" /></td>
+				<td><c:out value="${cv.sendStatus}" /></td>
 				<td><c:out value="${cv.age}" /></td>
 				<td><c:out value="${cv.education}" /></td>
 				<td><c:out value="${cv.email}" /></td>

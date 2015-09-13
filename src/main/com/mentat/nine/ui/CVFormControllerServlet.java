@@ -19,6 +19,7 @@ import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class CandidateControllerServlet
@@ -74,7 +75,7 @@ public class CVFormControllerServlet extends HttpServlet {
 			findCV(request, response);
 		}
 		if (3 == action) {
-			forward("/cvformBaseServlet", request, response);
+			forward(WebPath.CVFORM_BASE_PAGE_SERVLET, request, response);
 		}
 	}
 
@@ -107,7 +108,7 @@ public class CVFormControllerServlet extends HttpServlet {
 		
 		if (idList.size() == 0) {
 			request.setAttribute("noOneCVToDelete", "noOneCVToDelete");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
 		for (Integer id : idList) {
@@ -124,7 +125,7 @@ public class CVFormControllerServlet extends HttpServlet {
 			}
 		}
 		
-		forward("cvformBaseServlet", request, response);
+		forward(WebPath.CVFORM_BASE_PAGE_SERVLET, request, response);
 	}
 	
 	
@@ -159,7 +160,7 @@ public class CVFormControllerServlet extends HttpServlet {
 			cvList = new ArrayList<CVForm>();
 		}
 		request.setAttribute("cvIncomeList", cvList);
-		forward("cvformBaseServlet", request, response);		
+		forward(WebPath.CVFORM_BASE_PAGE_SERVLET, request, response);		
 	}
 	
 	

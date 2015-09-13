@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import main.com.mentat.nine.ui.util.WebPath;
+
 /**
  * Servlet implementation class MainServlet
  */
@@ -38,6 +40,6 @@ public class HomePageServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		request.getRequestDispatcher("main.jsp").forward(request, response);
+		request.getRequestDispatcher(WebPath.HOME_PAGE_JSP).forward(request, response);
 	}
 }

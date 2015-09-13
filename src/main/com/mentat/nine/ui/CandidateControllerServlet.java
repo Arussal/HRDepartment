@@ -33,6 +33,7 @@ import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
 import main.com.mentat.nine.domain.HRDepartment;
 import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class CandidateControllerServlet
@@ -98,7 +99,7 @@ public class CandidateControllerServlet extends HttpServlet {
 		} else if (2 == action) {
 			findCandidate(request, response);
 		} else if (3 == action) {
-			forward("/candidateBaseServlet", request, response);
+			forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
 		} else {
 			hireEmployee(request, response);
 		}
@@ -149,7 +150,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			candList = new HashSet<Candidate>();
 		}
 		request.setAttribute("candIncomeList", candList);
-		forward("candidateBaseServlet", request, response);
+		forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
 		
 	}
 	
@@ -200,7 +201,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			candDao.deleteCandidate(cand);
 		}
 		
-		forward("candidateBaseServlet", request, response);
+		forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
 	}
 		
 	
@@ -230,7 +231,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			
 			if (isEmptyFields | isWrongData) {
 				request.setAttribute("wrongData", "wrongData");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 			
 			String year = request.getParameter("year");
@@ -239,7 +240,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			boolean correctDate = checkCorrectInputDateFields(month, day);
 			if (!correctDate) {
 				request.setAttribute("wrongData", "wrongData");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 			String date = year + "-" + month + "-" + day;
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -263,12 +264,12 @@ public class CandidateControllerServlet extends HttpServlet {
 					parsedDate, parsedDepartment);
 			empDao.createEmployee(employee);
 			candDao.deleteCandidate(cand);
-			forward("candidateBaseServlet", request, response);
+			forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
 		}
 		
 		setDateFields(request);
 		request.setAttribute("departments", departments);
-		forward("hire_employee.jsp", request, response);
+		forward(WebPath.HR_HIRE_EMPLOYEE_JSP, request, response);
 		
 	}
 
@@ -358,7 +359,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
 			request.setAttribute("nothingSelectedError", "nothingSelectedError");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
@@ -367,7 +368,7 @@ public class CandidateControllerServlet extends HttpServlet {
 		if (idList.size() > 1) {
 			request.setAttribute("selectedCount", idList.size());
 			request.setAttribute("tooManySelectedError", "tooManySelectedError");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	

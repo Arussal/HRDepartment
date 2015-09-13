@@ -9,9 +9,8 @@
 <body>
 	<h1>Создать новое резюме</h1>
 	<hr/>
-	<form action="applicantServlet">
+	<form action="applicantCVControllerServlet" method="post">
 		<table>
-		<tr>
 			<tr>
 				<td>Возраст</td>
 				<td><input type="text" name="age" /></td>

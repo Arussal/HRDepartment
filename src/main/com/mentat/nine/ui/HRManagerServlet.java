@@ -14,9 +14,9 @@ import org.apache.log4j.Logger;
 import main.com.mentat.nine.dao.ManagerDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.Applicant;
 import main.com.mentat.nine.domain.Manager;
 import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class HRManagerServlet
@@ -110,17 +110,17 @@ public class HRManagerServlet extends HttpServlet {
 				log.error("manager with login " + login + " not found");
 				request.setAttribute("userNotFound", "userNotFound");
 				request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
 		
 		String password = request.getParameter("password");
 		if (manager.getPassword().equals(password)) {
-			forward("hrdepartment.jsp", request, response);
+			forward(WebPath.MANAGER_MAIN_JSP, request, response);
 		} else {
 			request.setAttribute("passwordNotFound", "passwordNotFound");
 			request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
@@ -129,7 +129,7 @@ public class HRManagerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		 
 		if (request.getParameter("registration")!= null) {
-			forward("manager_registration.jsp", request, response);
+			forward(WebPath.MANAGER_REGISTRATE_JSP, request, response);
 		}
 				
 		String login = request.getParameter("login");
@@ -147,13 +147,13 @@ public class HRManagerServlet extends HttpServlet {
 			} catch (PersistException e) {
 				request.setAttribute("notSuccessManagerCreateOperation", "notSuccessManagerCreateOperation");
 				request.setAttribute("notSuccessManagerRegistration", "notSuccessManagerRegistration");
-				forward("error.jsp", request, response);	
+				forward(WebPath.ERROR_JSP, request, response);	
 			}
 			request.setAttribute("successManagerRegistration", "successManagerRegistration");
-			forward("manager_success_operation.jsp", request, response);
+			forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 		} else {
 			request.setAttribute("notSuccessManagerRegistration", "notSuccessManagerRegistration");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 
@@ -221,7 +221,7 @@ public class HRManagerServlet extends HttpServlet {
 			if (null == manager) {
 				log.error("manager with login " + login + " not found");
 				request.setAttribute("managerNotFound", "managerNotFound");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
 		
@@ -231,15 +231,15 @@ public class HRManagerServlet extends HttpServlet {
 				manager.setPassword(newPassword);
 				mngrDao.updateManager(manager);
 				request.setAttribute("successChangePassword", "successChangePassword");
-				forward("manager_success_operation.jsp", request, response);
+				forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 			} else {
 				request.setAttribute("notSuccessManagerOperation", "notSuccessManagerOperation");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
 			request.setAttribute("notSuccessManagerOperation", "notSuccessManagerOperation");
 			request.setAttribute("passwordNotFound", "passwordNotFound");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
 	}
@@ -259,18 +259,18 @@ public class HRManagerServlet extends HttpServlet {
 				log.error("manager with login " + login + " not found");
 				request.setAttribute("userNotFound", "userNotFound");
 				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
 		
 		String password = request.getParameter("password");
 		if (manager.getPassword().equals(password)) {
 			request.setAttribute("manager", manager);
-			forward("delete_manager.jsp", request, response);
+			forward(WebPath.MANAGER_DELETE_JSP, request, response);
 		} else {
 			request.setAttribute("passwordNotFound", "passwordNotFound");
 			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
@@ -278,10 +278,10 @@ public class HRManagerServlet extends HttpServlet {
 	try {
 		mngrDao.deleteManager(manager);
 		request.setAttribute("successManagerDeleteOperation", "successManagerDeleteOperation");
-		forward("manager_success_operation.jsp", request, response);
+		forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 	} catch (PersistException e) {
 		request.setAttribute("notSuccessManagerDeleteOperation", "notSuccessManagerDeleteOperation");
-		forward("error.jsp", request, response);
+		forward(WebPath.ERROR_JSP, request, response);
 	}
 	
 }

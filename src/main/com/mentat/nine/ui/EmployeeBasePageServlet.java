@@ -18,6 +18,7 @@ import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Employee;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class EmployeeBasePageServlet
@@ -78,7 +79,7 @@ public class EmployeeBasePageServlet extends HttpServlet {
 			createFilterFinder(request, empList);
 		}
 		request.setAttribute("empList", empList);
-		forward("employees.jsp", request, response);
+		forward(WebPath.HR_EMPLOYEES_JSP, request, response);
 	}
 
 	

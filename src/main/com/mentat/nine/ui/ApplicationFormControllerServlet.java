@@ -30,6 +30,7 @@ import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.HRDepartment;
 import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
 import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class ApplicationFormControllerServlet
@@ -117,19 +118,19 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 
 		if (request.getParameter("createApp") != null) {
 			setDateFields(request);
-			forward("new_application.jsp", request, response);
+			forward(WebPath.HR_NEW_APPLICATION_FORM_JSP, request, response);
 		}
 
 		ApplicationForm appForm = getDataFromForm(request, response);
 		appDao.createApplicationForm(appForm);
 		
-		forward("applicationBaseServlet", request, response);
+		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
 		
 	}
 
 	
 	private ApplicationForm getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, PersistException {
+			throws ServletException, PersistException, IOException {
 		
 		ApplicationForm appForm = null;
 		boolean emptyFields = isEmptyFields(request);
@@ -142,14 +143,15 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			String salary = request.getParameter("salary");
 			String workExpirience = request.getParameter("expirience");
 			
-			//delete '[' and ']' symbols from requirements to avoid double symbols
+			//delete '[' and ']' symbols from requirements to avoid double symbols			
 			String formattedRequirements = requirements;
 			if (requirements.startsWith("[")) {
 				formattedRequirements = requirements.substring(1, requirements.length());
 				requirements = formattedRequirements;
 			} 
 			if (requirements.endsWith("]")) {
-				formattedRequirements = requirements.substring(requirements.length());
+				formattedRequirements = requirements.substring(0, requirements.length()-1);
+				requirements = formattedRequirements;
 			}
 			
 			//get data from dataFields
@@ -159,7 +161,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			boolean correctDate = isCorrectInputDateFields(month, day);
 			if (!correctDate) {
 				request.setAttribute("wrongDate", "wrongData");
-				forward("error.jsp", request, response);
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 			String date = year + "-" + month + "-" + day;
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -187,10 +189,14 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 				Set<String> parsedRequirements = new HashSet<String>(Arrays.asList(formattedRequirements.split(";")));
 				appForm = hrDep.formApplicationForm(parsedAge, education, 
 						parsedRequirements, post, parsedSalary, parsedWorkExpirience, parsedDate);
+			} else {
+				request.setAttribute("wrongFields", "wrongFields");
+				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			request.setAttribute("wrongFields", "wrongFields");
-			forward("error.jsp", request, response);
+			
+			request.setAttribute("emptyFields", "emptyFields");
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 			
 		return appForm;
@@ -256,7 +262,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			appDao.deleteApplicationForm(appForm);
 		}
 		
-		forward("applicationBaseServlet", request, response);
+		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
 	}
 	
 	
@@ -277,7 +283,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			}
 			setDateFields(request);
 			request.setAttribute("app", appForm);
-			forward("edit_application.jsp", request, response);
+			forward(WebPath.HR_EDIT_APPLICATION_FORM_JSP, request, response);
 		}
 		
 		ApplicationForm appForm = null;
@@ -294,7 +300,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			log.warn("can't update ApplicationForm with id " + id);
 		}
 		
-		forward("applicationBaseServlet", request, response);
+		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
 	}
 	
 	
@@ -314,11 +320,11 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			findedCandidates = hrDep.findCandidates(appForm);
 		} catch (NoSuitableCandidateException e) {
 			request.setAttribute("noOneCandidate", "noOneCandidate");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
 		request.setAttribute("candidates", findedCandidates);
-		forward("new_candidate.jsp", request, response);
+		forward(WebPath.HR_NEW_CANDIDATE_JSP, request, response);
 			
 	}
 
@@ -361,32 +367,26 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 	
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) {
+			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
 			request.setAttribute("nothingSelectedError", "nothingSelectedError");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
 	
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) {
+			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
 			request.setAttribute("selectedCount", idList.size());
 			request.setAttribute("tooManySelectedError", "tooManySelectedError");
-			forward("error.jsp", request, response);
+			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
 	
-	private void forward(String path, HttpServletRequest request, HttpServletResponse response) {
-		try {
+	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			request.getRequestDispatcher(path).forward(request, response);
-		} catch (IOException e) {
-			log.error("Page - " + path + " - not found");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }

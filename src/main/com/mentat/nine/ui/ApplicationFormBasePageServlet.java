@@ -13,6 +13,7 @@ import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class ApplicationFormsServlet
@@ -53,7 +54,7 @@ public class ApplicationFormBasePageServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		request.setAttribute("apps", apps);
-		request.getRequestDispatcher("applications.jsp").forward(request, response);
+		request.getRequestDispatcher(WebPath.HR_APPLICAION_FORMS_JSP).forward(request, response);
 	}
 	
 	private List<ApplicationForm> getApps() throws PersistException{

@@ -17,6 +17,7 @@ import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class CandidateControllerServlet
@@ -75,7 +76,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 			createFilterFinder(request, cvList);
 		}
 		request.setAttribute("cvList", cvList);
-		forward("cvforms.jsp", request, response);
+		forward(WebPath.HR_CVFORMS_JSP, request, response);
 	}
 	
 	

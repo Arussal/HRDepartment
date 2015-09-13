@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.ApplicantDAO;
 import main.com.mentat.nine.dao.ApplicationFormDAO;
+import main.com.mentat.nine.dao.CVFormApplicantDAO;
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.DepartmentDAO;
@@ -137,6 +138,11 @@ public class DAOFactory {
 	
 	public ApplicantDAO getApplicantDAO() throws PersistException {
 		return new ApplicantDAO();
+	}
+
+
+	public CVFormApplicantDAO getCVFormApplicantDAO() {
+		return new CVFormApplicantDAO();
 	}
 
 }

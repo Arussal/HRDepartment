@@ -17,6 +17,7 @@ import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Candidate;
+import main.com.mentat.nine.ui.util.WebPath;
 
 /**
  * Servlet implementation class CandidateBasePageServlet
@@ -77,7 +78,7 @@ public class CandidateBasePageServlet extends HttpServlet {
 		}
 		
 		request.setAttribute("candSet", candSet);
-		forward("candidates.jsp", request, response);
+		forward(WebPath.HR_CANDIDATES_JSP, request, response);
 	}
 
 
