@@ -13,9 +13,9 @@ public class WebAttributes {
 	public static final String TOO_MANY_ITEMS_SELECTED = "TOO_MANY_ITEMS_SELECTED";
 	
 	
-	//
 	
-	public static final String APPLICANT_BASE_PAGE = "applicantServlet"; //
+	
+	public static final String APPLICANT_BASE_PAGE_ATTRIBUTE = "APPLICANT_BASE_PAGE_ATTRIBUTE"; //
 	public static final String APPLICANT_CONTROLLER_SERVLET = "applicantCVControllerServlet";
 	public static final String APPLICATION_BASE_PAGE_SERVLET = "applicationBaseServlet";
 	public static final String APPLICATION_CONTROLLER_SERVLET = "appControllerServlet";
@@ -32,8 +32,8 @@ public class WebAttributes {
 	public static final String APPLICANT_MAIN_JSP = "applicant.jsp";
 	public static final String APPLICANT_LOGIN_JSP = "applicant_login.jsp";
 	public static final String APPLICANT_REGISTRATE_JSP = "applicant_registration.jsp";
-	public static final String APPLICANT_CREATE_CV = "applicant_createCV.jsp";			//
-	public static final String APPLICANT_EDIT_CV_JSP = "applicant_editCV.jsp";
+	public static final String APPLICANT_CREATE_CV_ATTRIBUTE = "APPLICANT_CREATE_CV_ATTRIBUTE";		//
+	public static final String APPLICANT_EDIT_CV_ATTRIBUTE = "APPLICANT_EDIT_CV_ATTRIBUTE";			//
 	public static final String APPLICANT_CHANGE_PASSWORD_JSP = "changeApplicantManager.jsp";
 	public static final String APPLICANT_SUCCESS_JSP = "applicant_success_operation.jsp";
 	public static final String APPLICANT_DELETE_JSP = "delete_applicant.jsp";
@@ -58,6 +58,7 @@ public class WebAttributes {
 	public static final String MANAGER_DELETE_JSP = "delete_manager.jsp";
 	
 	public static final String ERROR_JSP = "error.jsp";
+	public static final String INVALID_APPLICANT_LOGIN = "INVALID_APPLICANT_LOGIN"; //
 	
 	public static void loadAttribute(HttpServletRequest request, String attribute) {
 		request.setAttribute(attribute, attribute);

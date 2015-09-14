@@ -9,6 +9,8 @@
 </head>
 <body>
 	<h1>Ошибка!</h1>
+	${error}
+		
 	<hr />
 	<c:if test="${not empty WRONG_DATA}">
 		<c:if test="${not empty EMPTY_FIELDS_LIST}">
@@ -33,14 +35,25 @@
 		Надо же выбрать что-то одно<br /><br />
 	</c:if>
 	
-	<c:if test="${not empty APPLICANT_BASE_PAGE_SERVLET}">
+	<c:if test="${not empty USER_NOT_FOUND}">
+		Пользователь с таким логином не найден<br />
+	</c:if>
+	
+	<c:if test="${not empty INCORRECT_PASSWORD}">
+		Вы ввели неправильный пароль<br />
+	</c:if>
+	
+	<c:if test="${not empty INVALID_APPLICANT_LOGIN}">
+		Введите правильный логин и пароль или <a href="${APPLICANT_LOGIN_JSP}">зарегестрируйтесь</a><br /><br />
+	</c:if>
+				
+	<c:if test="${not empty APPLICANT_BASE_PAGE_ATTRIBUTE}">
 		<a href="${APPLICANT_BASE_PAGE_SERVLET}">Назад</a>
 	</c:if>
 	
-	<c:if test="${not empty APPLICANT_CREATE_CV}">
-		<a href="${APPLICANT_CREATE_CV}">Назад</a>
+	<c:if test="${not empty APPLICANT_EDIT_CV_ATTRIBUTE}">
+		<a href="${APPLICANT_BASE_PAGE_SERVLET}">Назад</a>
 	</c:if>
-	
 	
 	
 	<!-- 

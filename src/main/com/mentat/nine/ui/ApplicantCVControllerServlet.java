@@ -51,17 +51,23 @@ public class ApplicantCVControllerServlet extends HttpServlet {
     }
 
 	/**
+	 * @throws IOException 
+	 * @throws ServletException 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		performTask(request, response);
 
 	}
 
 	/**
+	 * @throws IOException 
+	 * @throws ServletException 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		performTask(request, response);
 	}
 
@@ -69,8 +75,9 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-		request.setCharacterEncoding("UTF-8");
-		
+
+			request.setCharacterEncoding("UTF-8");
+			
 		int action = checkActiion(request);
 		if (1 == action) {
 			forward(WebPath.APPLICANT_CREATE_CV_JSP, request, response);
@@ -117,8 +124,8 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		try {
 			cvApplicantDao.createCVForm(cv);
 		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("can't create new CVForm");
+			throw new ServletException();
 		}
 		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
@@ -126,9 +133,9 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
 
 	private void editCV(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-		WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_BASE_PAGE);
+			throws ServletException, IOException { 
+
+		WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_BASE_PAGE_ATTRIBUTE);
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
 		
@@ -160,6 +167,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			cvApplicantDao.updateCVForm(cvForm);
 		} catch (PersistException e) {
 			log.warn("can't update CVForm with id " + id);
+			throw new ServletException();
 		}
 		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);		
@@ -167,7 +175,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 
 
 	private void sendCV(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException {
+			throws ServletException, IOException {
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
 		
@@ -178,7 +186,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				cv = cvApplicantDao.getCVFormById(id);
 			} catch (PersistException e) {
 				log.error("can't get CV with id " + id);
-				// TODO Auto-generated catch block
 				throw new ServletException();
 			}
 			cv.setSendStatus("Sent");
@@ -186,14 +193,12 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				hr.addCVForm(cv);
 			} catch (PersistException e) {
 				log.error("can't send CV to HRDepartment");
-				// TODO Auto-generated catch block
 				throw new ServletException();
 			}
 			try {
 				cvApplicantDao.updateCVForm(cv);
 			} catch (PersistException e) {
 				log.error("can't update CV status");
-				// TODO Auto-generated catch block
 				throw new ServletException();
 			}
 		}
@@ -213,8 +218,8 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				CVForm cv = cvApplicantDao.getCVFormById(id);
 				cvApplicantDao.deleteCVForm(cv);
 			} catch (PersistException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("can't delete CVForm with id " + id);
+				throw new ServletException();
 			}
 		}
 		
@@ -222,8 +227,8 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	}
 	
 
-	private CVForm getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException {
+	private CVForm getDataFromForm(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		
 		CVForm newCV = new CVForm();
 		boolean emptyFields = isEmptyFields(request);
@@ -279,12 +284,12 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				newCV.setDesiredSalary(parsedSalary);
 				
 			} else {
-				WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_CREATE_CV);
+				WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_EDIT_CV_ATTRIBUTE);
 				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_CREATE_CV);
+			WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_EDIT_CV_ATTRIBUTE);
 			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
@@ -353,7 +358,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
 	
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException {
+			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
 			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
@@ -362,21 +367,15 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
 	
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException {
+			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
 			WebAttributes.loadAttribute(request, WebAttributes.TOO_MANY_ITEMS_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
-	private void forward(String path, HttpServletRequest request, HttpServletResponse response)
-			throws ServletException {
-		try {
+	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			request.getRequestDispatcher(path).forward(request, response);
-		} catch (IOException e) {
-			log.error("cant forward to " + path);
-			// TODO Auto-generated catch block
-			throw new ServletException();
-		}
 	}
 }

@@ -107,6 +107,8 @@ public class ApplicantServlet extends HttpServlet {
 	
 	private void enter(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		
+		WebAttributes.loadAttribute(request, WebAttributes.APPLICANT_BASE_PAGE_ATTRIBUTE);
 		String login = request.getParameter("login");
 		
 		Applicant applicant = null;
@@ -115,22 +117,22 @@ public class ApplicantServlet extends HttpServlet {
 		} catch (PersistException e) {
 			if (null == applicant) {
 				log.error("applicant with login " + login + " not found");
-				request.setAttribute("userNotFound", "userNotFound");
-				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
-		
-
-		String password = request.getParameter("password");
-		if (applicant.getPassword().equals(password)) {
-			HttpSession currentSession = request.getSession(false);
-			currentSession.setAttribute("applicant", applicant);
-			goToMainPage(request, response);
-		} else {
-			request.setAttribute("passwordNotFound", "passwordNotFound");
-			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-			forward(WebPath.ERROR_JSP, request, response);
+		if (applicant != null) {
+			String password = request.getParameter("password");
+			if (applicant.getPassword().equals(password)) {
+				HttpSession currentSession = request.getSession(false);
+				currentSession.setAttribute("applicant", applicant);
+				goToMainPage(request, response);
+			} else {
+				WebAttributes.loadAttribute(request, WebAttributes.INCORRECT_PASSWORD);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
+				forward(WebPath.ERROR_JSP, request, response);
+			}
 		}
 	}
 	
@@ -216,14 +218,18 @@ public class ApplicantServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
 		Applicant applicant = (Applicant) session.getAttribute("applicant");
-		try {
-			List<CVForm> cvList = cvAplcntDao.getCVFormByName(applicant.getName());
-			request.setAttribute("cvList", cvList);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (applicant != null) {
+			try {
+				List<CVForm> cvList = cvAplcntDao.getCVFormByName(applicant.getName());
+				request.setAttribute("cvList", cvList);
+			} catch (PersistException e) {
+				log.error("can't get CVForms for applicant " + applicant.getLogin());
+				throw new ServletException();
+			}
+			forward(WebPath.APPLICANT_MAIN_JSP, request, response);
+		} else {
+			forward(WebPath.APPLICANT_LOGIN_JSP, request, response);
 		}
-		forward(WebPath.APPLICANT_MAIN_JSP, request, response);
 	}
 	
 	

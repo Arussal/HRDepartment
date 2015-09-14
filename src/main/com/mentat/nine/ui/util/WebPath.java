@@ -17,6 +17,8 @@ public class WebPath {
 	public static final String EMPLOYEE_CONTROLLER_SERVLET = "employeeControllerServlet";
 	public static final String HR_MANAGER_SERVLET = "hrManagerServlet";
 	
+	public static final String ERROR_HANDLER_SERVLET = "errorHandlerServlet";
+	
 	public static final String HOME_PAGE_JSP = "main.jsp";
 	
 	public static final String APPLICANT_MAIN_JSP = "applicant.jsp";
