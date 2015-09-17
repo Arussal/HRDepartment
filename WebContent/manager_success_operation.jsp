@@ -8,13 +8,13 @@
 <title>Registration Complete - Manager - HRDepartment</title>
 </head>
 <body>
-	<c:if test="${not empty successManagerRegistration}">
+	<c:if test="${not empty SUCCESS_APPLICANT_REGISTRATION}">
 		<h1>Регистрация успешно выполнена</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
 		<a href="${MANAGER_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
-	<c:if test="${not empty successChangePassword}">
+	<c:if test="${not empty SUCCESS_APPLICANT_CHANGE_PASSWORD}">
 		<h1>Смена пароля успешно выполнено</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />

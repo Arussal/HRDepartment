@@ -21,8 +21,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.DepartmentDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
@@ -32,7 +30,7 @@ import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
 import main.com.mentat.nine.domain.HRDepartment;
-import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebAttributes;
 import main.com.mentat.nine.ui.util.WebPath;
 
 /**
@@ -41,12 +39,6 @@ import main.com.mentat.nine.ui.util.WebPath;
 @WebServlet("/candidateControllerServlet")
 public class CandidateControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(CandidateControllerServlet.class);
 	
 	private CandidateDAO candDao;
 	private DepartmentDAO depDao;
@@ -68,11 +60,7 @@ public class CandidateControllerServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			log.error("doGet error");
-		}
 	}
 
 	
@@ -80,16 +68,12 @@ public class CandidateControllerServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			log.error("doPost error");
-		}
 	}
 
 	
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request);
@@ -100,6 +84,8 @@ public class CandidateControllerServlet extends HttpServlet {
 			findCandidate(request, response);
 		} else if (3 == action) {
 			forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
+		} else if (4 == action) {
+			goToHireEmployeePage(request, response);
 		} else {
 			hireEmployee(request, response);
 		}
@@ -110,12 +96,12 @@ public class CandidateControllerServlet extends HttpServlet {
 		
 		if (request.getParameter("deleteCandidate") != null) {
 			return 1;
-		} 
-		if (request.getParameter("findCandidate") != null) {
+		} else if (request.getParameter("findCandidate") != null) {
 			return 2;
-		}
-		if (request.getParameter("showAllCandidates") != null) {
+		} else if (request.getParameter("showAllCandidates") != null) {
 			return 3;
+		} else if (request.getParameter("hireEmployee") != null) {
+			return 4;
 		}
 		return 0;
 	}
@@ -144,7 +130,7 @@ public class CandidateControllerServlet extends HttpServlet {
 		try {
 			candList = candDao.getCandidates(parameters);
 		} catch (PersistException e) {
-			log.warn("no one Candidate with different query parameters found");
+			throw new ServletException();
 		}
 		if (null == candList) {
 			candList = new HashSet<Candidate>();
@@ -190,36 +176,62 @@ public class CandidateControllerServlet extends HttpServlet {
 	
 	
 	private void deleteCandidate(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, NumberFormatException, ServletException, IOException {
+			throws ServletException, IOException {
 		
 		List<Integer> idList = selectedItems(request);
 			
 		makeErrorNoOneSelectedItem(idList, request, response);
 		
-		for (Integer id : idList) {
-			Candidate cand = candDao.getCandidateById(id);
-			candDao.deleteCandidate(cand);
+		try {
+			for (Integer id : idList) {
+				Candidate cand = candDao.getCandidateById(id);
+				candDao.deleteCandidate(cand);
+			}
+		} catch (PersistException pe) {
+			throw new ServletException();
 		}
 		
 		forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
 	}
+	
+	
+	private void goToHireEmployeePage (HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		
+		List<Department> departments;
+		try {
+			departments = depDao.getAllDepartments();
+		} catch (PersistException e1) {
+			throw new ServletException();
+		}
+		
+		setDateFields(request);
+		request.setAttribute("departments", departments);
+		forward(WebPath.HR_HIRE_EMPLOYEE_JSP, request, response);
+		
+	}
+	
 	
 	private void hireEmployee(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		
-		List<Department> departments = depDao.getAllDepartments();
 		
-		if (request.getParameter("hireCandidate") != null) {
-			List<Integer> idList = selectedItems(request);
-			HRDepartment hrDep = new HRDepartment();
+		List<Integer> idList = selectedItems(request);
+		HRDepartment hrDep = new HRDepartment();
 			
-			makeErrorNoOneSelectedItem(idList, request, response);
-			makeErrorTooManySelectedItem(idList,request, response);
+		makeErrorNoOneSelectedItem(idList, request, response);
+		makeErrorTooManySelectedItem(idList,request, response);
 			
-			Candidate cand = candDao.getCandidateById(idList.get(0));
-			
-			boolean isEmptyFields = checkEmptyFields(request);
+		Candidate cand;
+		try {
+			cand = candDao.getCandidateById(idList.get(0));
+		} catch (PersistException e1) {
+			throw new ServletException();
+		}
+		
+		boolean emptyFields = isEmptyFields(request);
+		
+		if (!emptyFields) {
 			
 			String salary = request.getParameter("salaryInput");
 			String department = request.getParameter("department");
@@ -227,50 +239,60 @@ public class CandidateControllerServlet extends HttpServlet {
 			Map<String, String> intData = new HashMap<String, String>();
 			intData.put("salary", salary);
 			
-			boolean isWrongData = checkWrongDataFields(intData, request);
+			boolean wrongData = isWrongDataFields(intData, request);
 			
-			if (isEmptyFields | isWrongData) {
-				request.setAttribute("wrongData", "wrongData");
-				forward(WebPath.ERROR_JSP, request, response);
-			}
+			if (!wrongData) {
 			
-			String year = request.getParameter("year");
-			String month = request.getParameter("month");
-			String day = request.getParameter("day");
-			boolean correctDate = checkCorrectInputDateFields(month, day);
-			if (!correctDate) {
-				request.setAttribute("wrongData", "wrongData");
-				forward(WebPath.ERROR_JSP, request, response);
-			}
-			String date = year + "-" + month + "-" + day;
-			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			Date parsedDate = null;
-			try {
-				parsedDate = dateFormat.parse(date);
-			} catch (ParseException e) {
-				// TODO logger
-				e.printStackTrace();
-			}
-			int parsedSalary = Integer.parseInt(salary);
-			
-			Department parsedDepartment = null;
-			for (Department dpmnt : departments) {
-				if (dpmnt.getName().equals(department)) {
-					parsedDepartment = dpmnt;
+				String year = request.getParameter("year");
+				String month = request.getParameter("month");
+				String day = request.getParameter("day");
+				boolean correctDate = checkCorrectInputDateFields(month, day);
+				if (!correctDate) {
+					WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
+					forward(WebPath.ERROR_JSP, request, response);
 				}
-			}
+				String date = year + "-" + month + "-" + day;
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Date parsedDate = null;
+				try {
+					parsedDate = dateFormat.parse(date);
+				} catch (ParseException e) {
+					throw new ServletException();
+				}
+				int parsedSalary = Integer.parseInt(salary);
+				
+				List<Department> departments;
+				try {
+					departments = depDao.getAllDepartments();
+				} catch (PersistException e1) {
+					throw new ServletException();
+				}
+				
+				Department parsedDepartment = null;
+				for (Department dpmnt : departments) {
+					if (dpmnt.getName().equals(department)) {
+						parsedDepartment = dpmnt;
+					}
+				}
 			
-			Employee employee = hrDep.hireEmployee(cand, parsedSalary, cand.getPost(), 
-					parsedDate, parsedDepartment);
-			empDao.createEmployee(employee);
-			candDao.deleteCandidate(cand);
-			forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
-		}
-		
-		setDateFields(request);
-		request.setAttribute("departments", departments);
-		forward(WebPath.HR_HIRE_EMPLOYEE_JSP, request, response);
-		
+				Employee employee = hrDep.hireEmployee(cand, parsedSalary, cand.getPost(), 
+						parsedDate, parsedDepartment);
+				try {
+					empDao.createEmployee(employee);
+					candDao.deleteCandidate(cand);
+				} catch (PersistException pe) {
+					throw new ServletException();
+				}
+				
+				forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
+			} else {
+				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
+				forward(WebPath.ERROR_JSP, request, response);
+			}
+		} else {
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
+			forward(WebPath.ERROR_JSP, request, response);
+		}	
 	}
 
 
@@ -285,34 +307,41 @@ public class CandidateControllerServlet extends HttpServlet {
 		return true;
 	}
 
-	private boolean checkEmptyFields(HttpServletRequest request) {
+	//if there is no empty fields
+	private boolean isEmptyFields(HttpServletRequest request) {
+		
 		Map<String, String[]> parameters = request.getParameterMap();
-		List<String> emptyParameters = new ArrayList<String>();
+		List<String> emptyFieldsList = new ArrayList<String>();
 		for (String key : parameters.keySet()) {
 			String val = request.getParameter(key);
 			if (val.equals("")) {
-				emptyParameters.add(key);
+				emptyFieldsList.add(key);
 			}
 		}
-		if (emptyParameters.size() > 0) {
-			request.setAttribute("emptyFields", emptyParameters);
+		if (emptyFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request, WebAttributes.EMPTY_FIELDS_LIST);
+			request.setAttribute("emptyFieldsList", emptyFieldsList);
 			return true;
 		}
 		return false;
 	}
-
-	
-	private boolean checkWrongDataFields(Map<String, String> map, HttpServletRequest request) {
-		List<String> wrongFields = new ArrayList<String>();
+		
+	//if there is correct data in fields
+	private boolean isWrongDataFields(Map<String, String> map, HttpServletRequest request) {
+		List<String> wrongFieldsList = new ArrayList<String>();
 		for (String data : map.keySet()) {
 			try {
-				Integer.parseInt(map.get(data));
+				int value = Integer.parseInt(map.get(data));
+				if (value < 0) {
+					wrongFieldsList.add(data);	
+				}
 			} catch (NumberFormatException e){
-				wrongFields.add(data);
+				wrongFieldsList.add(data);
 			}
 		}
-		if (wrongFields.size() > 0) {
-			request.setAttribute("wrongFields", wrongFields);
+		if (wrongFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA_FIELDS_LIST);
+			request.setAttribute("wrongFieldsList", wrongFieldsList);
 			return true;
 		}
 		return false;
@@ -358,16 +387,16 @@ public class CandidateControllerServlet extends HttpServlet {
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
-			request.setAttribute("nothingSelectedError", "nothingSelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
 	
+	
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
-			request.setAttribute("selectedCount", idList.size());
-			request.setAttribute("tooManySelectedError", "tooManySelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.TOO_MANY_ITEMS_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}

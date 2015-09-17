@@ -46,93 +46,62 @@
 	<c:if test="${not empty INVALID_APPLICANT_LOGIN}">
 		Введите правильный логин и пароль или <a href="${APPLICANT_LOGIN_JSP}">зарегестрируйтесь</a><br /><br />
 	</c:if>
-				
-	<c:if test="${not empty APPLICANT_BASE_PAGE_ATTRIBUTE}">
-		<a href="${APPLICANT_BASE_PAGE_SERVLET}">Назад</a>
-	</c:if>
-	
-	<c:if test="${not empty APPLICANT_EDIT_CV_ATTRIBUTE}">
-		<a href="${APPLICANT_BASE_PAGE_SERVLET}">Назад</a>
-	</c:if>
-	
-	
-	<!-- 
-	<c:if test="${not empty noOneCVToDelete}">
-	Ошибка ввода данных: выбрано 0 записей для удаления<br />
-	Надо же выбрать хоть что-то<br /><br />
-	
-	</c:if>
-	
-	<c:if test="${not empty noOneCandidateToDelete}">
-	Ошибка ввода данных: выбрано 0 записей для удаления<br />
-	Надо же выбрать хоть что-то<br /><br />
-	<a href="candidateBaseServlet">Назад</a>
-	</c:if>
-	
-	<c:if test="${not empty noOneCandidate}">
-	Найдено 0 новых кандидатов<br />
-	Заходите позже<br /><br />
-	<a href="candidateBaseServlet">Назад</a>
-	</c:if>
-	
-	
-	
-	<c:if test="${not empty noUsersFoundError}">
-		Пользователей не найдено<br />
-	</c:if>
-
-	<c:if test="${not empty userNotFound}">
-	Пользователь с таким логином отсутствует<br />
-	Станьте им!<br />
-		<c:if test="${not empty notSuccessApplicantLoginOperation}">
-			<a href="applicant_registration.jsp">Зарегестрироваться</a><br />
-		</c:if>
-		<c:if test="${not empty notSuccessManagerLoginOperation}">
-			<a href="manager_registration.jsp">Зарегестрироваться</a><br />
-		</c:if>
-	<br />
-	<br />
-	</c:if>
-	
-	<c:if test="${not empty passwordNotFound}">
-	Неправильный пароль! Повторите попытку<br />
-	<br />
-	<br />
-	</c:if>
-	
-	
 		
-	<c:if test="${not empty emptyLoginFields}">
+	<c:if test="${not empty INVALID_APPLICANT_REGISTRATION}">
+		Регистрация не выполнена<br /><br />
+	</c:if>
+	
+	<c:if test="${not empty INVALID_APPLICANT_CHANGE_PASSWORD}">
+		Смена пароля не выполнена<br /><br />
+	</c:if>
+	
+	<c:if test="${not empty INVALID_APPLICANT_CHANGE_PASSWORD}">
+		Смена пароля не выполнена<br /><br />
+	</c:if>
+			
+	
+	
+	<!-- register applicant block -->
+		
+	<c:if test="${not empty EMPTY_LOGIN_FIELDS}">
 		Пустое поля логина/пароля/повторного пароля! Введите все данные<br />	
 	</c:if>
 	
-	<c:if test="${not empty emptyNameFields}">
+	<c:if test="${not empty EMPTY_NAME_FIELDS}">
 		Пустое поля имени/фамилии/отчества! Введите все данные<br />	
 	</c:if>
 	
-	<c:if test="${not empty incorrectLogin}">
+	<c:if test="${not empty LOGIN_LENGTH_ERROR}">
 		Неправильное количество символов логина! Логин должен содержать от 6 до 10 символов<br />
 	</c:if>
 	
-	<c:if test="${not empty incorrectPassword}">
+	<c:if test="${not empty PASSWORD_LENGTH_ERROR}">
 		Неправильное количество символов пароля! Пароль должен содержать от 8 до 14 символов<br />
 	</c:if>
 	
-	<c:if test="${not empty passwordSpaceError}">
+	<c:if test="${not empty PASSWORD_SPACE_ERROR}">
 		В пароле присутствует символ пробела! Пароль не должен содержать пробел<br />
 	</c:if>
 	
-	<c:if test="${not empty loginSpaceError}">
+	<c:if test="${not empty LOGIN_SPACE_ERROR}">
 		В логине присутствует символ пробела! Логин не должен содержать пробел<br />
 	</c:if>
 	
-	<c:if test="${not empty existUserError}">
+	<c:if test="${not empty USER_ALREADY_EXIST_ERROR}">
 		Пользватель с таким логином уже есть! Придумайте другой логин<br />
 	</c:if>
 	
-	<c:if test="${not empty notEqualsPassword}">
+	<c:if test="${not empty DIFFERENT_PASSWORDS_ERROR}">
 		Пароль и "подтверждение пароля" не совпадают! Введите одинаковые пароли<br />
 	</c:if>
+	
+	<!-- end register applicant block -->
+	
+			
+	<c:if test="${not empty NO_NEW_CANDIDATE}">
+		Новых кандидатов не найдено
+	</c:if>
+	
 	
 	<c:if test="${not empty notSuccessManagerCreateOperation}">
 		Менеджер не создан<br />

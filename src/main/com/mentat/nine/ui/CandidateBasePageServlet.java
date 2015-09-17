@@ -38,35 +38,27 @@ public class CandidateBasePageServlet extends HttpServlet {
     }
 
 	/**
+	 * @throws IOException 
+	 * @throws ServletException 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	
 	@SuppressWarnings("unchecked")
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		Set<Candidate> candSet = null;
 		
 		if (request.getAttribute("candIncomeList") != null) {
@@ -82,8 +74,12 @@ public class CandidateBasePageServlet extends HttpServlet {
 	}
 
 
-	private Set<Candidate> getAllCandidates() throws PersistException {
-		return candDao.getAllCandidates();
+	private Set<Candidate> getAllCandidates() throws ServletException {
+		try {
+			return candDao.getAllCandidates();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 	}
 	
 	

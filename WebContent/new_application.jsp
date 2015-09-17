@@ -58,7 +58,7 @@
 			<td><input type="text" name="expirience" /></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" name="newApp" value="Создать"></td>
+			<td colspan="2"><input type="submit" name="confirmCreateApp" value="Создать"></td>
 		</tr>
 	</table>
 	</form>

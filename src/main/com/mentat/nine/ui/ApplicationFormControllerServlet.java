@@ -20,8 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
@@ -29,7 +27,7 @@ import main.com.mentat.nine.domain.ApplicationForm;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.HRDepartment;
 import main.com.mentat.nine.domain.exceptions.NoSuitableCandidateException;
-import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebAttributes;
 import main.com.mentat.nine.ui.util.WebPath;
 
 /**
@@ -38,13 +36,7 @@ import main.com.mentat.nine.ui.util.WebPath;
 @WebServlet("/appControllerServlet")
 public class ApplicationFormControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(ApplicationFormControllerServlet.class);
-	
+    	
 	private ApplicationFormDAO appDao;
 	
     /**
@@ -62,11 +54,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			log.error("doGet error");
-		}
 	}
 
 	/**
@@ -74,25 +62,25 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			log.error("doPost error");
-		}
 	}
 
 	
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 
 		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request);
 		if (1 == action) {
-			createNewApp(request, response);
+			goToNewAppFormPage(request, response);
 		} else if (2 == action) {
-			deleteApp(request, response);
+			createNewApp(request, response);
 		} else if (3 == action) {
+			deleteApp(request, response);
+		} else if (4 == action) {
+			goToEditAppForm(request, response);
+		} else if (5 == action) {
 			editApp(request, response);
 		} else {
 			findNewCandidate(request, response);
@@ -102,27 +90,38 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 
 	private int checkAction(HttpServletRequest request){
-		if ((request.getParameter("createApp") != null) || (request.getParameter("newApp") != null)) {
+		if (request.getParameter("createApp") != null) {
 			return 1;
-		} else if (request.getParameter("deleteApp") != null) {
+		}  else if (request.getParameter("confirmCreateApp") != null) {
 			return 2;
-		} else if ((request.getParameter("editApp") != null) || (request.getParameter("edit") != null)) {
+		} else if (request.getParameter("deleteApp") != null) {
 			return 3;
+		} else if (request.getParameter("editApp") != null) {
+			return 4;
+		} else if (request.getParameter("confirmEditApp") != null) {
+			return 5;
 		}
 		return 0;
 	}
 
 	
+	private void goToNewAppFormPage(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		setDateFields(request);
+		forward(WebPath.HR_NEW_APPLICATION_FORM_JSP, request, response);
+	}
+	
+	
 	private void createNewApp(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
-
-		if (request.getParameter("createApp") != null) {
-			setDateFields(request);
-			forward(WebPath.HR_NEW_APPLICATION_FORM_JSP, request, response);
-		}
+			throws ServletException, IOException {			
 
 		ApplicationForm appForm = getDataFromForm(request, response);
-		appDao.createApplicationForm(appForm);
+		try {
+			appDao.createApplicationForm(appForm);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 		
 		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
 		
@@ -130,7 +129,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 
 	
 	private ApplicationForm getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, PersistException, IOException {
+			throws ServletException, IOException {
 		
 		ApplicationForm appForm = null;
 		boolean emptyFields = isEmptyFields(request);
@@ -169,7 +168,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			try {
 				parsedDate = dateFormat.parse(date);
 			} catch (ParseException e) {
-				log.error("can't parse date from Form");
+				throw new ServletException();
 			}
 			
 			//check fields with numbers
@@ -190,17 +189,72 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 				appForm = hrDep.formApplicationForm(parsedAge, education, 
 						parsedRequirements, post, parsedSalary, parsedWorkExpirience, parsedDate);
 			} else {
-				request.setAttribute("wrongFields", "wrongFields");
+				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			
-			request.setAttribute("emptyFields", "emptyFields");
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 			
 		return appForm;
 	}
+	
+	
+	private void deleteApp(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		List<Integer> idList = getSelectedAppFormsId(request, "appId");
+		
+		try {
+			for (Integer id : idList) {
+				ApplicationForm appForm = appDao.getApplicationFormById(id);
+				appDao.deleteApplicationForm(appForm);
+			}
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
+		
+		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
+	}
+	
+	
+	private void goToEditAppForm(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+	
+		List<Integer> idList = getSelectedAppFormsId(request, "appId");
+		
+		makeErrorNoOneSelectedItem(idList, request, response);
+		makeErrorTooManySelectedItem(idList,request, response);
+		
+		ApplicationForm appForm = null;
+		try {
+			appForm = appDao.getApplicationFormById(idList.get(0));
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
+		setDateFields(request);
+		request.setAttribute("app", appForm);
+		forward(WebPath.HR_EDIT_APPLICATION_FORM_JSP, request, response);
+	}
+	
+	
+	private void editApp(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		ApplicationForm appForm = getDataFromForm(request, response);
+
+		Integer id = Integer.parseInt(request.getParameter("id"));
+		appForm.setId(id);
+		try {
+			appDao.updateApplicationForm(appForm);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
+		
+		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
+	}
+	
 	
 	//if the Days corresponding to the Months
 	private boolean isCorrectInputDateFields(String month, String day) {
@@ -218,15 +272,16 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private boolean isEmptyFields(HttpServletRequest request) {
 		
 		Map<String, String[]> parameters = request.getParameterMap();
-		List<String> emptyParameters = new ArrayList<String>();
+		List<String> emptyFieldsList = new ArrayList<String>();
 		for (String key : parameters.keySet()) {
 			String val = request.getParameter(key);
 			if (val.equals("")) {
-				emptyParameters.add(key);
+				emptyFieldsList.add(key);
 			}
 		}
-		if (emptyParameters.size() > 0) {
-			request.setAttribute("emptyFields", emptyParameters);
+		if (emptyFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request, WebAttributes.EMPTY_FIELDS_LIST);
+			request.setAttribute("emptyFieldsList", emptyFieldsList);
 			return true;
 		}
 		return false;
@@ -234,93 +289,49 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 	//if there is correct data in fields
 	private boolean isWrongDataFields(Map<String, String> map, HttpServletRequest request) {
-		List<String> wrongFields = new ArrayList<String>();
+		List<String> wrongFieldsList = new ArrayList<String>();
 		for (String data : map.keySet()) {
 			try {
 				int value = Integer.parseInt(map.get(data));
 				if (value < 0) {
-					wrongFields.add(data);	
+					wrongFieldsList.add(data);	
 				}
 			} catch (NumberFormatException e){
-				wrongFields.add(data);
+				wrongFieldsList.add(data);
 			}
 		}
-		if (wrongFields.size() > 0) {
-			request.setAttribute("wrongFields", wrongFields);
+		if (wrongFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA_FIELDS_LIST);
+			request.setAttribute("wrongFieldsList", wrongFieldsList);
 			return true;
 		}
 		return false;
 	}
 	
-	private void deleteApp(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
-		
-		List<Integer> idList = getSelectedAppFormsId(request, "appId");
-		
-		for (Integer id : idList) {
-			ApplicationForm appForm = appDao.getApplicationFormById(id);
-			appDao.deleteApplicationForm(appForm);
-		}
-		
-		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
-	}
-	
-	
-	private void editApp(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-						
-		if (request.getParameter("editApp") != null) {
-			List<Integer> idList = getSelectedAppFormsId(request, "appId");
-	
-			makeErrorNoOneSelectedItem(idList, request, response);
-			makeErrorTooManySelectedItem(idList,request, response);
-			
-			ApplicationForm appForm = null;
-			try {
-				appForm = appDao.getApplicationFormById(idList.get(0));
-			} catch (PersistException e) {
-				log.error("can't get Application Form with id " + idList.get(0));
-			}
-			setDateFields(request);
-			request.setAttribute("app", appForm);
-			forward(WebPath.HR_EDIT_APPLICATION_FORM_JSP, request, response);
-		}
-		
-		ApplicationForm appForm = null;
-		try {
-			appForm = getDataFromForm(request, response);
-		} catch (PersistException e) {
-			log.error("can't get ApplicationForm from Form");
-		}
-		Integer id = Integer.parseInt(request.getParameter("id"));
-		appForm.setId(id);
-		try {
-			appDao.updateApplicationForm(appForm);
-		} catch (PersistException e) {
-			log.warn("can't update ApplicationForm with id " + id);
-		}
-		
-		forward(WebPath.APPLICATION_BASE_PAGE_SERVLET, request, response);
-	}
-	
-	
 
 	private void findNewCandidate(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 
 		List<Integer> idList = getSelectedAppFormsId(request, "appId");
 		
 		makeErrorNoOneSelectedItem(idList, request, response);
 		makeErrorTooManySelectedItem(idList,request, response);
 		
-		ApplicationForm appForm = appDao.getApplicationFormById(idList.get(0));
+		ApplicationForm appForm;
+		try {
+			appForm = appDao.getApplicationFormById(idList.get(0));
+		} catch (PersistException e1) {
+			throw new ServletException();
+		}
 		HRDepartment hrDep = new HRDepartment();
 		Set<Candidate> findedCandidates = null;
 		try {
 			findedCandidates = hrDep.findCandidates(appForm);
 		} catch (NoSuitableCandidateException e) {
-			request.setAttribute("noOneCandidate", "noOneCandidate");
+			WebAttributes.loadAttribute(request, WebAttributes.NO_NEW_CANDIDATE);
 			forward(WebPath.ERROR_JSP, request, response);
+		} catch (PersistException pe) {
+			throw new ServletException();
 		}
 		
 		request.setAttribute("candidates", findedCandidates);
@@ -369,7 +380,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
-			request.setAttribute("nothingSelectedError", "nothingSelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -378,8 +389,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
-			request.setAttribute("selectedCount", idList.size());
-			request.setAttribute("tooManySelectedError", "tooManySelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.TOO_MANY_ITEMS_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}

@@ -108,7 +108,6 @@ public class ApplicantServlet extends HttpServlet {
 	private void enter(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-		WebAttributes.loadAttribute(request, WebAttributes.APPLICANT_BASE_PAGE_ATTRIBUTE);
 		String login = request.getParameter("login");
 		
 		Applicant applicant = null;
@@ -151,7 +150,7 @@ public class ApplicantServlet extends HttpServlet {
 		} catch (PersistException e) {
 			if (null == applicant) {
 				log.error("applicant with login " + login + " not found");
-				request.setAttribute("userNotFound", "userNotFound");
+				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
@@ -162,19 +161,19 @@ public class ApplicantServlet extends HttpServlet {
 				applicant.setPassword(newPassword);
 				try {
 					aplcntDao.updateApplicant(applicant);
-					request.setAttribute("successChangePassword", "successChangePassword");
-					forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 				} catch (PersistException e) {
-					request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+					WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_CHANGE_PASSWORD);
 					forward(WebPath.ERROR_JSP, request, response);
 				}
+				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_APPLICANT_CHANGE_PASSWORD);		
+				forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 			} else {
-				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_CHANGE_PASSWORD);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
-			request.setAttribute("passwordNotFound", "passwordNotFound");
+			WebAttributes.loadAttribute(request, WebAttributes.INCORRECT_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
@@ -201,13 +200,13 @@ public class ApplicantServlet extends HttpServlet {
 			try {
 				applicant = aplcntDao.createApplicant(applicant);
 			} catch (PersistException e) {
-				request.setAttribute("notSuccessApplicantCreateOperation", "notSuccessApplicantCreateOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_REGISTRATION);
 				forward(WebPath.ERROR_JSP, request, response);	
 			}
-			request.setAttribute("successApplicantRegistration", "successApplicantRegistration");
+			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_APPLICANT_REGISTRATION);		
 			forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 		} else {
-			request.setAttribute("notSuccessApplicantRegistration", "notSuccessApplicantRegistration");
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_REGISTRATION);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}	
@@ -251,8 +250,8 @@ public class ApplicantServlet extends HttpServlet {
 		} catch (PersistException e) {
 			if (null == applicant) {
 				log.error("applicant with login " + login + " not found");
-				request.setAttribute("userNotFound", "userNotFound");
-				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
@@ -262,8 +261,8 @@ public class ApplicantServlet extends HttpServlet {
 			request.setAttribute("applicant", applicant);
 			forward(WebPath.APPLICANT_DELETE_JSP, request, response);
 		} else {
-			request.setAttribute("passwordNotFound", "passwordNotFound");
-			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+			WebAttributes.loadAttribute(request, WebAttributes.INCORRECT_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -277,10 +276,10 @@ public class ApplicantServlet extends HttpServlet {
 		try {
 			Applicant applicant = aplcntDao.getApplicantByLogin(applicantLogin);
 			aplcntDao.deleteApplicant(applicant);
-			request.setAttribute("successApplicantDeleteOperation", "successApplicantDeleteOperation");
+			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_APPLICANT_DELETE);
 			forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 		} catch (PersistException e) {
-			request.setAttribute("notSuccessApplicantDeleteOperation", "notSuccessApplicantDeleteOperation");
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_DELETE);
 			forward(WebPath.ERROR_JSP, request, response);	
 		}
 	}
@@ -300,48 +299,48 @@ public class ApplicantServlet extends HttpServlet {
 
 			for (Applicant searchedApplicant : applicants) {
 				if (searchedApplicant.getLogin().equalsIgnoreCase(login)) {
-					request.setAttribute("existUserError", "existUserError");
+					WebAttributes.loadAttribute(request, WebAttributes.USER_ALREADY_EXIST_ERROR);
 					condition = false;
 				}
 			}
 			
 			if (request.getParameter("firstName").equals("")) {
-				request.setAttribute("emptyNameFields", "emptyNameFields");
+				WebAttributes.loadAttribute(request, WebAttributes.EMPTY_NAME_FIELDS);
 				condition = false;
 			}
 			if (request.getParameter("surname").equals("")) {
-				request.setAttribute("emptyNameFields", "emptyNameFields");
+				WebAttributes.loadAttribute(request, WebAttributes.EMPTY_NAME_FIELDS);
 				condition = false;
 			}
 			if (request.getParameter("secondName").equals("")) {
-				request.setAttribute("emptyNameFields", "emptyNameFields");
+				WebAttributes.loadAttribute(request, WebAttributes.EMPTY_NAME_FIELDS);
 				condition = false;
 			}
 				
 		}
 		
 		if (login.equals("") || password.equals("")) {
-			request.setAttribute("emptyLoginFields", "emptyLoginFields");
+			WebAttributes.loadAttribute(request, WebAttributes.EMPTY_LOGIN_FIELDS);
 			condition = false;
 		} 
 		if (login.length() < 6 || login.length() > 10) {
-			request.setAttribute("incorrectLogin", "incorrectLogin");
+			WebAttributes.loadAttribute(request, WebAttributes.LOGIN_LENGTH_ERROR);
 			condition = false;
 		} 
-		if (password.contains(" ")) {	
-			request.setAttribute("passwordSpaceError", "passwordSpaceError");
+		if (login.contains(" ")) {	
+			WebAttributes.loadAttribute(request, WebAttributes.LOGIN_SPACE_ERROR);
 			condition = false;
 		}
-		if (login.contains(" ")) {	
-			request.setAttribute("loginSpaceError", "loginSpaceError");
+		if (password.contains(" ")) {	
+			WebAttributes.loadAttribute(request, WebAttributes.PASSWORD_SPACE_ERROR);
 			condition = false;
 		}
 		if (password.length() < 8 || password.length() > 14) {
-			request.setAttribute("incorrectPassword", "incorrectPassword");
+			WebAttributes.loadAttribute(request, WebAttributes.PASSWORD_LENGTH_ERROR);
 			condition = false;
 		}
 		if (!password.equals(confirmedPassword)) {
-			request.setAttribute("notEqualsPassword", "notEqualsPassword");
+			WebAttributes.loadAttribute(request, WebAttributes.DIFFERENT_PASSWORDS_ERROR);
 			condition = false;
 		}
 		return condition;

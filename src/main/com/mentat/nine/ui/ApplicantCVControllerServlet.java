@@ -134,8 +134,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 
 	private void editCV(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException { 
-
-		WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_BASE_PAGE_ATTRIBUTE);
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
 		
@@ -284,12 +282,10 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				newCV.setDesiredSalary(parsedSalary);
 				
 			} else {
-				WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_EDIT_CV_ATTRIBUTE);
 				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			WebAttributes.loadAttribute(request,  WebAttributes.APPLICANT_EDIT_CV_ATTRIBUTE);
 			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
