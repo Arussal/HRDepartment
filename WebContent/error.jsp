@@ -26,21 +26,21 @@
 	</c:if>
 	
 	<c:if test="${not empty NO_ONE_ITEM_SELECTED}">
-		Ошибка ввода данных: выбрано 0 записей для редактирования<br />
+		Ошибка ввода данных: выбрано 0 записей для редактирования!<br />
 		Надо же выбрать хоть что-то<br /><br />
 	</c:if>
 	
 	<c:if test="${not empty TOO_MANY_ITEMS_SELECTED}">
-		Ошибка ввода данных: выбрано слишком много записей для редактирования<br />
+		Ошибка ввода данных: выбрано слишком много записей для редактирования!<br />
 		Надо же выбрать что-то одно<br /><br />
 	</c:if>
 	
 	<c:if test="${not empty USER_NOT_FOUND}">
-		Пользователь с таким логином не найден<br />
+		Пользователь с таким логином не найден!<br />
 	</c:if>
 	
-	<c:if test="${not empty INCORRECT_PASSWORD}">
-		Вы ввели неправильный пароль<br />
+	<c:if test="${not empty WRONG_PASSWORD}">
+		Вы ввели неправильный пароль!<br />
 	</c:if>
 	
 	<c:if test="${not empty INVALID_APPLICANT_LOGIN}">
@@ -48,18 +48,28 @@
 	</c:if>
 		
 	<c:if test="${not empty INVALID_APPLICANT_REGISTRATION}">
-		Регистрация не выполнена<br /><br />
+		Регистрация не выполнена!<br /><br />
 	</c:if>
 	
 	<c:if test="${not empty INVALID_APPLICANT_CHANGE_PASSWORD}">
-		Смена пароля не выполнена<br /><br />
+		Смена пароля не выполнена!<br /><br />
 	</c:if>
 	
 	<c:if test="${not empty INVALID_APPLICANT_CHANGE_PASSWORD}">
-		Смена пароля не выполнена<br /><br />
+		Смена пароля не выполнена!<br /><br />
 	</c:if>
 			
-	
+	<c:if test="${not empty INVALID_MANAGER_LOGIN}">
+		Введите правильный логин и пароль или <a href="${MANAGER_LOGIN_JSP}">зарегестрируйтесь</a><br /><br />
+	</c:if>
+			
+	<c:if test="${not empty INVALID_MANAGER_REGISTRATION}">
+		Регистрация не выполнена!<br /><br />
+	</c:if>
+				
+	<c:if test="${not empty NO_NEW_CANDIDATE}">
+		Новых кандидатов не найдено
+	</c:if>
 	
 	<!-- register applicant block -->
 		
@@ -94,13 +104,9 @@
 	<c:if test="${not empty DIFFERENT_PASSWORDS_ERROR}">
 		Пароль и "подтверждение пароля" не совпадают! Введите одинаковые пароли<br />
 	</c:if>
-	
 	<!-- end register applicant block -->
 	
-			
-	<c:if test="${not empty NO_NEW_CANDIDATE}">
-		Новых кандидатов не найдено
-	</c:if>
+
 	
 	
 	<c:if test="${not empty notSuccessManagerCreateOperation}">

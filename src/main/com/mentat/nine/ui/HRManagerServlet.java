@@ -9,13 +9,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.ManagerDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Manager;
-import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebAttributes;
 import main.com.mentat.nine.ui.util.WebPath;
 
 /**
@@ -24,35 +22,29 @@ import main.com.mentat.nine.ui.util.WebPath;
 @WebServlet("/hrManagerServlet")
 public class HRManagerServlet extends HttpServlet {
 	
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(HRManagerServlet.class);
-	
 	private static final long serialVersionUID = 1L;
 	private ManagerDAO mngrDao;
        
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public HRManagerServlet() throws PersistException {
+    public HRManagerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        mngrDao = daoFactory.getManagerDAO();
+        try {
+			mngrDao = daoFactory.getManagerDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -60,17 +52,12 @@ public class HRManagerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		try {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		
 		request.setCharacterEncoding("UTF-8");
 		
@@ -121,9 +108,8 @@ public class HRManagerServlet extends HttpServlet {
 			manager = mngrDao.getManagerByLogin(login);
 		} catch (PersistException e) {
 			if (null == manager) {
-				log.error("manager with login " + login + " not found");
-				request.setAttribute("userNotFound", "userNotFound");
-				request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
@@ -132,8 +118,8 @@ public class HRManagerServlet extends HttpServlet {
 		if (manager.getPassword().equals(password)) {
 			forward(WebPath.MANAGER_MAIN_JSP, request, response);
 		} else {
-			request.setAttribute("passwordNotFound", "passwordNotFound");
-			request.setAttribute("notSuccessManagerLoginOperation", "notSuccessManagerLoginOperation");
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_LOGIN);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -155,14 +141,13 @@ public class HRManagerServlet extends HttpServlet {
 			try {
 				mngrDao.createManager(manager);
 			} catch (PersistException e) {
-				request.setAttribute("notSuccessManagerCreateOperation", "notSuccessManagerCreateOperation");
-				request.setAttribute("notSuccessManagerRegistration", "notSuccessManagerRegistration");
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_REGISTRATION);
 				forward(WebPath.ERROR_JSP, request, response);	
 			}
-			request.setAttribute("successManagerRegistration", "successManagerRegistration");
+			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_MANAGER_REGISTRATION);
 			forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 		} else {
-			request.setAttribute("notSuccessManagerRegistration", "notSuccessManagerRegistration");
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_REGISTRATION);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -179,7 +164,7 @@ public class HRManagerServlet extends HttpServlet {
 				managers = mngrDao.getAllManagers();
 				for (Manager searchedManager : managers) {
 					if (searchedManager.getLogin().equalsIgnoreCase(login)) {
-						request.setAttribute("existUserError", "existUserError");
+						WebAttributes.loadAttribute(request, WebAttributes.USER_ALREADY_EXIST_ERROR);
 						condition = false;
 					}
 				}
@@ -190,34 +175,34 @@ public class HRManagerServlet extends HttpServlet {
 		}
 		
 		if (login.equals("") || password.equals("")) {
-			request.setAttribute("emptyLoginFields", "emptyLoginFields");
+			WebAttributes.loadAttribute(request, WebAttributes.EMPTY_LOGIN_FIELDS);
 			condition = false;
 		} 
 		if (login.length() < 6 || login.length() > 10) {
-			request.setAttribute("incorrectLogin", "incorrectLogin");
+			WebAttributes.loadAttribute(request, WebAttributes.LOGIN_LENGTH_ERROR);
 			condition = false;
 		} 
-		if (password.contains(" ")) {	
-			request.setAttribute("passwordSpaceError", "passwordSpaceError");
+		if (login.contains(" ")) {	
+			WebAttributes.loadAttribute(request, WebAttributes.LOGIN_SPACE_ERROR);
 			condition = false;
 		}
-		if (login.contains(" ")) {	
-			request.setAttribute("loginSpaceError", "loginSpaceError");
+		if (password.contains(" ")) {	
+			WebAttributes.loadAttribute(request, WebAttributes.PASSWORD_SPACE_ERROR);
 			condition = false;
 		}
 		if (password.length() < 8 || password.length() > 14) {
-			request.setAttribute("incorrectPassword", "incorrectPassword");
+			WebAttributes.loadAttribute(request, WebAttributes.PASSWORD_LENGTH_ERROR);
 			condition = false;
 		}
 		if (!password.equals(confirmedPassword)) {
-			request.setAttribute("notEqualsPassword", "notEqualsPassword");
+			WebAttributes.loadAttribute(request, WebAttributes.DIFFERENT_PASSWORDS_ERROR);
 			condition = false;
 		}
 		return condition;
 	}
 
 	private void changePassword(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 	
 		String login = request.getParameter("login");
 		String oldPassword = request.getParameter("oldPassword");
@@ -229,8 +214,7 @@ public class HRManagerServlet extends HttpServlet {
 			manager = mngrDao.getManagerByLogin(login);
 		} catch (PersistException e) {
 			if (null == manager) {
-				log.error("manager with login " + login + " not found");
-				request.setAttribute("managerNotFound", "managerNotFound");
+				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
@@ -239,16 +223,20 @@ public class HRManagerServlet extends HttpServlet {
 			boolean registrationConditions = isCorrectRegistrationData(login, newPassword, repeatePassword, request);
 			if (registrationConditions) {
 				manager.setPassword(newPassword);
-				mngrDao.updateManager(manager);
-				request.setAttribute("successChangePassword", "successChangePassword");
+				try {
+					mngrDao.updateManager(manager);
+				} catch (PersistException e) {
+					throw new ServletException();
+				}
+				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_MANAGER_CHANGE_PASSWORD);
 				forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 			} else {
-				request.setAttribute("notSuccessManagerOperation", "notSuccessManagerOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_CHANGE_PASSWORD);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			request.setAttribute("notSuccessManagerOperation", "notSuccessManagerOperation");
-			request.setAttribute("passwordNotFound", "passwordNotFound");
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_CHANGE_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 		
@@ -265,9 +253,8 @@ public class HRManagerServlet extends HttpServlet {
 			manager = mngrDao.getManagerByLogin(login);
 		} catch (PersistException e) {
 			if (null == manager) {
-				log.error("manager with login " + login + " not found");
-				request.setAttribute("userNotFound", "userNotFound");
-				request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		}
@@ -277,8 +264,8 @@ public class HRManagerServlet extends HttpServlet {
 			request.setAttribute("manager", manager);
 			forward(WebPath.MANAGER_DELETE_JSP, request, response);
 		} else {
-			request.setAttribute("passwordNotFound", "passwordNotFound");
-			request.setAttribute("notSuccessApplicantLoginOperation", "notSuccessApplicantLoginOperation");
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_LOGIN);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -291,10 +278,10 @@ public class HRManagerServlet extends HttpServlet {
 			try {
 				Manager manager = mngrDao.getManagerByLogin(managerLogin);
 				mngrDao.deleteManager(manager);
-				request.setAttribute("successManagerDeleteOperation", "successManagerDeleteOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_MANAGER_DELETE);
 				forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 			} catch (PersistException e) {
-				request.setAttribute("notSuccessManagerDeleteOperation", "notSuccessManagerDeleteOperation");
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_DELETE);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 	}

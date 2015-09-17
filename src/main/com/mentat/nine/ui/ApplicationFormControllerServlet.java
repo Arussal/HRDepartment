@@ -40,13 +40,17 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private ApplicationFormDAO appDao;
 	
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public ApplicationFormControllerServlet() throws PersistException {
+    public ApplicationFormControllerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		appDao = daoFactory.getApplicationFormDAO();
+		try {
+			appDao = daoFactory.getApplicationFormDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**

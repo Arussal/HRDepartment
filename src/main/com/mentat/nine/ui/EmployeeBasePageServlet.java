@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
+import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
 import main.com.mentat.nine.ui.util.WebPath;
 
@@ -29,45 +30,42 @@ public class EmployeeBasePageServlet extends HttpServlet {
 	private EmployeeDAO empDao;
        
     /**
+     * @throws ServletException 
      * @throws PersistException 
      * @see HttpServlet#HttpServlet()
      */
-    public EmployeeBasePageServlet() throws PersistException {
+    public EmployeeBasePageServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        empDao = daoFactory.getEmployeeDAO();
+        try {
+			empDao = daoFactory.getEmployeeDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
     
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	
 	@SuppressWarnings("unchecked")
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		
 		Set<Employee> empList = null;
 		if (request.getAttribute("empIncomeList") != null) {
@@ -83,13 +81,19 @@ public class EmployeeBasePageServlet extends HttpServlet {
 	}
 
 	
-	private Set<Employee> getAllEmployees() throws PersistException {
-		return empDao.getAllEmployees();
+	private Set<Employee> getAllEmployees() throws ServletException {
+		Set<Employee> employees;
+		try {
+			employees = empDao.getAllEmployees();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
+		return employees;
 	}
 
 	
-	private void createFilterFinder(HttpServletRequest request,
-			Set<Employee> employees) throws PersistException {
+	private void createFilterFinder(HttpServletRequest request, Set<Employee> employees) 
+			throws ServletException  {
 		
 		List<String> comparableList = new ArrayList<String>();
 		comparableList.add("меньше или равно");
@@ -151,11 +155,20 @@ public class EmployeeBasePageServlet extends HttpServlet {
 				expirienceEmployeeSet.add(" не указано");
 			} else {
 				originExpirienceSet.add(employee.getWorkExpirience());
-			} 			
-			if (employee.getDepartment() == null) {
+			} 
+			
+			Department department;
+			try {
+				department = employee.getDepartment();
+			} catch (PersistException e) {
+				throw new ServletException();
+			}
+			
+			if (department == null) {
 				departmentEmployeeSet.add(" не указано");
 			} else {
-				departmentEmployeeSet.add(employee.getDepartment().getName());
+				String name = department.getName();
+				departmentEmployeeSet.add(name);
 			}			
 			if (employee.getSalary() == null) {
 				salaryEmployeeSet.add(" не указано");

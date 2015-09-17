@@ -12,13 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.CVFormDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
-import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebAttributes;
 import main.com.mentat.nine.ui.util.WebPath;
 
 /**
@@ -26,24 +24,22 @@ import main.com.mentat.nine.ui.util.WebPath;
  */
 @WebServlet("/cvformControllerServlet")
 public class CVFormControllerServlet extends HttpServlet {
-	
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(CVFormControllerServlet.class);
-	
+ 	
 	private static final long serialVersionUID = 1L;
 	private CVFormDAO cvDao;
        
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public CVFormControllerServlet() throws PersistException {
+    public CVFormControllerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		cvDao = daoFactory.getCVFormDAO();
+		try {
+			cvDao = daoFactory.getCVFormDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**
@@ -106,22 +102,19 @@ public class CVFormControllerServlet extends HttpServlet {
 			}
 		}
 		
-		if (idList.size() == 0) {
-			request.setAttribute("noOneCVToDelete", "noOneCVToDelete");
-			forward(WebPath.ERROR_JSP, request, response);
-		}
+		makeErrorNoOneSelectedItem(idList, request, response);
 		
 		for (Integer id : idList) {
 			CVForm cv = null;
 			try {
 				cv = cvDao.getCVFormById(id);
 			} catch (PersistException e) {
-				log.error("can't get cv with id " + id);
+				throw new ServletException();
 			}
 			try {
 				cvDao.deleteCVForm(cv);
 			} catch (PersistException e) {
-				log.error("can't delete cv with id " + id);
+				throw new ServletException();
 			}
 		}
 		
@@ -153,7 +146,7 @@ public class CVFormControllerServlet extends HttpServlet {
 		try {
 			cvList = cvDao.getCVForm(parameters);
 		} catch (PersistException e) {
-			log.warn("no one candidate with different parameters found");
+			throw new ServletException();
 		}
 		
 		if (null == cvList) {
@@ -196,6 +189,16 @@ public class CVFormControllerServlet extends HttpServlet {
 		}
 		return conditionOperator;
 	}
+	
+	
+	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
+			HttpServletResponse response) throws ServletException, IOException {
+		if (0 == idList.size()) {
+			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
+			forward(WebPath.ERROR_JSP, request, response);
+		}
+	}
+	
 	
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {

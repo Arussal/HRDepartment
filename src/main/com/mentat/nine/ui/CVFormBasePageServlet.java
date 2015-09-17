@@ -27,44 +27,40 @@ public class CVFormBasePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private CVFormDAO cvDao;
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
     
-	public CVFormBasePageServlet() throws PersistException {
+	public CVFormBasePageServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		cvDao = daoFactory.getCVFormDAO();
+		try {
+			cvDao = daoFactory.getCVFormDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	
 	@SuppressWarnings("unchecked")
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, PersistException, IOException {
+			throws ServletException, IOException {
 
 		List<CVForm> cvList = null;
 		if (request.getAttribute("cvIncomeList") != null) {
@@ -80,7 +76,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 	}
 	
 	
-	private void createFilterFinder(HttpServletRequest request, List<CVForm> cvList) throws PersistException{
+	private void createFilterFinder(HttpServletRequest request, List<CVForm> cvList) {
 		
 		List<String> comparableList = new ArrayList<String>();
 		comparableList.add("меньше или равно");
@@ -153,8 +149,13 @@ public class CVFormBasePageServlet extends HttpServlet {
 	}
 	
 	
-	private List<CVForm> getAllCV() throws PersistException{
-		List<CVForm> cvList = cvDao.getAllCVForms();
+	private List<CVForm> getAllCV() throws ServletException {
+		List<CVForm> cvList;
+		try {
+			cvList = cvDao.getAllCVForms();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 		return cvList;
 	}
 	

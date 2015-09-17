@@ -28,13 +28,17 @@ public class CandidateBasePageServlet extends HttpServlet {
 	private CandidateDAO candDao;
        
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public CandidateBasePageServlet() throws PersistException {
+    public CandidateBasePageServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        candDao = daoFactory.getCandidateDAO();
+        try {
+			candDao = daoFactory.getCandidateDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**

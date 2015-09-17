@@ -22,15 +22,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.DepartmentDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.Employee;
-import main.com.mentat.nine.domain.util.LogConfig;
+import main.com.mentat.nine.ui.util.WebAttributes;
 import main.com.mentat.nine.ui.util.WebPath;
 
 /**
@@ -39,53 +37,45 @@ import main.com.mentat.nine.ui.util.WebPath;
 @WebServlet("/employeeControllerServlet")
 public class EmployeeControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(CandidateControllerServlet.class);
-	
+    	
 	private EmployeeDAO empDao;
 	private DepartmentDAO depDao;
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public EmployeeControllerServlet() throws PersistException {
+    public EmployeeControllerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        empDao = daoFactory.getEmployeeDAO();
-        depDao = daoFactory.getDepartmentDAO();
+     
+        try {
+			depDao = daoFactory.getDepartmentDAO();   
+			empDao = daoFactory.getEmployeeDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO logger
-			e.printStackTrace();
-		}
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
-		} catch (PersistException e) {
-			// TODO logger
-			e.printStackTrace();
-		}
 	}
 
 	
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
+		
 		request.setCharacterEncoding("UTF-8");
 		int action = checkAction(request);
 		
@@ -118,7 +108,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 	
 	
 	private void findEmployee(HttpServletRequest request, HttpServletResponse response)
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 
 		Map<String, List<String>> parameters = new HashMap<String, List<String>>();
 		String idParameter = request.getParameter("id");
@@ -137,9 +127,13 @@ public class EmployeeControllerServlet extends HttpServlet {
 		String hireDateSymbol = request.getParameter("hireDateComparable");
 		String fireDateSymbol = request.getParameter("fireDateComparable");
 		
-		Department department = depDao.getDepartmentByName(departmentParameter);
+		Department department;
+		try {
+			department = depDao.getDepartmentByName(departmentParameter);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 	
-		
 		addToParameterMap(parameters, idParameter, "id", "=");
 		addToParameterMap(parameters, ageParameter, "id", ageSymbol);
 		addToParameterMap(parameters, postParameter, "post", "=");
@@ -150,7 +144,12 @@ public class EmployeeControllerServlet extends HttpServlet {
 		addToParameterMap(parameters, hireDateParameter, "hireDate", hireDateSymbol);
 		addToParameterMap(parameters, fireDateParameter, "fireDate", fireDateSymbol);
 	
-		Set<Employee> employees = empDao.getEmployees(parameters);
+		Set<Employee> employees;
+		try {
+			employees = empDao.getEmployees(parameters);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 		request.setAttribute("empIncomeList", employees);
 		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 	}
@@ -190,16 +189,26 @@ public class EmployeeControllerServlet extends HttpServlet {
 
 
 	private void editEmployee(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 
 		List<Integer> idList = getSelectedItems(request);
 
 		makeErrorNoOneSelectedItem(idList, request, response);
 		makeErrorTooManySelectedItem(idList,request, response);
 			
-		List<Department> departments = depDao.getAllDepartments();
+		List<Department> departments;
+		try {
+			departments = depDao.getAllDepartments();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 		request.setAttribute("departments", departments);
-		Employee employee = empDao.getEmployeeById(idList.get(0));
+		Employee employee;
+		try {
+			employee = empDao.getEmployeeById(idList.get(0));
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 		setDateFields(request);
 		request.setAttribute("emp", employee);
 		forward(WebPath.HR_EDIT_EMPLOYEE_JSP, request, response); 
@@ -207,15 +216,23 @@ public class EmployeeControllerServlet extends HttpServlet {
 	
 	
 	public void saveEmployeeChanges(HttpServletRequest request, HttpServletResponse response) 
-			throws PersistException, ServletException, IOException {
+			throws ServletException, IOException {
 		
 		Integer id = Integer.parseInt(request.getParameter("id"));
-		Employee nonUpdatedEmployee = empDao.getEmployeeById(id);
+		Employee nonUpdatedEmployee;
+		try {
+			nonUpdatedEmployee = empDao.getEmployeeById(id);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 		Employee updatedEmployee = getDataFromForm(request, response);
-		
 		updatedEmployee.setId(id);
 		updatedEmployee.setName(nonUpdatedEmployee.getName());
-		empDao.updateEmployee(updatedEmployee);
+		try {
+			empDao.updateEmployee(updatedEmployee);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
 				
 		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 	}
@@ -236,7 +253,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 	
 	
 	private Employee getDataFromForm(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 				
 		Employee employee = new Employee();
 		boolean emptyFields = isEmptyFields(request);
@@ -269,7 +286,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			String dayHire = request.getParameter("dayHire");
 			boolean correctHireDate = isCorrectInputDateFields(monthHire, dayHire);
 			if (!correctHireDate) {
-				request.setAttribute("wrongDate", "wrongData");
+				WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 			String hireDate = yearHire + "-" + monthHire + "-" + dayHire;
@@ -278,7 +295,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			try {
 				parsedHireDate = dateFormat.parse(hireDate);
 			} catch (ParseException e) {
-				log.error("can't parse date from Form");
+				throw new ServletException();
 			}
 			
 			//get Fire Date from date Fields
@@ -287,7 +304,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			String day = request.getParameter("dayFire");
 			boolean correctFireDate = isCorrectInputDateFields(month, day);
 			if (!correctFireDate) {
-				request.setAttribute("wrongDate", "wrongData");
+				WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 			String fireDate = year + "-" + month + "-" + day;
@@ -295,7 +312,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			try {
 				parsedFireDate = dateFormat.parse(fireDate);
 			} catch (ParseException e) {
-				log.error("can't parse date from Form");
+				throw new ServletException();
 			}
 			
 			
@@ -313,7 +330,12 @@ public class EmployeeControllerServlet extends HttpServlet {
 				int parsedWorkExpirience = Integer.parseInt(workExpirience);
 				
 				Department parsedDepartment = null;
-				List<Department> departments = depDao.getAllDepartments();
+				List<Department> departments = null;
+				try {
+					departments = depDao.getAllDepartments();
+				} catch (PersistException e) {
+					throw new ServletException();
+				}
 				for (Department dep : departments) {
 					if (dep.getName().equals(department)) {
 						parsedDepartment = dep;
@@ -334,14 +356,13 @@ public class EmployeeControllerServlet extends HttpServlet {
 				employee.setSkills(parsedSkills);
 			
 			} else {
-				request.setAttribute("wrongFields", "wrongFields");
+				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			
-			request.setAttribute("emptyFields", "emptyFields");
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 			forward(WebPath.ERROR_JSP, request, response);
-		}
+		}	
 		
 		return employee;
 	}
@@ -358,9 +379,10 @@ public class EmployeeControllerServlet extends HttpServlet {
 				}
 		}
 		if (emptyParameters.size() > 0) {
-			for (String emptyParameter : emptyParameters) {
-				if (!emptyParameter.endsWith("Fire")) {
-					request.setAttribute("emptyFields", emptyParameters);
+			for (String emptyFieldsList : emptyParameters) {
+				if (!emptyFieldsList.endsWith("Fire")) {
+					WebAttributes.loadAttribute(request, WebAttributes.EMPTY_FIELDS_LIST);
+					request.setAttribute("emptyFieldsList", emptyFieldsList);
 					return true;
 				}
 			}
@@ -383,25 +405,26 @@ public class EmployeeControllerServlet extends HttpServlet {
 	
 	
 	private boolean isWrongDataFields(Map<String, String> map, HttpServletRequest request) {
-		List<String> wrongFields = new ArrayList<String>();
+		List<String> wrongFieldsList = new ArrayList<String>();
 		for (String data : map.keySet()) {
 			if (data.equals("fireDate") || data.equals("hireDate")) {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				try {
 					dateFormat.parse(map.get(data));
 				} catch (Exception e) {
-					wrongFields.add(data);
+					wrongFieldsList.add(data);
 				}
 			} else {
 				try {
 					Integer.parseInt(map.get(data));
 				} catch (NumberFormatException e){
-					wrongFields.add(data);
+					wrongFieldsList.add(data);
 				}
 			}
 		}
-		if (wrongFields.size() > 0) {
-			request.setAttribute("wrongFields", wrongFields);
+		if (wrongFieldsList.size() > 0) {
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA_FIELDS_LIST);
+			request.setAttribute("wrongFieldsList", wrongFieldsList);
 			return true;
 		}
 		return false;
@@ -409,7 +432,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 	
 
 	private void fireEmployee(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException, PersistException {
+			throws ServletException, IOException {
 		
 		if (request.getParameter("fireEmployee") != null) {
 			List<Integer> idList = getSelectedItems(request);
@@ -427,7 +450,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 		String day = request.getParameter("day");
 		boolean correctDate = checkCorrectInputDateFields(month, day);
 		if (!correctDate) {
-			request.setAttribute("wrongData", "wrongData");
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 		String date = year + "-" + month + "-" + day;
@@ -436,24 +459,32 @@ public class EmployeeControllerServlet extends HttpServlet {
 		try {
 			fireDate = dateFormat.parse(date);
 		} catch (ParseException e) {
-			// TODO logger
-			e.printStackTrace();
+			throw new ServletException();
 		}
-		Set<Employee> empList = getSelectedEmployees(idList);
-		for (Employee employee : empList) {
-			employee.setFireDate(fireDate);
-			empDao.updateEmployee(employee);
+		Set<Employee> empList = null;
+		try {
+			empList = getSelectedEmployees(idList);
+			for (Employee employee : empList) {
+				employee.setFireDate(fireDate);
+				empDao.updateEmployee(employee);
+			}
+		} catch (PersistException e) {
+			throw new ServletException();
 		}
 		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 		
 	}
 	
 	
-	private Set<Employee> getSelectedEmployees(List<Integer> idList) 
-			throws PersistException {
+	private Set<Employee> getSelectedEmployees(List<Integer> idList) throws ServletException {
 		Set<Employee> empList = new HashSet<Employee>();
 		for (int i = 0; i < idList.size(); i++) {
-			Employee employee = empDao.getEmployeeById(idList.get(i));
+			Employee employee;
+			try {
+				employee = empDao.getEmployeeById(idList.get(i));
+			} catch (PersistException e) {
+				throw new ServletException();
+			}
 			empList.add(employee);
 		}
 		return empList;
@@ -515,7 +546,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (0 == idList.size()) {
-			request.setAttribute("nothingSelectedError", "nothingSelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -524,8 +555,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
 			HttpServletResponse response) throws ServletException, IOException {
 		if (idList.size() > 1) {
-			request.setAttribute("selectedCount", idList.size());
-			request.setAttribute("tooManySelectedError", "tooManySelectedError");
+			WebAttributes.loadAttribute(request, WebAttributes.TOO_MANY_ITEMS_SELECTED);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}

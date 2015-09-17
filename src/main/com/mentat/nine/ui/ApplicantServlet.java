@@ -37,14 +37,18 @@ public class ApplicantServlet extends HttpServlet {
 	private CVFormApplicantDAO cvAplcntDao;
        
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public ApplicantServlet() throws PersistException {
+    public ApplicantServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        aplcntDao = daoFactory.getApplicantDAO();
-        cvAplcntDao = daoFactory.getCVFormApplicantDAO();
+        try {
+			aplcntDao = daoFactory.getApplicantDAO();
+			cvAplcntDao = daoFactory.getCVFormApplicantDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**
@@ -128,7 +132,7 @@ public class ApplicantServlet extends HttpServlet {
 				currentSession.setAttribute("applicant", applicant);
 				goToMainPage(request, response);
 			} else {
-				WebAttributes.loadAttribute(request, WebAttributes.INCORRECT_PASSWORD);
+				WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
 				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
@@ -149,7 +153,6 @@ public class ApplicantServlet extends HttpServlet {
 			applicant = aplcntDao.getApplicantByLogin(login);
 		} catch (PersistException e) {
 			if (null == applicant) {
-				log.error("applicant with login " + login + " not found");
 				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
@@ -172,7 +175,7 @@ public class ApplicantServlet extends HttpServlet {
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.INCORRECT_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
 			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
@@ -261,7 +264,7 @@ public class ApplicantServlet extends HttpServlet {
 			request.setAttribute("applicant", applicant);
 			forward(WebPath.APPLICANT_DELETE_JSP, request, response);
 		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.INCORRECT_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
 			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 			forward(WebPath.ERROR_JSP, request, response);
 		}

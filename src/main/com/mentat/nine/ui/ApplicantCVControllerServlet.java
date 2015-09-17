@@ -16,15 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.CVFormApplicantDAO;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Applicant;
 import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.HRDepartment;
-import main.com.mentat.nine.domain.util.LogConfig;
 import main.com.mentat.nine.ui.util.*;
 
 /**
@@ -33,12 +30,6 @@ import main.com.mentat.nine.ui.util.*;
 @WebServlet("/applicantCVControllerServlet")
 public class ApplicantCVControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(ApplicantCVControllerServlet.class);
     
 	private CVFormApplicantDAO cvApplicantDao;
     /**
@@ -75,7 +66,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-
 			request.setCharacterEncoding("UTF-8");
 			
 		int action = checkActiion(request);
@@ -124,7 +114,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		try {
 			cvApplicantDao.createCVForm(cv);
 		} catch (PersistException e) {
-			log.error("can't create new CVForm");
 			throw new ServletException();
 		}
 		
@@ -144,7 +133,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		try {
 			cv = cvApplicantDao.getCVFormById(idList.get(0));
 		} catch (PersistException e) {
-			log.error("can't get CVForm Form with id " + idList.get(0));
+			throw new ServletException();
 		}
 
 		request.setAttribute("cv", cv);
@@ -164,7 +153,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		try {
 			cvApplicantDao.updateCVForm(cvForm);
 		} catch (PersistException e) {
-			log.warn("can't update CVForm with id " + id);
 			throw new ServletException();
 		}
 		
@@ -183,20 +171,17 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			try {
 				cv = cvApplicantDao.getCVFormById(id);
 			} catch (PersistException e) {
-				log.error("can't get CV with id " + id);
 				throw new ServletException();
 			}
 			cv.setSendStatus("Sent");
 			try {
 				hr.addCVForm(cv);
 			} catch (PersistException e) {
-				log.error("can't send CV to HRDepartment");
 				throw new ServletException();
 			}
 			try {
 				cvApplicantDao.updateCVForm(cv);
 			} catch (PersistException e) {
-				log.error("can't update CV status");
 				throw new ServletException();
 			}
 		}
@@ -216,7 +201,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				CVForm cv = cvApplicantDao.getCVFormById(id);
 				cvApplicantDao.deleteCVForm(cv);
 			} catch (PersistException e) {
-				log.error("can't delete CVForm with id " + id);
 				throw new ServletException();
 			}
 		}
