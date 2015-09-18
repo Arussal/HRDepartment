@@ -414,7 +414,6 @@ public class CandidateDAO {
 			candidates = parseResultSet(rs);
 			if (candidates.size() < 1) {
 				log.warn("no Candidates with different query parameters");
-				throw new PersistException("No Candidates with different query parameters");
 			}
 		} catch (SQLException e) {
 			log.error("can't get Candidates with different query parameters");

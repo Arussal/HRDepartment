@@ -309,12 +309,13 @@ public class EmployeeControllerServlet extends HttpServlet {
 			}
 			String fireDate = year + "-" + month + "-" + day;
 			Date parsedFireDate = null;
-			try {
-				parsedFireDate = dateFormat.parse(fireDate);
-			} catch (ParseException e) {
-				throw new ServletException();
+			if (!fireDate.equals("--")) {
+				try {
+					parsedFireDate = dateFormat.parse(fireDate);
+				} catch (ParseException e) {
+					throw new ServletException();
+				}
 			}
-			
 			
 			Map<String, String> intData = new HashMap<String, String>();
 			intData.put("age", age);

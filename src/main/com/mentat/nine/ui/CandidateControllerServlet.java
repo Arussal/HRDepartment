@@ -45,15 +45,20 @@ public class CandidateControllerServlet extends HttpServlet {
 	private EmployeeDAO empDao;
        
     /**
-     * @throws PersistException 
+     * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public CandidateControllerServlet() throws PersistException {
+    public CandidateControllerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        candDao = daoFactory.getCandidateDAO();
-        depDao = daoFactory.getDepartmentDAO();
-        empDao = daoFactory.getEmployeeDAO();
+        
+        try {
+			empDao = daoFactory.getEmployeeDAO();
+			candDao = daoFactory.getCandidateDAO();
+	        depDao = daoFactory.getDepartmentDAO();
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
     }
 
 	/**
@@ -86,7 +91,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
 		} else if (4 == action) {
 			goToHireEmployeePage(request, response);
-		} else {
+		} else if (5 == action) {
 			hireEmployee(request, response);
 		}
 	}
@@ -102,6 +107,8 @@ public class CandidateControllerServlet extends HttpServlet {
 			return 3;
 		} else if (request.getParameter("hireEmployee") != null) {
 			return 4;
+		} else if (request.getParameter("hireSubmitEmployee") != null) {
+			return 5;
 		}
 		return 0;
 	}
@@ -198,26 +205,7 @@ public class CandidateControllerServlet extends HttpServlet {
 	private void goToHireEmployeePage (HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-		List<Department> departments;
-		try {
-			departments = depDao.getAllDepartments();
-		} catch (PersistException e1) {
-			throw new ServletException();
-		}
-		
-		setDateFields(request);
-		request.setAttribute("departments", departments);
-		forward(WebPath.HR_HIRE_EMPLOYEE_JSP, request, response);
-		
-	}
-	
-	
-	private void hireEmployee(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-		
 		List<Integer> idList = selectedItems(request);
-		HRDepartment hrDep = new HRDepartment();
 			
 		makeErrorNoOneSelectedItem(idList, request, response);
 		makeErrorTooManySelectedItem(idList,request, response);
@@ -229,6 +217,26 @@ public class CandidateControllerServlet extends HttpServlet {
 			throw new ServletException();
 		}
 		
+		List<Department> departments;
+		try {
+			departments = depDao.getAllDepartments();
+		} catch (PersistException e1) {
+			throw new ServletException();
+		}
+		
+		setDateFields(request);
+		request.setAttribute("candidate", cand);
+		request.setAttribute("departments", departments);
+		forward(WebPath.HR_HIRE_EMPLOYEE_JSP, request, response);
+		
+	}
+	
+	
+	private void hireEmployee(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
+		
+		
+		HRDepartment hrDep = new HRDepartment();
 		boolean emptyFields = isEmptyFields(request);
 		
 		if (!emptyFields) {
@@ -267,7 +275,7 @@ public class CandidateControllerServlet extends HttpServlet {
 				} catch (PersistException e1) {
 					throw new ServletException();
 				}
-				
+							
 				Department parsedDepartment = null;
 				for (Department dpmnt : departments) {
 					if (dpmnt.getName().equals(department)) {
@@ -275,8 +283,17 @@ public class CandidateControllerServlet extends HttpServlet {
 					}
 				}
 			
+				String  candidateID = request.getParameter("candidateID");
+				Candidate cand = null;
+				try {
+					cand = candDao.getCandidateById(Integer.parseInt(candidateID));
+				} catch (PersistException e) {
+					throw new ServletException();
+				}
+								
 				Employee employee = hrDep.hireEmployee(cand, parsedSalary, cand.getPost(), 
 						parsedDate, parsedDepartment);
+								
 				try {
 					empDao.createEmployee(employee);
 					candDao.deleteCandidate(cand);
@@ -284,7 +301,7 @@ public class CandidateControllerServlet extends HttpServlet {
 					throw new ServletException();
 				}
 				
-				forward(WebPath.CANDIDATE_BASE_PAGE_SERVLET, request, response);
+				forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 			} else {
 				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
 				forward(WebPath.ERROR_JSP, request, response);

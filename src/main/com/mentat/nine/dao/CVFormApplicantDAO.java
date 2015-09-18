@@ -258,7 +258,7 @@ public CVForm createCVForm(CVForm cv) throws PersistException {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<CVForm> cvForms = null;
+		List<CVForm> cvForms = new ArrayList<CVForm>();
 		
 		try {
 			log.trace("get CVFormApplicants with login " + name);
@@ -269,10 +269,12 @@ public CVForm createCVForm(CVForm cv) throws PersistException {
 			log.trace("create statement");
 			rs = statement.executeQuery(sqlSelect);
 			log.trace("resultset got");
-			cvForms = parseResultSet(rs);
+			List<CVForm> parsedList = parseResultSet(rs);
+			if (parsedList != null) {
+				cvForms = parsedList;
+			}
 			if (cvForms.size() < 1) {
 				log.warn("no CVFormApplicants with login " + name);
-				throw new PersistException("No CVFormApplicants with login = " + name);
 			}
 		} catch (SQLException e) {
 			log.error("can't get CVFormApplicants with login " + name);

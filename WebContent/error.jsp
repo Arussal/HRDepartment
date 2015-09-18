@@ -46,30 +46,28 @@
 	<c:if test="${not empty INVALID_APPLICANT_LOGIN}">
 		Введите правильный логин и пароль или <a href="${APPLICANT_LOGIN_JSP}">зарегестрируйтесь</a><br /><br />
 	</c:if>
-		
-	<c:if test="${not empty INVALID_APPLICANT_REGISTRATION}">
-		Регистрация не выполнена!<br /><br />
-	</c:if>
-	
-	<c:if test="${not empty INVALID_APPLICANT_CHANGE_PASSWORD}">
-		Смена пароля не выполнена!<br /><br />
-	</c:if>
-	
-	<c:if test="${not empty INVALID_APPLICANT_CHANGE_PASSWORD}">
-		Смена пароля не выполнена!<br /><br />
-	</c:if>
-			
+					
 	<c:if test="${not empty INVALID_MANAGER_LOGIN}">
 		Введите правильный логин и пароль или <a href="${MANAGER_LOGIN_JSP}">зарегестрируйтесь</a><br /><br />
 	</c:if>
-			
-	<c:if test="${not empty INVALID_MANAGER_REGISTRATION}">
+	
+	<c:if test="${not empty INVALID_REGISTRATION}">
 		Регистрация не выполнена!<br /><br />
 	</c:if>
-				
+	
+	<c:if test="${not empty INVALID_CHANGE_PASSWORD}">
+		Смена пароля не выполнена!<br /><br />
+	</c:if>
+	
+	<c:if test="${not empty INVALID_DELETE}">
+		Пользователь не удален!<br /><br />
+	</c:if>
+
 	<c:if test="${not empty NO_NEW_CANDIDATE}">
 		Новых кандидатов не найдено
 	</c:if>
+
+
 	
 	<!-- register applicant block -->
 		
@@ -107,48 +105,6 @@
 	<!-- end register applicant block -->
 	
 
-	
-	
-	<c:if test="${not empty notSuccessManagerCreateOperation}">
-		Менеджер не создан<br />
-	</c:if>
-	
-	<c:if test="${not empty notSuccessManagerRegistration}">
-		<a href="manager_registration.jsp">Назад</a>
-	</c:if>
-	
-	<c:if test="${not empty notSuccessManagerOperation}">
-		<a href="changePasswordManager.jsp">Назад</a>
-	</c:if>
-	
-	<c:if test="${not empty notSuccessManagerLoginOperation}">
-		<a href="hrdepartment_login.jsp">Назад</a>
-	</c:if>
-	
-	<c:if test="${not empty notSuccessApplicantLoginOperation}">
-		<a href="applicant_login.jsp">Назад</a><br />
-	</c:if>
-	
-	<c:if test="${not empty notSuccessApplicantCreateOperation}">
-		Соискатель не создан<br />
-	</c:if>
-	
-	<c:if test="${not empty notSuccessApplicantDeleteOperation}">
-		Соискатель не удлен<br />
-		<a href="applicant_login.jsp">Назад</a><br />
-	</c:if>
-	
-	<c:if test="${not empty notSuccessManagerDeleteOperation}">
-		Менеджер не удлен<br />
-		<a href="manager_login.jsp">Назад</a><br />
-	</c:if>
-	
-	<c:if test="${not empty notSuccessApplicantRegistration}">
-		<a href="applicant_registration.jsp">Назад</a>
-	</c:if>
-		
-	
-	 -->
 	
 </body>
 </html>

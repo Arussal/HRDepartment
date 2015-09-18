@@ -17,7 +17,7 @@
 			<td>
 				<select name="department">
 					<c:forEach var="dep" items="${departments}">
-						<option><c:out value="${item.name}"></c:out></option>
+						<option><c:out value="${dep.name}"></c:out></option>
 					</c:forEach>
 				</select>
 			</td>
@@ -47,10 +47,11 @@
 			</td>
 		</tr>
 	</table>
-	<input type="submit" name="hireCandidate" value="Оформить"/>
+	<input type="hidden" name="candidateID" value="${candidate.id}"/>
+	<input type="submit" name="hireSubmitEmployee" value="Оформить"/>
 	</form>
 	<br />
 	<br />
-	<a href="${EMPLOYEE_BASE_PAGE_SERVLET}">Назад</a> <a href="${MANAGER_MAIN_JSP}">На главную</a>
+	<a href="${CANDIDATE_BASE_PAGE_SERVLET}">Назад</a> <a href="${MANAGER_MAIN_JSP}">На главную</a>
 </body>
 </html>

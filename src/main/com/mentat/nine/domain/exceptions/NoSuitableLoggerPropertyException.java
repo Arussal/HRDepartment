@@ -18,7 +18,6 @@ public class NoSuitableLoggerPropertyException extends Exception {
 	 * 
 	 */
 	public NoSuitableLoggerPropertyException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -26,7 +25,6 @@ public class NoSuitableLoggerPropertyException extends Exception {
 	 */
 	public NoSuitableLoggerPropertyException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 }

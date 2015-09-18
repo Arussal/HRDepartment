@@ -128,6 +128,7 @@ public class EmployeeDAO {
 		} finally {
 			Closer.closeConnection(connection);
 		}
+
 		return createdEmployee;
 	}
 
@@ -488,7 +489,6 @@ public class EmployeeDAO {
 			employees = parseResultSet(rs);
 			if (employees.size() < 1) {
 				log.warn("no one Employee persist");
-				throw new PersistException("No one Employee persist");
 			}
 		} catch (SQLException e) {
 			log.error("can't get all Employees");

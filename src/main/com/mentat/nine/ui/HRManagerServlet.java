@@ -141,13 +141,13 @@ public class HRManagerServlet extends HttpServlet {
 			try {
 				mngrDao.createManager(manager);
 			} catch (PersistException e) {
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_REGISTRATION);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_REGISTRATION);
 				forward(WebPath.ERROR_JSP, request, response);	
 			}
-			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_MANAGER_REGISTRATION);
+			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_REGISTRATION);
 			forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_REGISTRATION);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_REGISTRATION);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}
@@ -228,14 +228,14 @@ public class HRManagerServlet extends HttpServlet {
 				} catch (PersistException e) {
 					throw new ServletException();
 				}
-				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_MANAGER_CHANGE_PASSWORD);
+				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_CHANGE_PASSWORD);
 				forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 			} else {
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_CHANGE_PASSWORD);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_CHANGE_PASSWORD);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_CHANGE_PASSWORD);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_CHANGE_PASSWORD);
 			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
@@ -278,10 +278,10 @@ public class HRManagerServlet extends HttpServlet {
 			try {
 				Manager manager = mngrDao.getManagerByLogin(managerLogin);
 				mngrDao.deleteManager(manager);
-				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_MANAGER_DELETE);
+				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_DELETE);
 				forward(WebPath.MANAGER_SUCCESS_JSP, request, response);
 			} catch (PersistException e) {
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_MANAGER_DELETE);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_DELETE);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 	}

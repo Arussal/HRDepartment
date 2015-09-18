@@ -314,7 +314,7 @@ public class CVFormDAO {
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<CVForm> cvForms = null;
+		List<CVForm> cvForms = new ArrayList<CVForm>();
 		
 		try {
 			log.trace("get CVForms with different query parameters");
@@ -350,7 +350,6 @@ public class CVFormDAO {
 			cvForms = parseResultSet(rs);
 			if (cvForms.size() < 1) {
 				log.warn("no CVForms with different query parameters");
-				throw new PersistException("No CVForms with different query parameters");
 			}
 		} catch (SQLException e) {
 			log.error("can't get CVForms with different query parameters");

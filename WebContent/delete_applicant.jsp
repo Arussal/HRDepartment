@@ -5,14 +5,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Confirm Delete - Applicant - HRDepartment</title>
+	<title>Confirm Delete - Applicant - HRDepartment</title>
 </head>
 <body>
 	<h1>Подтвердить удаление</h1>
 	<hr />
 	<form action="${APPLICANT_MAIN_JSP}" method="post">
 		Удалить соискателя: <c:out value="${applicant.name}" />
-		<input type="hidden" name="applicantLogin" value="${applicant.login}"/>
+		<input type="hidden" name="applicantLogin" value="${applicant.login}"/><br />
 		<input type="submit" name="confirmDelete" value="OK">
 		<input type="submit" name="cancel" value="ОТМЕНА">
 	</form>

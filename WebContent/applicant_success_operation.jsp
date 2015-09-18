@@ -8,19 +8,19 @@
 <title>Registration Complete - Manager - HRDepartment</title>
 </head>
 <body>
-	<c:if test="${not empty SUCCESS_APPLICANT_REGISTRATION}">
+	<c:if test="${not empty SUCCESS_REGISTRATION}">
 	<h1>Регистрация успешно выполнена</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
 		<a href="${APPLICANT_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
-	<c:if test="${not empty SUCCESS_APPLICANT_REGISTRATION}">
+	<c:if test="${not empty SUCCESS_CHANGE_PASSWORD}">
 		<h1>Смена пароля успешно выполнено</h1>
 		<hr />
 		Войдите в систему, используя свой логин и пароль<br />
 		<a href="${APPLICANT_LOGIN_JSP}">Войти в систему</a>
 	</c:if>
-	<c:if test="${not empty SUCCESS_APPLICANT_DELETE}">
+	<c:if test="${not empty SUCCESS_DELETE}">
 		<h1>Соискатель успешно удален</h1>
 		<hr />
 		<a href="${HOME_PAGE_JSP}">Выйти из раздела</a>

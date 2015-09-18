@@ -59,7 +59,7 @@
 			<td><input type="text" name="expirience" value="${app.workExpirience}"/></td>
 		</tr>
 		<tr>
-			<td colspan="2"><input type="submit" name="edit" value="Сохранить"></td>
+			<td colspan="2"><input type="submit" name="confirmEditApp" value="Сохранить"></td>
 		</tr>
 	</table>
 	</form>

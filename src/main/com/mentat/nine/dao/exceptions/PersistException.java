@@ -16,12 +16,10 @@ public class PersistException extends Exception {
 
 	public PersistException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public PersistException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 }

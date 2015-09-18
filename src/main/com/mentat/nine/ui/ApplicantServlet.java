@@ -54,7 +54,8 @@ public class ApplicantServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		performTask(request, response);
 	}
 
@@ -62,7 +63,8 @@ public class ApplicantServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		performTask(request, response);
 	}
 
@@ -119,7 +121,6 @@ public class ApplicantServlet extends HttpServlet {
 			applicant = aplcntDao.getApplicantByLogin(login);
 		} catch (PersistException e) {
 			if (null == applicant) {
-				log.error("applicant with login " + login + " not found");
 				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
 				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);
@@ -165,13 +166,13 @@ public class ApplicantServlet extends HttpServlet {
 				try {
 					aplcntDao.updateApplicant(applicant);
 				} catch (PersistException e) {
-					WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_CHANGE_PASSWORD);
+					WebAttributes.loadAttribute(request, WebAttributes.INVALID_CHANGE_PASSWORD);
 					forward(WebPath.ERROR_JSP, request, response);
 				}
-				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_APPLICANT_CHANGE_PASSWORD);		
+				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_CHANGE_PASSWORD);		
 				forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 			} else {
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_CHANGE_PASSWORD);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_CHANGE_PASSWORD);
 				forward(WebPath.ERROR_JSP, request, response);
 			}
 		} else {
@@ -203,13 +204,13 @@ public class ApplicantServlet extends HttpServlet {
 			try {
 				applicant = aplcntDao.createApplicant(applicant);
 			} catch (PersistException e) {
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_REGISTRATION);
+				WebAttributes.loadAttribute(request, WebAttributes.INVALID_REGISTRATION);
 				forward(WebPath.ERROR_JSP, request, response);	
 			}
-			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_APPLICANT_REGISTRATION);		
+			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_REGISTRATION);		
 			forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_REGISTRATION);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_REGISTRATION);
 			forward(WebPath.ERROR_JSP, request, response);
 		}
 	}	
@@ -225,7 +226,6 @@ public class ApplicantServlet extends HttpServlet {
 				List<CVForm> cvList = cvAplcntDao.getCVFormByName(applicant.getName());
 				request.setAttribute("cvList", cvList);
 			} catch (PersistException e) {
-				log.error("can't get CVForms for applicant " + applicant.getLogin());
 				throw new ServletException();
 			}
 			forward(WebPath.APPLICANT_MAIN_JSP, request, response);
@@ -279,10 +279,10 @@ public class ApplicantServlet extends HttpServlet {
 		try {
 			Applicant applicant = aplcntDao.getApplicantByLogin(applicantLogin);
 			aplcntDao.deleteApplicant(applicant);
-			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_APPLICANT_DELETE);
+			WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_DELETE);
 			forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
 		} catch (PersistException e) {
-			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_DELETE);
+			WebAttributes.loadAttribute(request, WebAttributes.INVALID_DELETE);
 			forward(WebPath.ERROR_JSP, request, response);	
 		}
 	}
