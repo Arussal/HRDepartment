@@ -18,7 +18,6 @@ public class NoSuchEmployeeException extends Exception {
 	 * 
 	 */
 	public NoSuchEmployeeException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -26,7 +25,6 @@ public class NoSuchEmployeeException extends Exception {
 	 */
 	public NoSuchEmployeeException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 }

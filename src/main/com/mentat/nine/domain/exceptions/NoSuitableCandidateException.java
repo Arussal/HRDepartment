@@ -18,7 +18,6 @@ public class NoSuitableCandidateException extends Exception {
 	 * 
 	 */
 	public NoSuitableCandidateException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -26,6 +25,5 @@ public class NoSuitableCandidateException extends Exception {
 	 */
 	public NoSuitableCandidateException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 }

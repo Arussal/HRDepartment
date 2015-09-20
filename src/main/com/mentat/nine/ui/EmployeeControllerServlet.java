@@ -43,15 +43,15 @@ public class EmployeeControllerServlet extends HttpServlet {
     	
 	private EmployeeDAO empDao;
 	private DepartmentDAO depDao;
+
+	private DAOFactory daoFactory;
     /**
      * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
     public EmployeeControllerServlet() throws ServletException {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-		depDao = daoFactory.getDepartmentDAO();   
-		empDao = daoFactory.getEmployeeDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -78,6 +78,11 @@ public class EmployeeControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        daoFactory.setLogPath(logPath);
+		depDao = daoFactory.getDepartmentDAO();   
+		empDao = daoFactory.getEmployeeDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {

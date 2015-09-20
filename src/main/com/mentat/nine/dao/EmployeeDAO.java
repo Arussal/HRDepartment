@@ -22,14 +22,14 @@ import main.com.mentat.nine.domain.util.LogConfig;
 
 public class EmployeeDAO {
 
-	static {
-		LogConfig.loadLogConfig();
-	}
 	private static Logger log = Logger.getLogger(EmployeeDAO.class);
 	
 	private DAOFactory daoFactory = null;
+	private String logPath;
 	
-	public EmployeeDAO() {
+	public EmployeeDAO(String logPath) {
+		this.logPath = logPath;
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 	
@@ -548,7 +548,7 @@ public class EmployeeDAO {
 				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
 				employee.setSkills(skills);
 				
-				DepartmentDAO departmentDao = new DepartmentDAO();
+				DepartmentDAO departmentDao = new DepartmentDAO(logPath);
 				Department department = 
 						departmentDao.getDepartmentById(Integer.parseInt(rs.getString("id_department")));
 

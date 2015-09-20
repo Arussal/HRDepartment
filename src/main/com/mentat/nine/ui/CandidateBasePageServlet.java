@@ -29,6 +29,7 @@ import main.com.mentat.nine.ui.util.WebPath;
 public class CandidateBasePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private CandidateDAO candDao;
+	private DAOFactory daoFactory;
        
     /**
      * @throws ServletException 
@@ -36,8 +37,7 @@ public class CandidateBasePageServlet extends HttpServlet {
      */
     public CandidateBasePageServlet() {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-		candDao = daoFactory.getCandidateDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -65,6 +65,10 @@ public class CandidateBasePageServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        daoFactory.setLogPath(logPath);
+        candDao = daoFactory.getCandidateDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {

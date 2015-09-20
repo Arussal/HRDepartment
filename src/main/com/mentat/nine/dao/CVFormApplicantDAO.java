@@ -29,9 +29,6 @@ import main.com.mentat.nine.domain.util.LogConfig;
  */
 public class CVFormApplicantDAO {
 
-	static {
-		LogConfig.loadLogConfig();
-	}
 	private static Logger log = Logger.getLogger(CVFormApplicantDAO.class);
 	
 	private DAOFactory daoFactory;
@@ -39,7 +36,8 @@ public class CVFormApplicantDAO {
 	/**
 	 * 
 	 */
-	public CVFormApplicantDAO() {
+	public CVFormApplicantDAO(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 

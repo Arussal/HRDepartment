@@ -17,7 +17,6 @@ public class CVForm extends Person{
 	 * 
 	 */
 	public CVForm() {
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Integer getDesiredSalary() {

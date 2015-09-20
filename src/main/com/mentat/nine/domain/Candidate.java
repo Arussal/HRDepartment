@@ -16,18 +16,14 @@ import main.com.mentat.nine.domain.util.LogConfig;
  *
  */
 public class Candidate extends Person{
-	
-	
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
+		
 	private static Logger log = Logger.getLogger(Candidate.class);
 	
 	/**
 	 * 
 	 */
-	public Candidate() {
+	public Candidate(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 	}
 	
 	public CVForm formCVForm(String name, int age, Set<String> skills, String education, String phone, 

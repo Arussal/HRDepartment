@@ -41,6 +41,8 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     	
 	private ApplicationFormDAO appDao;
+	private DAOFactory daoFactory;
+	private String logPath;
 	
     /**
      * @throws ServletException 
@@ -48,8 +50,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
      */
     public ApplicationFormControllerServlet() {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-        appDao = daoFactory.getApplicationFormDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -74,6 +75,11 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        this.logPath = logPath;
+        daoFactory.setLogPath(logPath);
+        appDao = daoFactory.getApplicationFormDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {
@@ -191,7 +197,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			boolean wrongFields = isWrongDataFields(intData, request);
 			
 			if (!wrongFields) {
-				HRDepartment hrDep = new HRDepartment();
+				HRDepartment hrDep = new HRDepartment(logPath);
 				
 				int parsedAge = Integer.parseInt(age);
 				int parsedSalary = Integer.parseInt(salary);
@@ -334,7 +340,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		} catch (PersistException e1) {
 			throw new ServletException();
 		}
-		HRDepartment hrDep = new HRDepartment();
+		HRDepartment hrDep = new HRDepartment(logPath);
 		Set<Candidate> findedCandidates = null;
 		try {
 			findedCandidates = hrDep.findCandidates(appForm);

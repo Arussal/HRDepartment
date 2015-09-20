@@ -17,15 +17,12 @@ import main.com.mentat.nine.domain.Manager;
 import main.com.mentat.nine.domain.util.LogConfig;
 
 public class ManagerDAO {
-
-	static {
-		LogConfig.loadLogConfig();
-	}
 	
 	private static Logger log = Logger.getLogger(ManagerDAO.class);
 	private DAOFactory daoFactory; 
 	
-	public ManagerDAO() {
+	public ManagerDAO(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 	

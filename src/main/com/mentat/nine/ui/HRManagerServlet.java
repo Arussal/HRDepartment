@@ -27,6 +27,7 @@ public class HRManagerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private ManagerDAO mngrDao;
+	private DAOFactory daoFactory;
        
     /**
      * @throws ServletException 
@@ -34,8 +35,7 @@ public class HRManagerServlet extends HttpServlet {
      */
     public HRManagerServlet() throws ServletException {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-		mngrDao = daoFactory.getManagerDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -62,6 +62,10 @@ public class HRManagerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        daoFactory.setLogPath(logPath);
+		mngrDao = daoFactory.getManagerDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {

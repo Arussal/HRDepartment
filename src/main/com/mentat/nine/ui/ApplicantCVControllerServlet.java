@@ -34,14 +34,16 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
 	private CVFormApplicantDAO cvApplicantDao;
+	private DAOFactory daoFactory;
+	private String logPath;
+	
     /**
      * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
     public ApplicantCVControllerServlet() throws ServletException {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-        cvApplicantDao = daoFactory.getCVFormApplicantDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -71,6 +73,11 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        this.logPath = logPath;
+        daoFactory.setLogPath(logPath);
+        cvApplicantDao = daoFactory.getCVFormApplicantDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {
@@ -176,7 +183,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
 		
-		HRDepartment hr = new HRDepartment();
+		HRDepartment hr = new HRDepartment(logPath);
 		for (Integer id : idList) {
 			CVForm cv = null;
 			try {

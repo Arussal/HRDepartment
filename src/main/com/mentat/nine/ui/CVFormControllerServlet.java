@@ -30,6 +30,7 @@ public class CVFormControllerServlet extends HttpServlet {
  	
 	private static final long serialVersionUID = 1L;
 	private CVFormDAO cvDao;
+	private DAOFactory daoFactory;
        
     /**
      * @throws ServletException 
@@ -37,14 +38,14 @@ public class CVFormControllerServlet extends HttpServlet {
      */
     public CVFormControllerServlet() throws ServletException {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-		cvDao = daoFactory.getCVFormDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
 	}
 
@@ -52,7 +53,8 @@ public class CVFormControllerServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 			performTask(request, response);
 	}
 	
@@ -63,6 +65,10 @@ public class CVFormControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        daoFactory.setLogPath(logPath);
+		cvDao = daoFactory.getCVFormDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {
@@ -164,7 +170,8 @@ public class CVFormControllerServlet extends HttpServlet {
 	}
 	
 	
-	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, String symbol) {
+	private void addToParameterMap(Map <String, List<String>> map, 
+			String parameter, String field, String symbol) {
 		
 		if (!parameter.equals("")) {
 			List<String> queryParameters = new ArrayList<String>();

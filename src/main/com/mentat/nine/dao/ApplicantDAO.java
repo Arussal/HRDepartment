@@ -24,18 +24,15 @@ import org.apache.log4j.Logger;
  *
  */
 public class ApplicantDAO {
-
-	static {
-		LogConfig.loadLogConfig();
-	}
 	
-	private static Logger log = Logger.getLogger(ManagerDAO.class);
+	private static Logger log = Logger.getLogger(ApplicantDAO.class);
 	private DAOFactory daoFactory; 
 	
 	/**
 	 * 
 	 */
-	public ApplicantDAO() {
+	public ApplicantDAO(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 

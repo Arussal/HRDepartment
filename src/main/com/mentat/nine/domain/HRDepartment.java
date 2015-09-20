@@ -37,18 +37,13 @@ public class HRDepartment extends Department implements HRManager{
 	private EmployeeDAO empDao;
 	private ApplicationFormDAO appDao;
 	private CandidateDAO candDao;
+	private String logPath;
 	
-	/**
-	 * @throws PersistException 
-	 * 
-	 */
-	
-	static {
-		LogConfig.loadLogConfig();
-	}
 	private static Logger log = Logger.getLogger(HRDepartment.class);
 	
-	public HRDepartment()  {
+	public HRDepartment(String logPath)  {
+		this.logPath = logPath;
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 		appDao = daoFactory.getApplicationFormDAO();
 		candDao = daoFactory.getCandidateDAO();
@@ -119,7 +114,7 @@ public class HRDepartment extends Department implements HRManager{
 			}
 			
 			log.trace("candidate is found");
-			Candidate candidate = new Candidate();
+			Candidate candidate = new Candidate(logPath);
 			candidate.setName(cv.getName());
 			candidate.setAge(cv.getAge());
 			candidate.setEducation(cv.getEducation());

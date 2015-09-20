@@ -26,10 +26,12 @@ import static org.mockito.Mockito.*;
 public class CandidateTest {
 	
 	private CVFormDAO cvDao;
+	private String logPath;
 
 	@Before
 	public void setUp() throws PersistException {
 		cvDao = mock(CVFormDAO.class);
+		logPath = mock(String.class);
 	}
 
 	/**
@@ -38,7 +40,7 @@ public class CandidateTest {
 	 */
 	@Test
 	public void testCreateCVForm() {
-		Candidate candidate = new Candidate();
+		Candidate candidate = new Candidate(logPath);
 		String name = "Ivan Pertov";
 		int age = 25;
 		Set<String> skills = new HashSet<String>();
@@ -61,10 +63,10 @@ public class CandidateTest {
 	 */
 	@Test
 	public void testSendCVForm() throws PersistException {
-		HRDepartment hrDep = new HRDepartment();
+		HRDepartment hrDep = new HRDepartment(logPath);
 		hrDep.setCvDao(cvDao);
 		CVForm cvMock = mock(CVForm.class);
-		Candidate candidate = new Candidate();
+		Candidate candidate = new Candidate(logPath);
 		candidate.sendCVForm(cvMock, hrDep);
 		verify(cvDao).createCVForm(cvMock);
 	}

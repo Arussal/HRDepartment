@@ -29,6 +29,7 @@ import main.com.mentat.nine.ui.util.WebPath;
 public class CVFormBasePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private CVFormDAO cvDao;
+	private DAOFactory daoFactory;
     /**
      * @throws ServletException 
      * @see HttpServlet#HttpServlet()
@@ -36,8 +37,7 @@ public class CVFormBasePageServlet extends HttpServlet {
     
 	public CVFormBasePageServlet() throws ServletException {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-		cvDao = daoFactory.getCVFormDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -63,6 +63,10 @@ public class CVFormBasePageServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        daoFactory.setLogPath(logPath);
+        cvDao = daoFactory.getCVFormDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {

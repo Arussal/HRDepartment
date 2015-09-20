@@ -25,14 +25,12 @@ import main.com.mentat.nine.domain.util.LogConfig;
  */
 public class DepartmentDAO{
 
-	static {
-		LogConfig.loadLogConfig();
-	}
 	private static Logger log = Logger.getLogger(DepartmentDAO.class);
 	
 	private DAOFactory daoFactory = null;
 	
-	public DepartmentDAO() {
+	public DepartmentDAO(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 

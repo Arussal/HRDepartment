@@ -46,19 +46,23 @@ public class HomePageServlet extends HttpServlet {
 		HttpSession session = request.getSession(true);
 		WebPath.loadPathValues(session);
 		
-		String path = getServletContext().getInitParameter("dbproperties");
+		String dbPathProperty = getServletContext().getInitParameter("dbproperties");
+		System.out.println(dbPathProperty);		//////
+		String logPath = getServletContext().getInitParameter("log4jproperties");
+		System.out.println(logPath);		//////
 		Properties properties = new Properties();
 		try {
-			InputStream is = getServletContext().getResourceAsStream(path);
+			InputStream dbStream = getServletContext().getResourceAsStream(dbPathProperty);
 			try {
-				properties.load(is);
+				properties.load(dbStream);
 			} finally {
-				is.close();
+				dbStream.close();
 			}
 		} catch (IOException e) {
 			throw new ServletException();
 		}
 		session.setAttribute("properties", properties);
+		session.setAttribute("logPath", logPath);
 		request.getRequestDispatcher(WebPath.HOME_PAGE_JSP).forward(request, response);
 	}
 	

@@ -27,13 +27,14 @@ public class ApplicationFormBasePageServlet extends HttpServlet {
        
 	private ApplicationFormDAO appDao;
 	private List<ApplicationForm> apps;
+
+	private DAOFactory daoFactory;
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ApplicationFormBasePageServlet() {
         super();
-		DAOFactory factory = DAOFactory.getFactory();
-		appDao = factory.getApplicationFormDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -56,6 +57,10 @@ public class ApplicationFormBasePageServlet extends HttpServlet {
 			throws ServletException, IOException {
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        daoFactory.setLogPath(logPath);
+        appDao = daoFactory.getApplicationFormDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {

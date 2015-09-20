@@ -27,15 +27,15 @@ import main.com.mentat.nine.domain.util.LogConfig;
  *
  */
 public class CandidateDAO {
-	
-	static {
-		LogConfig.loadLogConfig();
-	}
+
 	private static Logger log = Logger.getLogger(CandidateDAO.class);
 	
 	private DAOFactory daoFactory = null;
+	private String logPath;
 	
-	public CandidateDAO() {
+	public CandidateDAO(String logPath) {
+		this.logPath = logPath;
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 
@@ -148,7 +148,7 @@ public class CandidateDAO {
 		ResultSet rs = null;
 		Set<Candidate> candidates = null;
 		
-		Candidate candidate = new Candidate();
+		Candidate candidate = new Candidate(logPath);
 
 		try {
 			log.trace("get Candidate with id " + id);
@@ -458,7 +458,7 @@ public class CandidateDAO {
 		try {
 			String skill = "";
 			while (rs.next()) {
-				Candidate candidate = new Candidate();
+				Candidate candidate = new Candidate(logPath);
 				candidate.setId(rs.getInt("id"));
 				candidate.setName(rs.getString("name"));
 				candidate.setAge(rs.getInt("age"));

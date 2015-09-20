@@ -46,6 +46,8 @@ public class CandidateControllerServlet extends HttpServlet {
 	private CandidateDAO candDao;
 	private DepartmentDAO depDao;
 	private EmployeeDAO empDao;
+	private String logPath;
+	private DAOFactory daoFactory;
        
     /**
      * @throws ServletException 
@@ -53,10 +55,7 @@ public class CandidateControllerServlet extends HttpServlet {
      */
     public CandidateControllerServlet() {
         super();
-        DAOFactory daoFactory = DAOFactory.getFactory();
-		empDao = daoFactory.getEmployeeDAO();
-		candDao = daoFactory.getCandidateDAO();
-	    depDao = daoFactory.getDepartmentDAO();
+        daoFactory = DAOFactory.getFactory();
     }
 
 	/**
@@ -81,6 +80,13 @@ public class CandidateControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
+        String logPath = (String) session.getAttribute("logPath");
+        this.logPath = logPath;
+        daoFactory.setLogPath(logPath);
+		empDao = daoFactory.getEmployeeDAO();
+		candDao = daoFactory.getCandidateDAO();
+	    depDao = daoFactory.getDepartmentDAO();
+        
 	    try {
 			DAOFactory.loadConnectProperties(properties);
 		} catch (NoSuitableDBPropertiesException e) {
@@ -242,7 +248,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		
-		HRDepartment hrDep = new HRDepartment();
+		HRDepartment hrDep = new HRDepartment(logPath);
 		boolean emptyFields = isEmptyFields(request);
 		
 		if (!emptyFields) {

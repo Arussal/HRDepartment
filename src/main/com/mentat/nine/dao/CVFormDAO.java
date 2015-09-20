@@ -28,15 +28,13 @@ import main.com.mentat.nine.domain.util.LogConfig;
  *
  */
 public class CVFormDAO {
-	
-	static {
-		LogConfig.loadLogConfig();
-	}
+
 	private static Logger log = Logger.getLogger(CVFormDAO.class);
 	
 	private DAOFactory daoFactory;
 	
-	public CVFormDAO() {
+	public CVFormDAO(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 

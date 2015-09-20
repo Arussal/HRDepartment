@@ -27,17 +27,13 @@ import main.com.mentat.nine.domain.util.LogConfig;
  *
  */
 public class ApplicationFormDAO {
-
-
-	static {
-		LogConfig.loadLogConfig();
-	}
 	
 	private static Logger log = Logger.getLogger(ApplicationForm.class);
 	
 	private DAOFactory daoFactory = null;
 	
-	public ApplicationFormDAO() {
+	public ApplicationFormDAO(String logPath) {
+		LogConfig.loadLogConfig(logPath);
 		daoFactory = DAOFactory.getFactory();
 	}
 

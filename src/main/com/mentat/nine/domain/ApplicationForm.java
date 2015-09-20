@@ -21,7 +21,6 @@ public class ApplicationForm extends Person {
 	 * 
 	 */
 	public ApplicationForm() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ApplicationForm(String post) {

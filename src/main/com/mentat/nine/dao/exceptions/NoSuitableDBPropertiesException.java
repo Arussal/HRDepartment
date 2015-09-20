@@ -16,12 +16,10 @@ public class NoSuitableDBPropertiesException extends Exception {
 
 	public NoSuitableDBPropertiesException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public NoSuitableDBPropertiesException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 }

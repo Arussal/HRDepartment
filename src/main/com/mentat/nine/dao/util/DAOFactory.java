@@ -31,6 +31,7 @@ public class DAOFactory {
 	private static String password;
 	private static String url;
 	private static String driverName;
+	private String logPath;
 	
 	private DAOFactory(){	
 	}
@@ -48,6 +49,10 @@ public class DAOFactory {
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		}
+	}
+	
+	public void setLogPath(String logPath) {
+		this.logPath = logPath;
 	}
 		
 	public static DAOFactory getFactory(){
@@ -68,35 +73,35 @@ public class DAOFactory {
 	}
 	
 	public ApplicationFormDAO getApplicationFormDAO() {
-		return new ApplicationFormDAO();
+		return new ApplicationFormDAO(logPath);
 	}
 
 	public CandidateDAO getCandidateDAO() {
-		return new CandidateDAO();
+		return new CandidateDAO(logPath);
 	}
 
 	public CVFormDAO getCVFormDAO() {
-		return new CVFormDAO();
+		return new CVFormDAO(logPath);
 	}
 
 	public DepartmentDAO getDepartmentDAO() {
-		return new DepartmentDAO();
+		return new DepartmentDAO(logPath);
 	}
 
 	public EmployeeDAO getEmployeeDAO() {
-		return new EmployeeDAO();
+		return new EmployeeDAO(logPath);
 	}
 
 	public ManagerDAO getManagerDAO() {
-		return new ManagerDAO();
+		return new ManagerDAO(logPath);
 	}
 	
 	public ApplicantDAO getApplicantDAO() {
-		return new ApplicantDAO();
+		return new ApplicantDAO(logPath);
 	}
 
 	public CVFormApplicantDAO getCVFormApplicantDAO() {
-		return new CVFormApplicantDAO();
+		return new CVFormApplicantDAO(logPath);
 	}
 
 }
