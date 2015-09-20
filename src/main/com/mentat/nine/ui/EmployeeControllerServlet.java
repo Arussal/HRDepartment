@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -21,9 +22,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.DepartmentDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
@@ -47,13 +50,8 @@ public class EmployeeControllerServlet extends HttpServlet {
     public EmployeeControllerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-     
-        try {
-			depDao = daoFactory.getDepartmentDAO();   
-			empDao = daoFactory.getEmployeeDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		depDao = daoFactory.getDepartmentDAO();   
+		empDao = daoFactory.getEmployeeDAO();
     }
 
 	/**
@@ -77,6 +75,15 @@ public class EmployeeControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		request.setCharacterEncoding("UTF-8");
+		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		int action = checkAction(request);
 		
 		if (1 == action) {

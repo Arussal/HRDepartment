@@ -32,7 +32,7 @@ public class DepartmentDAO{
 	
 	private DAOFactory daoFactory = null;
 	
-	public DepartmentDAO() throws PersistException{
+	public DepartmentDAO() {
 		daoFactory = DAOFactory.getFactory();
 	}
 

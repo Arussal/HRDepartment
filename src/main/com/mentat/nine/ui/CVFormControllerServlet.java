@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.CVFormDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
@@ -35,11 +38,7 @@ public class CVFormControllerServlet extends HttpServlet {
     public CVFormControllerServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		try {
-			cvDao = daoFactory.getCVFormDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		cvDao = daoFactory.getCVFormDAO();
     }
 
 	/**
@@ -62,6 +61,14 @@ public class CVFormControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF8");
 		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		int action = checkAction(request);
 		
 		if (1 == action) {

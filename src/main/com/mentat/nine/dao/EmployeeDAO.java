@@ -29,7 +29,7 @@ public class EmployeeDAO {
 	
 	private DAOFactory daoFactory = null;
 	
-	public EmployeeDAO() throws PersistException{
+	public EmployeeDAO() {
 		daoFactory = DAOFactory.getFactory();
 	}
 	

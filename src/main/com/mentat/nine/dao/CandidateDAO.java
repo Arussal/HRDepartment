@@ -35,7 +35,7 @@ public class CandidateDAO {
 	
 	private DAOFactory daoFactory = null;
 	
-	public CandidateDAO() throws PersistException{
+	public CandidateDAO() {
 		daoFactory = DAOFactory.getFactory();
 	}
 

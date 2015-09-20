@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,8 +13,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.CVFormDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
@@ -34,11 +37,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 	public CVFormBasePageServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		try {
-			cvDao = daoFactory.getCVFormDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		cvDao = daoFactory.getCVFormDAO();
     }
 
 	/**
@@ -61,7 +60,15 @@ public class CVFormBasePageServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		List<CVForm> cvList = null;
 		if (request.getAttribute("cvIncomeList") != null) {
 			cvList = (List<CVForm>)request.getAttribute("cvIncomeList");

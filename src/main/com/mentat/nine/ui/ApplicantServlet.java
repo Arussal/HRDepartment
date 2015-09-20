@@ -2,6 +2,7 @@ package main.com.mentat.nine.ui;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,15 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import main.com.mentat.nine.dao.ApplicantDAO;
 import main.com.mentat.nine.dao.CVFormApplicantDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Applicant;
 import main.com.mentat.nine.domain.CVForm;
-import main.com.mentat.nine.domain.util.LogConfig;
 import main.com.mentat.nine.ui.util.*;
 
 /**
@@ -26,11 +25,6 @@ import main.com.mentat.nine.ui.util.*;
  */
 @WebServlet("/applicantServlet")
 public class ApplicantServlet extends HttpServlet {
-	static {
-		LogConfig.loadLogConfig();
-	}
-	
-	private static Logger log = Logger.getLogger(HRManagerServlet.class);
 	
 	private static final long serialVersionUID = 1L;
 	private ApplicantDAO aplcntDao;
@@ -43,12 +37,9 @@ public class ApplicantServlet extends HttpServlet {
     public ApplicantServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        try {
-			aplcntDao = daoFactory.getApplicantDAO();
-			cvAplcntDao = daoFactory.getCVFormApplicantDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		aplcntDao = daoFactory.getApplicantDAO();
+		cvAplcntDao = daoFactory.getCVFormApplicantDAO();
+
     }
 
 	/**
@@ -71,6 +62,15 @@ public class ApplicantServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+        try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+        
 		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request); 
@@ -252,7 +252,6 @@ public class ApplicantServlet extends HttpServlet {
 			applicant = aplcntDao.getApplicantByLogin(login);
 		} catch (PersistException e) {
 			if (null == applicant) {
-				log.error("applicant with login " + login + " not found");
 				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
 				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
 				forward(WebPath.ERROR_JSP, request, response);

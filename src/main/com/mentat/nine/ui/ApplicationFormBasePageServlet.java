@@ -2,14 +2,17 @@ package main.com.mentat.nine.ui;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.ApplicationFormDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
@@ -22,12 +25,15 @@ import main.com.mentat.nine.ui.util.WebPath;
 public class ApplicationFormBasePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	private ApplicationFormDAO appDao;
 	private List<ApplicationForm> apps;
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ApplicationFormBasePageServlet() {
         super();
+		DAOFactory factory = DAOFactory.getFactory();
+		appDao = factory.getApplicationFormDAO();
     }
 
 	/**
@@ -48,6 +54,14 @@ public class ApplicationFormBasePageServlet extends HttpServlet {
 
 	private void performTask(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		try {
 			apps = getApps();
 		} catch (PersistException e) {
@@ -58,9 +72,6 @@ public class ApplicationFormBasePageServlet extends HttpServlet {
 	}
 	
 	private List<ApplicationForm> getApps() throws PersistException{
-		DAOFactory factory = DAOFactory.getFactory();
-		ApplicationFormDAO appDao = factory.getApplicationFormDAO();
-		List<ApplicationForm> applications = appDao.getAllApplicationForms();
-		return applications;
+		return appDao.getAllApplicationForms();
 	}
 }

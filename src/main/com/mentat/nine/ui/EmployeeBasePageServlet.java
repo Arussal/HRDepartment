@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,8 +14,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.EmployeeDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
@@ -37,11 +40,7 @@ public class EmployeeBasePageServlet extends HttpServlet {
     public EmployeeBasePageServlet() throws ServletException {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        try {
-			empDao = daoFactory.getEmployeeDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		empDao = daoFactory.getEmployeeDAO();
     }
 
     
@@ -67,6 +66,14 @@ public class EmployeeBasePageServlet extends HttpServlet {
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		Set<Employee> empList = null;
 		if (request.getAttribute("empIncomeList") != null) {
 			empList = (Set<Employee>)request.getAttribute("empIncomeList");

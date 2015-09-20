@@ -37,7 +37,7 @@ public class ApplicationFormDAO {
 	
 	private DAOFactory daoFactory = null;
 	
-	public ApplicationFormDAO() throws PersistException{
+	public ApplicationFormDAO() {
 		daoFactory = DAOFactory.getFactory();
 	}
 

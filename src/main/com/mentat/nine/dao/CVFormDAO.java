@@ -36,7 +36,7 @@ public class CVFormDAO {
 	
 	private DAOFactory daoFactory;
 	
-	public CVFormDAO() throws PersistException{
+	public CVFormDAO() {
 		daoFactory = DAOFactory.getFactory();
 	}
 

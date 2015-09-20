@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -20,10 +21,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.CandidateDAO;
 import main.com.mentat.nine.dao.DepartmentDAO;
 import main.com.mentat.nine.dao.EmployeeDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Candidate;
@@ -48,17 +51,12 @@ public class CandidateControllerServlet extends HttpServlet {
      * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public CandidateControllerServlet() throws ServletException {
+    public CandidateControllerServlet() {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        
-        try {
-			empDao = daoFactory.getEmployeeDAO();
-			candDao = daoFactory.getCandidateDAO();
-	        depDao = daoFactory.getDepartmentDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		empDao = daoFactory.getEmployeeDAO();
+		candDao = daoFactory.getCandidateDAO();
+	    depDao = daoFactory.getDepartmentDAO();
     }
 
 	/**
@@ -81,6 +79,14 @@ public class CandidateControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF8");
 		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		int action = checkAction(request);
 		
 		if (1 == action) {

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -19,8 +20,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.ApplicationFormDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
@@ -43,14 +46,10 @@ public class ApplicationFormControllerServlet extends HttpServlet {
      * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public ApplicationFormControllerServlet() throws ServletException {
+    public ApplicationFormControllerServlet() {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-		try {
-			appDao = daoFactory.getApplicationFormDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+        appDao = daoFactory.getApplicationFormDAO();
     }
 
 	/**
@@ -72,7 +71,15 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 	
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(request);

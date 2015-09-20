@@ -1,6 +1,8 @@
 package main.com.mentat.nine.ui;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -43,6 +45,21 @@ public class HomePageServlet extends HttpServlet {
 			throws ServletException, IOException {
 		HttpSession session = request.getSession(true);
 		WebPath.loadPathValues(session);
+		
+		String path = getServletContext().getInitParameter("dbproperties");
+		Properties properties = new Properties();
+		try {
+			InputStream is = getServletContext().getResourceAsStream(path);
+			try {
+				properties.load(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			throw new ServletException();
+		}
+		session.setAttribute("properties", properties);
 		request.getRequestDispatcher(WebPath.HOME_PAGE_JSP).forward(request, response);
 	}
+	
 }

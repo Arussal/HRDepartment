@@ -50,26 +50,11 @@ public class HRDepartment extends Department implements HRManager{
 	
 	public HRDepartment()  {
 		daoFactory = DAOFactory.getFactory();
-		try {
-			appDao = daoFactory.getApplicationFormDAO();
-		} catch (PersistException e) {
-			log.error("cant get ApplicationFormDAO");
-		}
-		try {
-			candDao = daoFactory.getCandidateDAO();
-		} catch (PersistException e) {
-			log.error("cant get CandidateDAO");
-		}
-		try {
-			cvDao = daoFactory.getCVFormDAO();
-		} catch (PersistException e) {
-			log.error("cant get CVFormDAO");
-		}
-		try {
-			empDao = daoFactory.getEmployeeDAO();
-		} catch (PersistException e) {
-			log.error("cant get EmployeeDAO");
-		}
+		appDao = daoFactory.getApplicationFormDAO();
+		candDao = daoFactory.getCandidateDAO();
+		cvDao = daoFactory.getCVFormDAO();
+		empDao = daoFactory.getEmployeeDAO();
+
 	}
 		
 	@Override

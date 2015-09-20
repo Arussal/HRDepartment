@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,8 +13,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.com.mentat.nine.dao.CandidateDAO;
+import main.com.mentat.nine.dao.exceptions.NoSuitableDBPropertiesException;
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Candidate;
@@ -31,14 +34,10 @@ public class CandidateBasePageServlet extends HttpServlet {
      * @throws ServletException 
      * @see HttpServlet#HttpServlet()
      */
-    public CandidateBasePageServlet() throws ServletException {
+    public CandidateBasePageServlet() {
         super();
         DAOFactory daoFactory = DAOFactory.getFactory();
-        try {
-			candDao = daoFactory.getCandidateDAO();
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
+		candDao = daoFactory.getCandidateDAO();
     }
 
 	/**
@@ -63,6 +62,15 @@ public class CandidateBasePageServlet extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	private void performTask(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		HttpSession session = request.getSession(false);
+        Properties properties = (Properties) session.getAttribute("properties");
+	    try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
+		}
+	    
 		Set<Candidate> candSet = null;
 		
 		if (request.getAttribute("candIncomeList") != null) {
