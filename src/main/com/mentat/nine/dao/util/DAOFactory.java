@@ -31,7 +31,7 @@ public class DAOFactory {
 	private static String password;
 	private static String url;
 	private static String driverName;
-	private String logPath;
+	private Properties properties;
 	
 	private DAOFactory(){	
 	}
@@ -51,8 +51,8 @@ public class DAOFactory {
 		}
 	}
 	
-	public void setLogPath(String logPath) {
-		this.logPath = logPath;
+	public void setLogPath(Properties properties) {
+		this.properties = properties;
 	}
 		
 	public static DAOFactory getFactory(){
@@ -73,35 +73,35 @@ public class DAOFactory {
 	}
 	
 	public ApplicationFormDAO getApplicationFormDAO() {
-		return new ApplicationFormDAO(logPath);
+		return new ApplicationFormDAO(properties);
 	}
 
 	public CandidateDAO getCandidateDAO() {
-		return new CandidateDAO(logPath);
+		return new CandidateDAO(properties);
 	}
 
 	public CVFormDAO getCVFormDAO() {
-		return new CVFormDAO(logPath);
+		return new CVFormDAO(properties);
 	}
 
 	public DepartmentDAO getDepartmentDAO() {
-		return new DepartmentDAO(logPath);
+		return new DepartmentDAO(properties);
 	}
 
 	public EmployeeDAO getEmployeeDAO() {
-		return new EmployeeDAO(logPath);
+		return new EmployeeDAO(properties);
 	}
 
 	public ManagerDAO getManagerDAO() {
-		return new ManagerDAO(logPath);
+		return new ManagerDAO(properties);
 	}
 	
 	public ApplicantDAO getApplicantDAO() {
-		return new ApplicantDAO(logPath);
+		return new ApplicantDAO(properties);
 	}
 
 	public CVFormApplicantDAO getCVFormApplicantDAO() {
-		return new CVFormApplicantDAO(logPath);
+		return new CVFormApplicantDAO(properties);
 	}
 
 }

@@ -1,5 +1,6 @@
 package main.com.mentat.nine.ui;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.PropertyConfigurator;
 
 import main.com.mentat.nine.ui.util.WebPath;
 
@@ -47,22 +50,24 @@ public class HomePageServlet extends HttpServlet {
 		WebPath.loadPathValues(session);
 		
 		String dbPathProperty = getServletContext().getInitParameter("dbproperties");
-		System.out.println(dbPathProperty);		//////
 		String logPath = getServletContext().getInitParameter("log4jproperties");
-		System.out.println(logPath);		//////
+
 		Properties properties = new Properties();
 		try {
 			InputStream dbStream = getServletContext().getResourceAsStream(dbPathProperty);
+			InputStream logStream = getServletContext().getResourceAsStream(logPath);
 			try {
 				properties.load(dbStream);
+				properties.load(logStream);
 			} finally {
 				dbStream.close();
 			}
-		} catch (IOException e) {
+		} catch (IOException e) { 	 	
 			throw new ServletException();
 		}
+	      
 		session.setAttribute("properties", properties);
-		session.setAttribute("logPath", logPath);
+		
 		request.getRequestDispatcher(WebPath.HOME_PAGE_JSP).forward(request, response);
 	}
 	

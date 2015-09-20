@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
 import main.com.mentat.nine.dao.util.Closer;
@@ -31,8 +32,8 @@ public class ApplicantDAO {
 	/**
 	 * 
 	 */
-	public ApplicantDAO(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public ApplicantDAO(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 

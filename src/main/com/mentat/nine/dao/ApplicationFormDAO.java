@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -32,8 +33,8 @@ public class ApplicationFormDAO {
 	
 	private DAOFactory daoFactory = null;
 	
-	public ApplicationFormDAO(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public ApplicationFormDAO(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 

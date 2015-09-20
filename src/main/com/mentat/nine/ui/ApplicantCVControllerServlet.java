@@ -73,7 +73,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = (String) session.getAttribute("logPath");
+        String logPath = getServletContext() + (String) session.getAttribute("logPath");
         this.logPath = logPath;
         daoFactory.setLogPath(logPath);
         cvApplicantDao = daoFactory.getCVFormApplicantDAO();

@@ -3,6 +3,8 @@
  */
 package main.com.mentat.nine.domain.util;
 
+import java.util.Properties;
+
 
 /**
  * @author Ruslan
@@ -10,8 +12,8 @@ package main.com.mentat.nine.domain.util;
  */
 public class LogConfig {
 
-	public static void loadLogConfig(String path) {
-			org.apache.log4j.PropertyConfigurator.configure(path);
+	public static void loadLogConfig(Properties properties) {
+			org.apache.log4j.PropertyConfigurator.configure(properties);
 	}
 	
 }
