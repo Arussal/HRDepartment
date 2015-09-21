@@ -63,8 +63,7 @@ public class ApplicantServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = getServletContext() + (String)session.getAttribute("logPath");
-        daoFactory.setLogPath(logPath);
+        daoFactory.setLogPath(properties);
 		aplcntDao = daoFactory.getApplicantDAO();
 		cvAplcntDao = daoFactory.getCVFormApplicantDAO();
 		

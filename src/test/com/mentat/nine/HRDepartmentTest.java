@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Properties;
 
 import main.com.mentat.nine.dao.ApplicationFormDAO;
 import main.com.mentat.nine.dao.CVFormDAO;
@@ -38,13 +39,13 @@ public class HRDepartmentTest {
 	private CandidateDAO candidateDao;
 	private EmployeeDAO employeeDao;
 	private HRDepartment hrDep;
-	private String logPath;
+	private Properties properties;
 
 	@Before
 	public void setUp() throws PersistException{
-		logPath = mock(String.class);
+		properties = mock(Properties.class);
 		try {
-			hrDep = new HRDepartment(logPath);
+			hrDep = new HRDepartment(properties);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,7 +70,7 @@ public class HRDepartmentTest {
 	@Test
 	public void testCreateCandidate() throws PersistException {
 		Candidate mockCandidate = mock(Candidate.class);
-		Candidate candidate = new Candidate(logPath);
+		Candidate candidate = new Candidate(properties);
 		when(candidateDao.createCandidate(mockCandidate)).thenReturn(candidate);
 		assertEquals(candidate, hrDep.createCandidate(mockCandidate));
 	}
@@ -81,7 +82,7 @@ public class HRDepartmentTest {
 	
 	@Test
 	public void testHireEmployee() throws PersistException {
-		assertNotNull(hrDep.hireEmployee(new Candidate(logPath), 5000, "post", new Date(), new Department()));
+		assertNotNull(hrDep.hireEmployee(new Candidate(properties), 5000, "post", new Date(), new Department()));
 	}
 	
 	@Test

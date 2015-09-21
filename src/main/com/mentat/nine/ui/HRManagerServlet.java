@@ -62,8 +62,7 @@ public class HRManagerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = (String) session.getAttribute("logPath");
-        daoFactory.setLogPath(logPath);
+        daoFactory.setLogPath(properties);
 		mngrDao = daoFactory.getManagerDAO();
         
 	    try {

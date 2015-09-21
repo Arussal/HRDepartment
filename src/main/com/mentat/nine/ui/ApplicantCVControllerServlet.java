@@ -35,7 +35,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
     
 	private CVFormApplicantDAO cvApplicantDao;
 	private DAOFactory daoFactory;
-	private String logPath;
+	private Properties properties;
 	
     /**
      * @throws ServletException 
@@ -73,9 +73,8 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = getServletContext() + (String) session.getAttribute("logPath");
-        this.logPath = logPath;
-        daoFactory.setLogPath(logPath);
+        this.properties = properties;
+        daoFactory.setLogPath(properties);
         cvApplicantDao = daoFactory.getCVFormApplicantDAO();
         
 	    try {
@@ -183,7 +182,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
 		
-		HRDepartment hr = new HRDepartment(logPath);
+		HRDepartment hr = new HRDepartment(properties);
 		for (Integer id : idList) {
 			CVForm cv = null;
 			try {

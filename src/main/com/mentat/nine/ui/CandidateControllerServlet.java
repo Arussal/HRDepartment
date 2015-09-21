@@ -46,7 +46,7 @@ public class CandidateControllerServlet extends HttpServlet {
 	private CandidateDAO candDao;
 	private DepartmentDAO depDao;
 	private EmployeeDAO empDao;
-	private String logPath;
+	private Properties properties;
 	private DAOFactory daoFactory;
        
     /**
@@ -80,9 +80,8 @@ public class CandidateControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = (String) session.getAttribute("logPath");
-        this.logPath = logPath;
-        daoFactory.setLogPath(logPath);
+        this.properties = properties;
+        daoFactory.setLogPath(properties);
 		empDao = daoFactory.getEmployeeDAO();
 		candDao = daoFactory.getCandidateDAO();
 	    depDao = daoFactory.getDepartmentDAO();
@@ -248,7 +247,7 @@ public class CandidateControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		
-		HRDepartment hrDep = new HRDepartment(logPath);
+		HRDepartment hrDep = new HRDepartment(properties);
 		boolean emptyFields = isEmptyFields(request);
 		
 		if (!emptyFields) {

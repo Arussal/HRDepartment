@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -31,11 +32,11 @@ public class CandidateDAO {
 	private static Logger log = Logger.getLogger(CandidateDAO.class);
 	
 	private DAOFactory daoFactory = null;
-	private String logPath;
+	private Properties properties;
 	
-	public CandidateDAO(String logPath) {
-		this.logPath = logPath;
-		LogConfig.loadLogConfig(logPath);
+	public CandidateDAO(Properties properties) {
+		this.properties = properties;
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 
@@ -148,7 +149,7 @@ public class CandidateDAO {
 		ResultSet rs = null;
 		Set<Candidate> candidates = null;
 		
-		Candidate candidate = new Candidate(logPath);
+		Candidate candidate = new Candidate(properties);
 
 		try {
 			log.trace("get Candidate with id " + id);
@@ -458,7 +459,7 @@ public class CandidateDAO {
 		try {
 			String skill = "";
 			while (rs.next()) {
-				Candidate candidate = new Candidate(logPath);
+				Candidate candidate = new Candidate(properties);
 				candidate.setId(rs.getInt("id"));
 				candidate.setName(rs.getString("name"));
 				candidate.setAge(rs.getInt("age"));

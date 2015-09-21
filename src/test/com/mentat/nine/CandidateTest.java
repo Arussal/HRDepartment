@@ -6,6 +6,7 @@ package test.com.mentat.nine;
 import static org.junit.Assert.*;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import main.com.mentat.nine.dao.CVFormDAO;
@@ -26,12 +27,12 @@ import static org.mockito.Mockito.*;
 public class CandidateTest {
 	
 	private CVFormDAO cvDao;
-	private String logPath;
+	private Properties properties;
 
 	@Before
 	public void setUp() throws PersistException {
 		cvDao = mock(CVFormDAO.class);
-		logPath = mock(String.class);
+		properties = mock(Properties.class);
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class CandidateTest {
 	 */
 	@Test
 	public void testCreateCVForm() {
-		Candidate candidate = new Candidate(logPath);
+		Candidate candidate = new Candidate(properties);
 		String name = "Ivan Pertov";
 		int age = 25;
 		Set<String> skills = new HashSet<String>();
@@ -63,10 +64,10 @@ public class CandidateTest {
 	 */
 	@Test
 	public void testSendCVForm() throws PersistException {
-		HRDepartment hrDep = new HRDepartment(logPath);
+		HRDepartment hrDep = new HRDepartment(properties);
 		hrDep.setCvDao(cvDao);
 		CVForm cvMock = mock(CVForm.class);
-		Candidate candidate = new Candidate(logPath);
+		Candidate candidate = new Candidate(properties);
 		candidate.sendCVForm(cvMock, hrDep);
 		verify(cvDao).createCVForm(cvMock);
 	}

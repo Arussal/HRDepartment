@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -33,8 +34,8 @@ public class CVFormDAO {
 	
 	private DAOFactory daoFactory;
 	
-	public CVFormDAO(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public CVFormDAO(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 

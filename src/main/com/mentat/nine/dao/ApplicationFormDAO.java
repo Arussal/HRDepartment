@@ -29,7 +29,7 @@ import main.com.mentat.nine.domain.util.LogConfig;
  */
 public class ApplicationFormDAO {
 	
-	private static Logger log = Logger.getLogger(ApplicationForm.class);
+	private static Logger log = Logger.getLogger(ApplicationFormDAO.class);
 	
 	private DAOFactory daoFactory = null;
 	

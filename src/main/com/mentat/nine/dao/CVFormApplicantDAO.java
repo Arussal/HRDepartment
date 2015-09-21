@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -33,15 +34,12 @@ public class CVFormApplicantDAO {
 	
 	private DAOFactory daoFactory;
 
-	/**
-	 * 
-	 */
-	public CVFormApplicantDAO(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public CVFormApplicantDAO(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 
-public CVForm createCVForm(CVForm cv) throws PersistException {
+	public CVForm createCVForm(CVForm cv) throws PersistException {
 		
 		CVForm createdCV = null;
 		Connection connection = null;

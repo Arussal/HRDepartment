@@ -63,8 +63,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = (String) session.getAttribute("logPath");
-        daoFactory.setLogPath(logPath);
+        daoFactory.setLogPath(properties);
         cvDao = daoFactory.getCVFormDAO();
         
 	    try {

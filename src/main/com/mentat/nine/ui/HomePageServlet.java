@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.PropertyConfigurator;
-
 import main.com.mentat.nine.ui.util.WebPath;
 
 /**

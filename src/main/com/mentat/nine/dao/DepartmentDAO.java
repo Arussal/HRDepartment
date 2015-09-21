@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -29,8 +30,8 @@ public class DepartmentDAO{
 	
 	private DAOFactory daoFactory = null;
 	
-	public DepartmentDAO(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public DepartmentDAO(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 

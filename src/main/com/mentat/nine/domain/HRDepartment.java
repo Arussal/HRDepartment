@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -37,13 +38,13 @@ public class HRDepartment extends Department implements HRManager{
 	private EmployeeDAO empDao;
 	private ApplicationFormDAO appDao;
 	private CandidateDAO candDao;
-	private String logPath;
+	private Properties properties;
 	
 	private static Logger log = Logger.getLogger(HRDepartment.class);
 	
-	public HRDepartment(String logPath)  {
-		this.logPath = logPath;
-		LogConfig.loadLogConfig(logPath);
+	public HRDepartment(Properties properties)  {
+		this.properties = properties;
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 		appDao = daoFactory.getApplicationFormDAO();
 		candDao = daoFactory.getCandidateDAO();
@@ -114,7 +115,7 @@ public class HRDepartment extends Department implements HRManager{
 			}
 			
 			log.trace("candidate is found");
-			Candidate candidate = new Candidate(logPath);
+			Candidate candidate = new Candidate(properties);
 			candidate.setName(cv.getName());
 			candidate.setAge(cv.getAge());
 			candidate.setEducation(cv.getEducation());

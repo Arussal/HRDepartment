@@ -42,7 +42,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
     	
 	private ApplicationFormDAO appDao;
 	private DAOFactory daoFactory;
-	private String logPath;
+	private Properties properties;
 	
     /**
      * @throws ServletException 
@@ -75,9 +75,8 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = (String) session.getAttribute("logPath");
-        this.logPath = logPath;
-        daoFactory.setLogPath(logPath);
+        this.properties = properties;
+        daoFactory.setLogPath(properties);
         appDao = daoFactory.getApplicationFormDAO();
         
 	    try {
@@ -197,7 +196,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 			boolean wrongFields = isWrongDataFields(intData, request);
 			
 			if (!wrongFields) {
-				HRDepartment hrDep = new HRDepartment(logPath);
+				HRDepartment hrDep = new HRDepartment(properties);
 				
 				int parsedAge = Integer.parseInt(age);
 				int parsedSalary = Integer.parseInt(salary);
@@ -340,7 +339,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 		} catch (PersistException e1) {
 			throw new ServletException();
 		}
-		HRDepartment hrDep = new HRDepartment(logPath);
+		HRDepartment hrDep = new HRDepartment(properties);
 		Set<Candidate> findedCandidates = null;
 		try {
 			findedCandidates = hrDep.findCandidates(appForm);

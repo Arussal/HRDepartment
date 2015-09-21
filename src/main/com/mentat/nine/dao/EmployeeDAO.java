@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -25,11 +26,11 @@ public class EmployeeDAO {
 	private static Logger log = Logger.getLogger(EmployeeDAO.class);
 	
 	private DAOFactory daoFactory = null;
-	private String logPath;
+	private Properties properties;
 	
-	public EmployeeDAO(String logPath) {
-		this.logPath = logPath;
-		LogConfig.loadLogConfig(logPath);
+	public EmployeeDAO(Properties properties) {
+		this.properties = properties;
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 	
@@ -548,7 +549,7 @@ public class EmployeeDAO {
 				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
 				employee.setSkills(skills);
 				
-				DepartmentDAO departmentDao = new DepartmentDAO(logPath);
+				DepartmentDAO departmentDao = new DepartmentDAO(properties);
 				Department department = 
 						departmentDao.getDepartmentById(Integer.parseInt(rs.getString("id_department")));
 

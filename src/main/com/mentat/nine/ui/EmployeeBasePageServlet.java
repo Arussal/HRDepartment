@@ -35,7 +35,6 @@ public class EmployeeBasePageServlet extends HttpServlet {
        
     /**
      * @throws ServletException 
-     * @throws PersistException 
      * @see HttpServlet#HttpServlet()
      */
     public EmployeeBasePageServlet() throws ServletException {
@@ -68,8 +67,7 @@ public class EmployeeBasePageServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
-        String logPath = (String) session.getAttribute("logPath");
-        daoFactory.setLogPath(logPath);
+        daoFactory.setLogPath(properties);
 		empDao = daoFactory.getEmployeeDAO();
         
 	    try {

@@ -4,6 +4,7 @@
  */
 package main.com.mentat.nine.domain;
 
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -22,8 +23,8 @@ public class Candidate extends Person{
 	/**
 	 * 
 	 */
-	public Candidate(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public Candidate(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 	}
 	
 	public CVForm formCVForm(String name, int age, Set<String> skills, String education, String phone, 

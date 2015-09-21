@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -21,8 +22,8 @@ public class ManagerDAO {
 	private static Logger log = Logger.getLogger(ManagerDAO.class);
 	private DAOFactory daoFactory; 
 	
-	public ManagerDAO(String logPath) {
-		LogConfig.loadLogConfig(logPath);
+	public ManagerDAO(Properties properties) {
+		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 	}
 	
