@@ -12,7 +12,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Manager;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -54,8 +53,20 @@ public class ManagerDAO {
 			} catch (SQLException e) {
 				throw new PersistException();
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			Integer id = null;
@@ -74,8 +85,20 @@ public class ManagerDAO {
 				log.error("cant create new Manager entry");
 				throw new PersistException();
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(pStatement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != pStatement) {
+					try {
+						pStatement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 				
@@ -96,11 +119,29 @@ public class ManagerDAO {
 				log.error("cant return Manager entry");
 				throw new PersistException();
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 		} finally {
-			Closer.closeConnection(connection);
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return createdManager;
 	}
@@ -127,7 +168,27 @@ public class ManagerDAO {
 		} catch (SQLException e) {
 			log.error("cant return Manager whith login: " + login);
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return selectedManager;
 	}
@@ -151,7 +212,6 @@ public class ManagerDAO {
 		
 		Connection connection = null;
 		PreparedStatement pStatement = null;
-		ResultSet rs = null;
 		String updateSql = getUpdateQuery() + " WHERE login = " + "'" + manager.getLogin() + "'";
 		
 		try {
@@ -167,7 +227,20 @@ public class ManagerDAO {
 			log.error("can't update Manager entry");
 			throw new PersistException("can't update Manager entry");
 		} finally {
-			Closer.close(rs, pStatement, connection);
+			if (null != pStatement) {
+				try {
+					pStatement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -206,7 +279,27 @@ public class ManagerDAO {
 			log.error("can't delete Manager entry");
 			throw new PersistException("can't delete Manager entry");
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -231,8 +324,28 @@ public class ManagerDAO {
 			log.error("cant get all managers");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
-		}		
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}	
 		return managers;
 	}
 

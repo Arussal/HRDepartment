@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Properties;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Applicant;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -65,8 +64,20 @@ public class ApplicantDAO {
 			} catch (SQLException e) {
 				throw new PersistException();
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 
@@ -87,8 +98,20 @@ public class ApplicantDAO {
 				log.error("cant create new Applicant entry");
 				throw new PersistException();
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(pStatement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != pStatement) {
+					try {
+						pStatement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}	
 				
 			//return created Applicant entry
@@ -108,11 +131,29 @@ public class ApplicantDAO {
 				log.error("cant return Applicant entry");
 				throw new PersistException();
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 		} finally {
-			Closer.closeConnection(connection);
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return createdApplicant;
 	}
@@ -139,7 +180,27 @@ public class ApplicantDAO {
 		} catch (SQLException e) {
 			log.error("cant return Applicant whith login: " + login);
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return selectedApplicant;
 	}
@@ -163,7 +224,6 @@ public class ApplicantDAO {
 		
 		Connection connection = null;
 		PreparedStatement pStatement = null;
-		ResultSet rs = null;
 		String updateSql = getUpdateQuery() + " WHERE login = " + "'" + applicant.getLogin() + "'";
 		
 		try {
@@ -179,7 +239,20 @@ public class ApplicantDAO {
 			log.error("can't update Applicant entry");
 			throw new PersistException("can't update Applicant entry");
 		} finally {
-			Closer.close(rs, pStatement, connection);
+			if (null != pStatement) {
+				try {
+					pStatement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -216,8 +289,20 @@ public class ApplicantDAO {
 			log.error("can't delete Applicant entry");
 			throw new PersistException("can't delete Applicant entry");
 		} finally {
-			Closer.closeStatement(statement);
-			Closer.closeConnection(connection);
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -245,7 +330,27 @@ public class ApplicantDAO {
 			log.error("cant get all applicants");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}		
 		return applicants;
 	}

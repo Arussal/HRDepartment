@@ -15,7 +15,6 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Department;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -71,8 +70,20 @@ public class DepartmentDAO{
 				log.error(" can't check Department by id");
 				throw new PersistException(" can't check Department with id " + department.getId());
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			// create new Department persist
@@ -97,8 +108,20 @@ public class DepartmentDAO{
 				log.error("new entity Department not created");
 				throw new PersistException(" can't create Department with id " + id);
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(pStatement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != pStatement) {
+					try {
+						pStatement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			//return the last entity
@@ -122,11 +145,29 @@ public class DepartmentDAO{
 				log.error(" can't return new Department with id " + id);
 				throw new PersistException(" can't return new Department with id " + id);
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 		} finally {
-			Closer.closeConnection(connection);
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return createdDepartment;
@@ -166,7 +207,27 @@ public class DepartmentDAO{
 			log.error("can't get Department with id " + id);
 			throw new PersistException(" can't get Department by id " + id);
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return department;
 	}
@@ -202,7 +263,27 @@ public class DepartmentDAO{
 			log.error("can't get Departments with post " + name);
 			throw new PersistException(" can't get Department by name " + name);
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return department;
 	}
@@ -235,7 +316,27 @@ public class DepartmentDAO{
 		} catch (SQLException e) {
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return departments;
@@ -282,8 +383,20 @@ public class DepartmentDAO{
 			log.error("can't update Department");
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(pStatement);
-			Closer.closeConnection(connection);
+			if (null != pStatement) {
+				try {
+					pStatement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -325,8 +438,20 @@ public class DepartmentDAO{
 			log.error("can't delete Department");
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(statement);
-			Closer.closeConnection(connection);
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -356,7 +481,27 @@ public class DepartmentDAO{
 			log.error("can't get all Departments");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return departments;
 		

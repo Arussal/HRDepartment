@@ -19,7 +19,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.CVForm;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -79,8 +78,20 @@ public class CVFormApplicantDAO {
 				log.error(" can't check CVFormApplicant by id");
 				throw new PersistException(" can't check CVFormApplicant with id " + cv.getId());
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			// create new CVFormApplicant persist
@@ -107,8 +118,20 @@ public class CVFormApplicantDAO {
 				log.error("new entity CVFormApplicant not created");
 				throw new PersistException(" can't create CVFormApplicant with id " + id);
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(pStatement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != pStatement) {
+					try {
+						pStatement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			//return the last entity
@@ -132,11 +155,29 @@ public class CVFormApplicantDAO {
 				log.error(" can't return new CVFormApplicant with id " + id);
 				throw new PersistException(" can't return new CVFormApplicant with id " + id);
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 		} finally {
-			Closer.closeConnection(connection);
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return createdCV;
@@ -177,7 +218,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get CVFormApplicant with id " + id);
 			throw new PersistException(" can't get CVFormApplicant by id " + id);
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return cv;
 	}
@@ -208,7 +269,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get CVFormApplicants with post " + post);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return cvForms;
@@ -241,7 +322,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get CVFormApplicants with workExpirience " + workExpirience);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return cvForms;
@@ -276,7 +377,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get CVFormApplicants with login " + name);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return cvForms;
@@ -309,7 +430,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get CVFormApplicants with desiredSalary " + desiredSalary);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return cvForms;
@@ -363,7 +504,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get CVFormApplicants with different query parameters");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return cvForms;
@@ -373,7 +534,6 @@ public class CVFormApplicantDAO {
 
 		Connection connection = null;
 		PreparedStatement pStatement = null;
-		ResultSet rs = null;
 		
 		// check if there is CVForm entity
 		if (null == cv) {
@@ -412,7 +572,20 @@ public class CVFormApplicantDAO {
 			log.error("can't update CVForm");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, pStatement, connection);
+			if (null != pStatement) {
+				try {
+					pStatement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -457,8 +630,20 @@ public class CVFormApplicantDAO {
 			log.error("can't delete CVFormApplicant");
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(statement);
-			Closer.closeConnection(connection);
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -489,7 +674,27 @@ public class CVFormApplicantDAO {
 			log.error("can't get all CVForms");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		log.trace("return Set of cvForms");
 		return cvForms;

@@ -18,7 +18,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.ApplicationForm;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -74,8 +73,20 @@ public class ApplicationFormDAO {
 				log.error(" can't check ApplicationForm by id");
 				throw new PersistException(" can't check ApplicationForm by id");
 			}finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			// create new ApplicationForm persist
@@ -100,8 +111,20 @@ public class ApplicationFormDAO {
 				log.error("new entity ApplicationForm not created");
 				throw new PersistException(" can't create new ApplicationForm");
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(pStatement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != pStatement) {
+					try {
+						pStatement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			//return the last entity
@@ -126,11 +149,29 @@ public class ApplicationFormDAO {
 				log.error(" can't return new ApplicationForm with id " + id);
 				throw new PersistException(" can't return new ApplicationForm");
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 		} finally {
-			Closer.closeConnection(connection);
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return appForm;
@@ -170,7 +211,27 @@ public class ApplicationFormDAO {
 			log.error("can't get ApplicationForm with id " + id);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return appForm;
 	}
@@ -180,7 +241,6 @@ public class ApplicationFormDAO {
 		 
 		Connection connection = null;
 		PreparedStatement pStatement = null;
-		ResultSet rs = null;
 		
 		// check if there is ApplicationForm entity
 		if (null == af) {
@@ -219,7 +279,20 @@ public class ApplicationFormDAO {
 			log.error("can't update ApplicationForm");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, pStatement, connection);
+			if (null != pStatement) {
+				try {
+					pStatement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -262,8 +335,20 @@ public class ApplicationFormDAO {
 			log.error("can't delete ApplicationForm");
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(statement);
-			Closer.closeConnection(connection);;
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -293,7 +378,27 @@ public class ApplicationFormDAO {
 			log.error("can't get all ApplicationForms");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return appForms;
 	}

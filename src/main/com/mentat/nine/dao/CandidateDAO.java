@@ -18,7 +18,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.Closer;
 import main.com.mentat.nine.dao.util.DAOFactory;
 import main.com.mentat.nine.domain.Candidate;
 import main.com.mentat.nine.domain.util.LogConfig;
@@ -77,8 +76,20 @@ public class CandidateDAO {
 				log.error(" can't check Candidate by id");
 				throw new PersistException(" can't check Candidate with id " + candidate.getId());
 			}finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			// create new Candidate persist
@@ -103,8 +114,20 @@ public class CandidateDAO {
 				log.error("new entity Candidate not created");
 				throw new PersistException(" can't create Candidate with id " + id);
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(pStatement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != pStatement) {
+					try {
+						pStatement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 			
 			//return the last entity
@@ -131,11 +154,29 @@ public class CandidateDAO {
 				log.error(" can't return new Candidate with id " + id);
 				throw new PersistException(" can't return new Candidate with id " + id);
 			} finally {
-				Closer.closeResultSet(rs);
-				Closer.closeStatement(statement);
+				if (null != rs) {
+					try {
+						rs.close();
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
+				if (null != statement) {
+					try {
+						statement.close();						
+					} catch (SQLException se) {
+						se.printStackTrace();
+					}
+				}
 			}
 		} finally {
-			Closer.closeConnection(connection);
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return createdCandidate;
@@ -178,7 +219,27 @@ public class CandidateDAO {
 			log.error("can't get Candidate with id " + id);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return candidate;
 	}
@@ -210,7 +271,27 @@ public class CandidateDAO {
 			log.error("can't get Candidates with post " + post);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return candidates;
@@ -242,7 +323,27 @@ public class CandidateDAO {
 			log.error("can't get Candidates with workExpirience " + workExpirience);
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return candidates;
@@ -253,7 +354,6 @@ public class CandidateDAO {
 		
 		Connection connection = null;
 		PreparedStatement pStatement = null;
-		ResultSet rs = null;
 		
 		// check if there is CVForm entity
 		if (null == candidate) {
@@ -292,7 +392,20 @@ public class CandidateDAO {
 			log.error("can't update Candidate");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, pStatement, connection);
+			if (null != pStatement) {
+				try {
+					pStatement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
@@ -335,8 +448,20 @@ public class CandidateDAO {
 			log.error("can't delete Candidate");
 			throw new PersistException();
 		} finally {
-			Closer.closeStatement(statement);
-			Closer.closeConnection(connection);
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -367,7 +492,27 @@ public class CandidateDAO {
 			log.error("can't get all Candidates");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return candidates;
 	}
@@ -420,7 +565,27 @@ public class CandidateDAO {
 			log.error("can't get Candidates with different query parameters");
 			throw new PersistException();
 		} finally {
-			Closer.close(rs, statement, connection);
+			if (null != rs) {
+				try {
+					rs.close();
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != statement) {
+				try {
+					statement.close();						
+				} catch (SQLException se) {
+					se.printStackTrace();
+				}
+			}
+			if (null != connection) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return candidates;
