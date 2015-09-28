@@ -3,6 +3,7 @@ package dao;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -10,12 +11,14 @@ import org.hibernate.Transaction;
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
 import domain.Applicant;
+import domain.util.LogConfig;
 
 public class ApplicantDAO {
 
-
+	private static Logger log = Logger.getLogger(ApplicantDAO.class);
+	
 	public ApplicantDAO(Properties properties) {
-		//LogConfig.loadLogConfig(properties);
+		LogConfig.loadLogConfig(properties);
 	}
 
 		
@@ -27,7 +30,6 @@ public class ApplicantDAO {
 		transaction.commit();
 		Applicant createdApplicant = getApplicantByID(id);
 		session.close();
-		
 		return createdApplicant;
 	}
 		
@@ -37,9 +39,11 @@ public class ApplicantDAO {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Applicant applicant = session.get(Applicant.class, new Integer(id));
 		session.close();
+		log.info("get applicant with id " + applicant.getId());
 		
 		return applicant;
 	}
+	
 	
 	public Applicant getApplicantByLogin(String login) throws PersistException {
 		
@@ -49,42 +53,92 @@ public class ApplicantDAO {
 		
 		@SuppressWarnings("unchecked")
 		List<Applicant> list = query.list();
+		session.close();
 		if (list.size() != 1) {
-			throw new PersistException(list.size() + " persists with login " + login);
+			log.error(list.size() + " applicant persists with login " + login);
+			throw new PersistException(list.size() + " persists with login " + login);		
 		}
+		log.info("get applicant with login " + list.get(0));
+		
 		return list.get(0);
 	}
 	
 	
+	public List<Applicant> getAllApplicants() throws PersistException {
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		String selectQuery = "from Applicant a";
+		Query query = session.createQuery(selectQuery);
+		@SuppressWarnings("unchecked")
+		List<Applicant> applicants = query.list();
+		session.close();
+		log.info("get all applicants");
+		
+		return applicants;
+	}
+
+	
 	public void updateApplicant(Applicant applicant) throws PersistException {
 		
-		if (applicant.getId() == null) {
+		boolean applicantPersisted = isApplicantPersisted(applicant);
+		
+		if (applicantPersisted) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction t = session.beginTransaction();
+			String updateHQL = updateQuery();
+			Query query = session.createQuery(updateHQL);
+			preparedApplicantData(query, applicant);
+			try {
+				int count = query.executeUpdate();
+				if (1 != count) {
+					throw new PersistException("updated " + count + " applicant records");
+				}
+			} finally {
+				t.commit();
+				session.close();
+			}
+			log.info("update applicant with id " + applicant.getId());
+		} else {
+			log.error("applicant not persisted yet");
 			throw new PersistException("applicant not persisted yet");
 		}
+	}
+	
+	
+	public void deleteApplicant(Applicant applicant) throws PersistException {
 		
-		Applicant persistedApplicant = getApplicantByID(applicant.getId());
-		if (persistedApplicant == null) {
-			throw new PersistException("no applicant with " + applicant.getId() + " in db");
-		}
+		boolean applicantPersisted = isApplicantPersisted(applicant);
 				
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction t = session.beginTransaction();
-		//String updateHQL = "update Applicant a set password=:password where id=:id";
-		Query query = session.createQuery("update Applicant a set a.password='newPassword' where a.id='1'");
-		//query.setParameter("password", "newPassword");
-		//query.setParameter("id", 1);
-		//preparedApplicantData(query, applicant);
-		//System.out.println(updateHQL); 							/////
-		try {
-			int count = query.executeUpdate();
-			if (1 != count) {
-				throw new PersistException("updated " + count + " applicant records");
+		if (applicantPersisted) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			try {
+				session.delete(applicant);
+				transaction.commit();
+			} finally {
+				session.close();
 			}
-		} finally {
-			t.commit();
-			session.close();
+			log.info("delete applicant with id " + applicant.getId());
+		} else {
+			log.error("applicant not persisted yet");
+			throw new PersistException("applicant not persisted yet");
 		}
 	}
+	
+		
+	private boolean isApplicantPersisted(Applicant applicant) throws PersistException {
+		
+		if (applicant.getId() == null) {
+			return false;
+		}	
+		Applicant persistedApplicant = getApplicantByID(applicant.getId());
+		if (persistedApplicant == null) {
+			return false;
+			
+		}
+		return true;
+	}
+	
 	
 	private void preparedApplicantData(Query query, Applicant applicant) {
 
@@ -92,166 +146,9 @@ public class ApplicantDAO {
 		query.setParameter("id", applicant.getId());
 	}
 	
+	
 	private String updateQuery() {
-		return "update Applicant set password=:password";
+		return "update Applicant a set a.password=:password where a.id=:id";
 	}
 		
-//      check if there Manager persist
-//		if (null == applicant) {
-//			throw new IllegalArgumentException();
-//		}
-//		if (null == applicant.getId()) {
-//			log.warn("Applicant with id " + applicant.getId() + " is not persist");
-//			throw new PersistException("Applicant does not persist yet");
-//		}
-//		Applicant selectedApplicant = this.getApplicantByLogin(applicant.getLogin());
-//		if (null == selectedApplicant) {
-//			log.warn("Applicant with id " + applicant.getId() + " is not persist");
-//			throw new PersistException("Applicant does not persist yet");
-//		}	
-//		
-//		Connection connection = null;
-//		PreparedStatement pStatement = null;
-//		String updateSql = getUpdateQuery() + " WHERE login = " + "'" + applicant.getLogin() + "'";
-//		
-//		try {
-//			connection = daoFactory.createConnection();
-//			pStatement = connection.prepareStatement(updateSql);
-//			preparedStatementForInsert(applicant, pStatement);
-//			int count = pStatement.executeUpdate();
-//			if (1 != count) {
-//				log.error("Updated " + count + " Applicant entries");
-//				throw new PersistException("Updated " + count + " Applicant entries");
-//			}			
-//		} catch (SQLException e) {
-//			log.error("can't update Applicant entry");
-//			throw new PersistException("can't update Applicant entry");
-//		} finally {
-//			if (null != pStatement) {
-//				try {
-//					pStatement.close();						
-//				} catch (SQLException se) {
-//					se.printStackTrace();
-//				}
-//			}
-//			if (null != connection) {
-//				try {
-//					connection.close();
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-		
-	
-	
-	
-	public void deleteApplicant(Applicant applicant) throws PersistException {
-		
-//		//check if there Manager persist
-//		if (null == applicant) {
-//			throw new IllegalArgumentException();
-//		}
-//		if (null == applicant.getId()) {
-//			log.warn("Applicant with id " + applicant.getId() + " is not persist");
-//			throw new PersistException("Applicant does not persist yet");
-//		}
-//		Applicant selectedManager = this.getApplicantByLogin(applicant.getLogin());
-//		if (null == selectedManager) {
-//			log.warn("Applicant with id " + applicant.getId() + " is not persist");
-//			throw new PersistException("Applicant does not persist yet");
-//		}
-//		
-//		Connection connection = null;
-//		Statement statement = null;
-//		String deleteSql = getDeleteQuery() + " WHERE login = '" + applicant.getLogin() + "'";
-//		
-//		try { 							
-//			connection = daoFactory.createConnection();
-//			statement = connection.createStatement();
-//			int count = statement.executeUpdate(deleteSql);
-//			if (1 != count) {
-//				log.error("Deleted " + count + " Applicant entries");
-//				throw new PersistException("Deleted " + count + " Applicant entries");
-//			}			
-//		} catch (SQLException e) {
-//			log.error("can't delete Applicant entry");
-//			throw new PersistException("can't delete Applicant entry");
-//		} finally {
-//			if (null != statement) {
-//				try {
-//					statement.close();						
-//				} catch (SQLException se) {
-//					se.printStackTrace();
-//				}
-//			}
-//			if (null != connection) {
-//				try {
-//					connection.close();
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-	}
-	
-	
-	public List<Applicant> getAllApplicants() throws PersistException {
-		
-//		Connection connection = null;
-//		Statement statement = null;
-//		ResultSet rs = null;
-//		List<Applicant> applicants = new ArrayList<Applicant>();
-//		
-//		try {
-//			String selectSql = getSelectQuery();
-//			connection = daoFactory.createConnection();
-//			statement = connection.createStatement();
-//			rs = statement.executeQuery(selectSql);
-//			List<Applicant> parsedList = parseResultSet(rs);
-//			if (parsedList != null) {
-//				applicants = parsedList;
-//			}
-//			if (log.isTraceEnabled()) {
-//				log.trace("get all applicants");
-//			}
-//		} catch (SQLException e) {
-//			log.error("cant get all applicants");
-//			throw new PersistException();
-//		} finally {
-//			if (null != rs) {
-//				try {
-//					rs.close();
-//				} catch (SQLException se) {
-//					se.printStackTrace();
-//				}
-//			}
-//			if (null != statement) {
-//				try {
-//					statement.close();						
-//				} catch (SQLException se) {
-//					se.printStackTrace();
-//				}
-//			}
-//			if (null != connection) {
-//				try {
-//					connection.close();
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}		
-//		return applicants;
-		return null;
-	}
-
-
-	
-	
-
-
-	
-	
-
-
 }
