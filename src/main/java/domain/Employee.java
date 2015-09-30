@@ -8,10 +8,15 @@ import java.util.Date;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+
+
 
 import dao.exceptions.PersistException;
 
@@ -47,8 +52,8 @@ public class Employee extends Person{
 	@Column(name="salary")
 	private Integer salary;
 	
-	@ManyToOne//TODO
-	@Column(name="department")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name="id_department", referencedColumnName="id")
 	private Department department;
 	
 	/**

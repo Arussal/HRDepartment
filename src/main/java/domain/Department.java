@@ -3,11 +3,14 @@
  */
 package domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -30,6 +33,8 @@ public class Department {
 	@Column(name="head")
 	private String head;
 
+	@OneToMany(mappedBy="department")
+	private List<Employee> employees;
 	public Department() {
 	}
 	
@@ -60,6 +65,14 @@ public class Department {
 	}
 	public void setHead(String head) {
 		this.head = head;
+	}
+
+	public List<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(List<Employee> employees) {
+		this.employees = employees;
 	}
 
 	@Override

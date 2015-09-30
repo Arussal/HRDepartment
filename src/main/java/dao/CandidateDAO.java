@@ -3,12 +3,6 @@
  */
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +10,15 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
-import domain.ApplicationForm;
 import domain.Candidate;
 import domain.util.LogConfig;
 
@@ -35,15 +31,13 @@ public class CandidateDAO {
 	private static Logger log = Logger.getLogger(CandidateDAO.class);
 	
 	private String title = "candidate";
-	private Properties properties;
 	
 	public CandidateDAO(Properties properties) {
-		this.properties = properties;
 		LogConfig.loadLogConfig(properties);
 	}
 	
 	
-	public Candidate createCandidate(Candidate candidate) throws PersistException {
+	public Candidate createCandidate(Candidate candidate) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
@@ -56,7 +50,7 @@ public class CandidateDAO {
 	}
 
 	
-	public Candidate getCandidateById(int id) throws PersistException {
+	public Candidate getCandidateById(int id) {
 				
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Candidate candidate = session.get(Candidate.class, new Integer(id));
@@ -67,108 +61,33 @@ public class CandidateDAO {
 	}
 
 	
-	public Set<Candidate> getCandidatesByPost(String post)
-			throws PersistException {
+	public Set<Candidate> getCandidatesByPost(String post) {
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		Set<Candidate> candidates = null;
-		
-		try {
-			log.trace("get Candidates with post " + post);
-			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			candidates = parseResultSet(rs);
-			if (candidates.size() < 1) {
-				log.warn("no Candidates with post " + post);
-				throw new PersistException("No Candidates with post = " + post);
-			}
-		} catch (SQLException e) {
-			log.error("can't get Candidates with post " + post);
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return candidates;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(Candidate.class);
+		Criterion crPost = Restrictions.eq("post", post);
+		crit.add(crPost);
+		@SuppressWarnings("unchecked")
+		List<Candidate> list = crit.list();
+		session.close();
+		log.info("get " + title + " with post " + post + ", amount = " + list.size());
+ 
+		return new HashSet<Candidate>(list);
 	}
 
 	
-	public Set<Candidate> getCandidatesByWorkExpirience(int workExpirience)
-			throws PersistException {
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		Set<Candidate> candidates = null;
+	public Set<Candidate> getCandidatesByWorkExpirience(int workExpirience) {
 		
-		try {
-			log.trace("get Candidates with workExpirience " + workExpirience);
-			String sqlSelect = getSelectQuery() + " WHERE work_expirience = " + workExpirience;
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			candidates = parseResultSet(rs);
-			if (candidates.size() < 1) {
-				log.warn("no Candidates with workExpirience " + workExpirience);
-				throw new PersistException("No Candidates with workExpirience = " + workExpirience);
-			}
-		} catch (SQLException e) {
-			log.error("can't get Candidates with workExpirience " + workExpirience);
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return candidates;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(Candidate.class);
+		Criterion crExpirience = Restrictions.eq("workExpirience", workExpirience);
+		crit.add(crExpirience);
+		@SuppressWarnings("unchecked")
+		List<Candidate> list = crit.list();
+		session.close();
+		log.info("get " + title + " with expirience " + workExpirience + ", amount = " + list.size());
+ 
+		return new HashSet<Candidate>(list);
 	}
 
 	
@@ -201,9 +120,9 @@ public class CandidateDAO {
 
 	public void deleteCandidate(Candidate candidate) throws PersistException {
 	
-		boolean appFormPersisted = isCandidatePersisted(candidate);
+		boolean candidatePersisted = isCandidatePersisted(candidate);
 		
-		if (appFormPersisted) {
+		if (candidatePersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 			try {
@@ -220,7 +139,7 @@ public class CandidateDAO {
 	}
 
 
-	public Set<Candidate> getAllCandidates() throws PersistException {
+	public Set<Candidate> getAllCandidates() {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		String selectQuery = getSelectQuery();
@@ -238,77 +157,44 @@ public class CandidateDAO {
 	public Set<Candidate> getCandidates(Map<String, List<String>> queries) 
 			throws PersistException {
 
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		Set<Candidate> candidates = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(Candidate.class);
+		addCriteria(crit, queries);
+		@SuppressWarnings("unchecked")
+		List<Candidate> list = crit.list();
+		session.close();
+		log.info("get " + title + " with expirience different parameters, amount = " + list.size());
+ 
+		return new HashSet<Candidate>(list);
+	}
 		
-		try {
-			log.trace("get Candidates with different query parameters");
-			StringBuilder selectBuilder = new StringBuilder();
-			String selectSql = "";
-			String selectPhrase = getSelectQuery();
-			selectBuilder.append(selectPhrase);
-			if (queries.size() != 0) {
-				selectBuilder.append(" WHERE ");
-				for (String key : queries.keySet()) {
-					selectBuilder.append(key);
-					if (queries.get(key).get(0) == null) {
-						selectBuilder.append(" is null");
-						selectSql = selectBuilder.toString();
-					} else {
-						selectBuilder.append(queries.get(key).get(1)+"'");
-						selectBuilder.append(queries.get(key).get(0));
-						selectBuilder.append("'");
-						selectBuilder.append(" AND ");
-						selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
-					}
-				}
-			} else {
-				selectSql = selectBuilder.toString();
-			}
-			
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(selectSql);
-			log.trace("resultset got");
-			candidates = parseResultSet(rs);
-			if (candidates.size() < 1) {
-				log.warn("no Candidates with different query parameters");
-			}
-		} catch (SQLException e) {
-			log.error("can't get Candidates with different query parameters");
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+
+	private void addCriteria(Criteria crit, Map<String, List<String>> queries) {
+		
+		for (String key : queries.keySet()) {
+			Criterion cron = makeCriterian(key, queries.get(key));
+			crit.add(cron);
 		}
 		
-		return candidates;
-		
 	}
-	
+
+
+	private Criterion makeCriterian(String field, List<String> params) {
+		Criterion criterion;
+		if (params.get(1).equals("<=")) {
+			criterion = Restrictions.le(field, params.get(0));	
+		} else if (params.get(1).equals("<")) {
+			criterion = Restrictions.lt(field, params.get(0));	
+		} else if (params.get(1).equals(">=")) {
+			criterion = Restrictions.ge(field, params.get(0));
+		} else if (params.get(1).equals(">")) {
+			criterion = Restrictions.gt(field, params.get(0));
+		} else {
+			criterion = Restrictions.eq(field, params.get(0));	 
+		}
+		return criterion;
+	}
+
 
 	private String getSelectQuery() {
 		return "from Candidate c";
@@ -316,19 +202,13 @@ public class CandidateDAO {
 	
 	
 	private String getUpdateQuery() {
-		return "update ApplicationForm af set af.date=:date, af.age=:age, af.education=:education, \n"
-				+ "af.requirements=:requirements, af.post=:post, af.salary=:salary, \n"
-				+ "af.workExpirience=:workExpirience where af.id=:id";
+		return "update Candidate c set c.name=:name, c.age=:age, c.education=:education, \n"
+				+ "c.email=:email, c.phone=:phone, c.skills=:skills, \n"
+				+ "c.workExpirience=:workExpirience where c.id=:id";
 	}
 
-
-	private String getUpdateQuery() {
-		String sql = "UPDATE candidate SET name = ?, age = ?, education = ?, \n"
-				+ "email = ?, phone = ?, skills = ?, work_expirience = ?";
-		return sql;
-	}
 		
-	private boolean isCandidatePersisted(Candidate candidate) throws PersistException {
+	private boolean isCandidatePersisted(Candidate candidate) {
 		
 		if (candidate.getId() == null) {
 			return false;
@@ -342,17 +222,15 @@ public class CandidateDAO {
 	}
 	
 	
-	private void prepareInsertData(Query query, ApplicationForm appForm) {
+	private void prepareInsertData(Query query, Candidate candidate) {
 
-		query.setParameter("date", appForm.getDate());
-		query.setParameter("age", appForm.getAge());
-		query.setParameter("education", appForm.getEducation());
-		query.setParameter("requirements", appForm.getRequirements());
-		query.setParameter("post", appForm.getPost());
-		query.setParameter("salary", appForm.getSalary());
-		query.setParameter("workExpirience", appForm.getWorkExpirience());
-		query.setParameter("id", appForm.getId());
+		query.setParameter("name", candidate.getName());
+		query.setParameter("age", candidate.getAge());
+		query.setParameter("education", candidate.getEducation());
+		query.setParameter("email", candidate.getEmail());
+		query.setParameter("phone", candidate.getPhone());
+		query.setParameter("skills", candidate.getSkills());
+		query.setParameter("workExpirience", candidate.getWorkExpirience());
+		query.setParameter("id", candidate.getId());
 	}
-	
-	
 }

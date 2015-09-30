@@ -35,9 +35,6 @@ public class CVForm extends Person{
 	@Column(name="additionalInfo")
 	private String additionalInfo;
 	
-	@Column(name="sendStatus")
-	private String sendStatus;
-	
 	
 	/**
 	 * 
@@ -58,14 +55,6 @@ public class CVForm extends Person{
 	
 	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
-	}
-	
-	public String getSendStatus() {
-		return sendStatus;
-	}
-
-	public void setSendStatus(String sendStatus) {
-		this.sendStatus = sendStatus;
 	}
 	
 	public String getName() {

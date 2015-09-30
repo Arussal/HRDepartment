@@ -1,404 +1,165 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.Manager;
-import main.com.mentat.nine.domain.util.LogConfig;
+import dao.exceptions.PersistException;
+import dao.util.HibernateUtil;
+import domain.Manager;
+import domain.util.LogConfig;
 
 public class ManagerDAO {
 	
 	private static Logger log = Logger.getLogger(ManagerDAO.class);
-	private DAOFactory daoFactory; 
+	
+	private String title = "Manager";
 	
 	public ManagerDAO(Properties properties) {
 		LogConfig.loadLogConfig(properties);
-		daoFactory = DAOFactory.getFactory();
 	}
 	
 	public Manager createManager(Manager manager) throws PersistException{
 		
-		Connection connection = null;
-		Statement statement = null;
-		PreparedStatement pStatement = null;
-		ResultSet rs = null;
-		Manager createdManager = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+		Integer id = (Integer)session.save(manager);
+		transaction.commit();
+		Manager createdManager = getManagerById(id);
+		session.close();
 		
-		
-		try {
-			//check if this Manager already persist
-			try {
-				String selectSql = getSelectQuery() + " WHERE login = " + "'" + manager.getLogin() + "'";
-				connection = daoFactory.createConnection();
-				statement = connection.createStatement();
-				rs = statement.executeQuery(selectSql);
-				List<Manager> managers = parseResultSet(rs);
-				if (managers.size() > 0) {
-					log.warn("more than one Manager with login " + manager.getLogin());
-					throw new PersistException("Manager with login = " + manager.getLogin() + " is already persist");
-				}
-				if(log.isTraceEnabled()){
-					log.trace("Manager with login: " + manager.getLogin() + " is absent");
-				}
-			} catch (SQLException e) {
-				throw new PersistException();
-			} finally {
-				if (null != rs) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (null != statement) {
-					try {
-						statement.close();						
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-			}
-			
-			Integer id = null;
-			//create new Manager entry
-			try {
-				String createSql = getCreateQuery();
-				pStatement = connection.prepareStatement(createSql, Statement.RETURN_GENERATED_KEYS);
-				preparedStatementForInsert(manager, pStatement);
-				int count = pStatement.executeUpdate();
-				if (1 == count) {
-					rs = pStatement.getGeneratedKeys();
-					rs.next();
-					id = rs.getInt("id");
-				}
-			} catch (SQLException e) {
-				log.error("cant create new Manager entry");
-				throw new PersistException();
-			} finally {
-				if (null != rs) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (null != pStatement) {
-					try {
-						pStatement.close();						
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-			}
-			
-				
-			//return created Manager entry
-			try {
-				String selectSql = getSelectQuery() + " WHERE id = " + id;
-				statement = connection.createStatement();
-				rs = statement.executeQuery(selectSql);
-				List<Manager> managers = parseResultSet(rs);
-				if (managers.size() != 1) {
-					log.error("return more than one Manager entry");
-					throw new PersistException();
-				}
-				createdManager = managers.get(0);
-				createdManager.setId(id);
-				log.info("new entry Manager created, id " + id);
-			} catch (SQLException e) {
-				log.error("cant return Manager entry");
-				throw new PersistException();
-			} finally {
-				if (null != rs) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (null != statement) {
-					try {
-						statement.close();						
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-			}
-		} finally {
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 		return createdManager;
 	}
 	
 	
+	public Manager getManagerById(Integer id) throws PersistException {
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Manager manager = session.get(Manager.class, new Integer(id));
+		session.close();
+		log.info("get " + title + " with id " + manager.getId());
+ 
+		return manager;
+	}
+	
+	
+	
 	public Manager getManagerByLogin(String login) throws PersistException {
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		Manager selectedManager = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		String selectQuery = getSelectQuery() + " where a.login=:login";
+		Query query = session.createQuery(selectQuery).setString("login", login);
 		
-		try {
-			String selectSql = getSelectQuery() + " WHERE login = " + "'" + login + "'"; 
-			connection = daoFactory.createConnection();
-			statement = connection.createStatement();
-			rs = statement.executeQuery(selectSql);
-			List<Manager> managers = parseResultSet(rs);
-			if (1 != managers.size()) {
-				log.error("return not the only Manager: " + managers.size());
-				throw new PersistException();
-			}
-			selectedManager = managers.get(0);
-		} catch (SQLException e) {
-			log.error("cant return Manager whith login: " + login);
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		@SuppressWarnings("unchecked")
+		List<Manager> list = query.list();
+		session.close();
+		if (list.size() != 1) {
+			log.error(list.size() + title + " persists with login " + login);
+			throw new PersistException(list.size() + " persists with login " + login);		
 		}
-		return selectedManager;
+		log.info("get " + title + " with login " + list.get(0));
+		
+		return list.get(0);
 	}
 	
 	
 	public void updateManager(Manager manager) throws PersistException {
 		
-		//check if there Manager persist
-		if (null == manager) {
-			throw new IllegalArgumentException();
-		}
-		if (null == manager.getId()) {
-			log.warn("Manager with id " + manager.getId() + " is not persist");
-			throw new PersistException("Manager does not persist yet");
-		}
-		Manager selectedManager = this.getManagerByLogin(manager.getLogin());
-		if (null == selectedManager) {
-			log.warn("Manager with id " + manager.getId() + " is not persist");
-			throw new PersistException("Manager does not persist yet");
-		}	
+		boolean managerPersisted = isManagerPersisted(manager);
 		
-		Connection connection = null;
-		PreparedStatement pStatement = null;
-		String updateSql = getUpdateQuery() + " WHERE login = " + "'" + manager.getLogin() + "'";
-		
-		try {
-			connection = daoFactory.createConnection();
-			pStatement = connection.prepareStatement(updateSql);
-			preparedStatementForInsert(manager, pStatement);
-			int count = pStatement.executeUpdate();
-			if (1 != count) {
-				log.error("Updated " + count + " Manager entries");
-				throw new PersistException("Updated " + count + " Manager entries");
-			}			
-		} catch (SQLException e) {
-			log.error("can't update Manager entry");
-			throw new PersistException("can't update Manager entry");
-		} finally {
-			if (null != pStatement) {
-				try {
-					pStatement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
+		if (managerPersisted) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction t = session.beginTransaction();
+			String updateHQL = getUpdateQuery();
+			Query query = session.createQuery(updateHQL);
+			prepareInsertData(query, manager);
+			try {
+				int count = query.executeUpdate();
+				if (1 != count) {
+					throw new PersistException("updated " + count + " " + title + " records");
 				}
+			} finally {
+				t.commit();
+				session.close();
 			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			log.info("update " + title + " with id " + manager.getId());
+		} else {
+			log.error(title + " not persisted yet");
+			throw new PersistException(title + " not persisted yet");
 		}
 	}
 	
 	
 	public void deleteManager(Manager manager) throws PersistException {
 		
-		//check if there Manager persist
-		if (null == manager) {
-			throw new IllegalArgumentException();
-		}
-		if (null == manager.getId()) {
-			log.warn("Manager with id " + manager.getId() + " is not persist");
-			throw new PersistException("Manager does not persist yet");
-		}
-		Manager selectedManager = this.getManagerByLogin(manager.getLogin());
-		if (null == selectedManager) {
-			log.warn("Manager with id " + manager.getId() + " is not persist");
-			throw new PersistException("Manager does not persist yet");
-		}
+		boolean managerPersisted = isManagerPersisted(manager);
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		String deleteSql = getDeleteQuery() + " WHERE login = '" + manager.getLogin() + "'";
-		System.out.println(deleteSql);
-		
-		try {
-			connection = daoFactory.createConnection();
-			statement = connection.createStatement();
-			int count = statement.executeUpdate(deleteSql);
-			if (1 != count) {
-				log.error("Deleted " + count + " Manager entries");
-				throw new PersistException("Deleted " + count + " Manager entries");
-			}			
-		} catch (SQLException e) {
-			log.error("can't delete Manager entry");
-			throw new PersistException("can't delete Manager entry");
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
+		if (managerPersisted) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			try {
+				session.delete(manager);
+				transaction.commit();
+			} finally {
+				session.close();
 			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			log.info("delete " + title + " with id " + manager.getId());
+		} else {
+			log.error(title + " not persisted yet");
+			throw new PersistException(title + " not persisted yet");
 		}
 	}
 	
 	
 	public List<Manager> getAllManagers() throws PersistException {
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<Manager> managers = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		String selectQuery = getSelectQuery();
+		Query query = session.createQuery(selectQuery);
+		@SuppressWarnings("unchecked")
+		List<Manager> list = query.list();
+		session.close();
+		log.info("get all " + title + "s");
+
+		return list;
+	}
+
+	
+	private String getUpdateQuery() {
+		return "update Manager m set m.login=:login, m.password=:password";
+	}
+	
+	
+	private String getSelectQuery() {
+		String sql = "from Manager m";
+		return sql;
+	}
+
+	
+	private boolean isManagerPersisted(Manager manager) throws PersistException {
 		
-		try {
-			String selectSql = getSelectQuery();
-			connection = daoFactory.createConnection();
-			statement = connection.createStatement();
-			rs = statement.executeQuery(selectSql);
-			managers = parseResultSet(rs);
-			if (log.isTraceEnabled()) {
-				log.trace("get all managers");
-			}
-		} catch (SQLException e) {
-			log.error("cant get all managers");
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		if (manager.getId() == null) {
+			return false;
 		}	
-		return managers;
-	}
-
-
-	public String getSelectQuery() {
-		return "SELECT * FROM manager";
-	}
-	
-	
-	public String getCreateQuery() {
-		return "INSERT INTO manager (login, password) VALUES (?, ?)";
-	}
-	
-	
-	public String getUpdateQuery() {
-		return "UPDATE manager SET login = ?, password = ?";
-	}
-	
-	
-	public String getDeleteQuery() {
-		return "DELETE FROM manager";
-	}
-	
-
-	private List<Manager> parseResultSet(ResultSet rs) throws PersistException {
-		
-		List<Manager> managers = new ArrayList<Manager>();
-		try {
-			while(rs.next()) {
-				Manager manager = new Manager();
-				manager.setId(rs.getInt("id"));
-				manager.setLogin(rs.getString("login"));
-				manager.setPassword(rs.getString("password"));
-				managers.add(manager);
-			}
-		} catch (SQLException e) {
-			log.error("can't parse query results");
-			throw new PersistException();
+		Manager persistedManager = getManagerById(manager.getId());
+		if (persistedManager == null) {
+			return false;
 		}
-		return managers;
-	}
-	
-	
-	private void preparedStatementForInsert(Manager manager, PreparedStatement statement) 
-			throws PersistException {
 		
-		try {
-			statement.setString(1, manager.getLogin());
-			statement.setString(2, manager.getPassword());
-		} catch (SQLException e) {
-			log.error("can't prepare statement");
-			throw new PersistException();
-		}
+		return true;
 	}
+	
+	
+	private void prepareInsertData(Query query, Manager manager) {
+
+		query.setParameter("login", manager.getLogin());
+		query.setParameter("password", manager.getPassword());
+		query.setParameter("id", manager.getId());
+	}
+	
 
 }

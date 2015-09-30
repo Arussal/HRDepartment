@@ -15,7 +15,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import dao.ApplicationFormDAO;
-import dao.CVFormDAO;
+import dao.CVFormApplicantDAO;
 import dao.CandidateDAO;
 import dao.EmployeeDAO;
 import dao.exceptions.PersistException;
@@ -33,7 +33,7 @@ public class HRDepartment extends Department implements HRManager{
 	private Set<Employee> staff;
 	
 	private List<ApplicationForm> apps;
-	private CVFormDAO cvDao;
+	private CVFormApplicantDAO cvDao;
 	private EmployeeDAO empDao;
 	private ApplicationFormDAO appDao;
 	private CandidateDAO candDao;
@@ -280,11 +280,11 @@ public class HRDepartment extends Department implements HRManager{
 		this.apps = apps;
 	}
 
-	public CVFormDAO getCvDao() {
+	public CVFormApplicantDAO getCvDao() {
 		return cvDao;
 	}
 
-	public void setCvDao(CVFormDAO cvDao) {
+	public void setCvDao(CVFormApplicantDAO cvDao) {
 		if (null == cvDao) {
 			throw new IllegalArgumentException("cvDao is null");
 		}

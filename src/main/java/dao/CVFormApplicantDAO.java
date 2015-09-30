@@ -17,11 +17,18 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 
-import main.com.mentat.nine.dao.exceptions.PersistException;
-import main.com.mentat.nine.dao.util.DAOFactory;
-import main.com.mentat.nine.domain.CVForm;
-import main.com.mentat.nine.domain.util.LogConfig;
+import dao.exceptions.PersistException;
+import dao.util.HibernateUtil;
+import domain.CVFormApplicant;
+import domain.Candidate;
+import domain.util.LogConfig;
 
 /**
  * @author Ruslan
@@ -31,441 +38,107 @@ public class CVFormApplicantDAO {
 
 	private static Logger log = Logger.getLogger(CVFormApplicantDAO.class);
 	
-	private DAOFactory daoFactory;
-
+	private String title = "CVFormApplicant";
+	
 	public CVFormApplicantDAO(Properties properties) {
 		LogConfig.loadLogConfig(properties);
-		daoFactory = DAOFactory.getFactory();
 	}
 
-	public CVForm createCVForm(CVForm cv) throws PersistException {
+	public CVFormApplicant createCVForm(CVFormApplicant cv) throws PersistException {
 		
-		CVForm createdCV = null;
-		Connection connection = null;
-		Statement statement = null;
-		PreparedStatement pStatement = null;
-		ResultSet rs = null;
-		int id = 0;
-
-		try {
-			
-			//check if this CVFormApplicant does not persist
-			try {
-				if(log.isTraceEnabled()) {
-					log.trace("try check if CVFormApplicant with id " + cv.getId() + " exists");
-				}
-				String sqlSelect = "";
-				if (cv.getId() == null) {
-					sqlSelect = getSelectQuery() + " WHERE id IS "+ cv.getId();
-				}	else {
-					sqlSelect = getSelectQuery() + " WHERE id = "+ cv.getId();
-				}
-				connection = daoFactory.createConnection();
-				log.trace("connection created");
-				statement = connection.createStatement();
-				log.trace("statement created");
-				rs = statement.executeQuery(sqlSelect);
-				log.trace("resultset got");
-				List<CVForm> cvList = parseResultSet(rs);
-				if (cvList.size() != 0) {
-					log.warn("CVFormApplicant is already persist, id " + cv.getId());
-					throw new PersistException("CVFormApplicant is already persist, id " + cv.getId());
-				} 
-				if(log.isTraceEnabled()){
-					log.trace("CVFormApplicant with id " + id + " is absent");
-				}
-			} catch (SQLException e) {
-				log.error(" can't check CVFormApplicant by id");
-				throw new PersistException(" can't check CVFormApplicant with id " + cv.getId());
-			} finally {
-				if (null != rs) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (null != statement) {
-					try {
-						statement.close();						
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-			}
-			
-			// create new CVFormApplicant persist
-			try {
-				
-				log.trace("try to create new entity CVFormApplicant");
-				String sqlCreate = getCreateQuery();
-				pStatement = connection.prepareStatement(sqlCreate, Statement.RETURN_GENERATED_KEYS);
-				log.trace("pStatement created");
-				prepareStatementForInsert(pStatement, cv);
-				int count = pStatement.executeUpdate();
-
-				if (1 == count) {
-					rs = pStatement.getGeneratedKeys();
-					log.trace("generated pStatement keys");
-					rs.next();
-					id = rs.getInt("id"); 
-				} else {
-					log.error("new entity CVFormApplicant not created");
-					throw new PersistException("CVFormApplicant hasn't been created");
-				}
-				log.info("new entity CVFormApplicant created, id " + id);
-			} catch (SQLException e) {
-				log.error("new entity CVFormApplicant not created");
-				throw new PersistException(" can't create CVFormApplicant with id " + id);
-			} finally {
-				if (null != rs) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (null != pStatement) {
-					try {
-						pStatement.close();						
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-			}
-			
-			//return the last entity
-			try {
-				if(log.isTraceEnabled()) {
-					log.trace("try to return CVFormApplicant entity with id " + id);
-				}
-				String sqlSelect = getSelectQuery() + " WHERE id = " + id;
-				statement = connection.createStatement();
-				log.trace("statement created");
-				rs = statement.executeQuery(sqlSelect);
-				log.trace("resulset got");
-				List<CVForm> cvForms = parseResultSet(rs);
-				if (null == cvForms || cvForms.size() != 1) {
-					log.warn("more than one CVFormApplicant with id " + id);
-					throw new PersistException("Was created more than one persist with id = " + id);
-				}
-				createdCV = cvForms.get(0);
-				log.info("return new CVFormApplicant with id " + id);
-			} catch (SQLException e) {
-				log.error(" can't return new CVFormApplicant with id " + id);
-				throw new PersistException(" can't return new CVFormApplicant with id " + id);
-			} finally {
-				if (null != rs) {
-					try {
-						rs.close();
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-				if (null != statement) {
-					try {
-						statement.close();						
-					} catch (SQLException se) {
-						se.printStackTrace();
-					}
-				}
-			}
-		} finally {
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+		Integer id = (Integer)session.save(cv);
+		transaction.commit();
+		CVFormApplicant createdCV = getCVFormById(id);
+		session.close();
 		
 		return createdCV;
 	}
 
 	
-	public CVForm getCVFormById(int id) throws PersistException {
+	public CVFormApplicant getCVFormById(int id) {
 
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVForm> cvList = null;
-		
-		CVForm cv = new CVForm();
-
-		try {
-			log.trace("try to get CVFormApplicant with id " + id);
-			String sqlSelect = getSelectQuery() + " WHERE id = " + id;
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			cvList = parseResultSet(rs);
-			if (cvList.size() > 1) {
-				log.warn("more than one CVFormApplicant with id " + id);
-				throw new PersistException("Get more than one CVFormApplicant with id = " + id);
-			} else if (cvList.size() < 1) {
-				log.warn("no CVFormApplicant with id " + id);
-				throw new PersistException("No CVFormApplicant with id = " + id);
-			}
-			cv = cvList.get(0);
-			if (log.isTraceEnabled()) {
-				log.trace("get CVFormApplicant with id " + id);
-			}
-		} catch (SQLException e) {
-			log.error("can't get CVFormApplicant with id " + id);
-			throw new PersistException(" can't get CVFormApplicant by id " + id);
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		CVFormApplicant cv = session.get(CVFormApplicant.class, new Integer(id));
+		session.close();
+		log.info("get " + title + " with id " + cv.getId());
+ 
 		return cv;
 	}
 
 	
-	public List<CVForm> getCVFormByPost(String post) throws PersistException {
+	public List<CVFormApplicant> getCVFormByPost(String post) {
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVForm> cvForms = null;
-		
-		try {
-			log.trace("get CVForms with post " + post);
-			String sqlSelect = getSelectQuery() + " WHERE post = " + post;
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			cvForms = parseResultSet(rs);
-			if (cvForms.size() < 1) {
-				log.warn("no CVForms with post " + post);
-				throw new PersistException("No CVFormApplicants with post = " + post);
-			}
-		} catch (SQLException e) {
-			log.error("can't get CVFormApplicants with post " + post);
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return cvForms;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(CVFormApplicant.class);
+		Criterion crPost = Restrictions.eq("post", post);
+		crit.add(crPost);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = crit.list();
+		session.close();
+		log.info("get " + title + " with post " + post + ", amount = " + list.size());
+ 
+		return list;
 	}
 
 
-	public List<CVForm> geyCVFormByWorkExpirience(int workExpirience)
-			throws PersistException {
+	public List<CVFormApplicant> getCVFormByWorkExpirience(int workExpirience) {
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVForm> cvForms = null;
-		
-		try {
-			log.trace("get CVFormApplicants with workExpirience " + workExpirience);
-			String sqlSelect = getSelectQuery() + " WHERE work_expirience = " + workExpirience;
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			cvForms = parseResultSet(rs);
-			if (cvForms.size() < 1) {
-				log.warn("no CVFormApplicants with workExpirience " + workExpirience);
-				throw new PersistException("No CVFormApplicants with workExpirience = " + workExpirience);
-			}
-		} catch (SQLException e) {
-			log.error("can't get CVFormApplicants with workExpirience " + workExpirience);
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return cvForms;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(CVFormApplicant.class);
+		Criterion crExpirience = Restrictions.eq("workExpirience", workExpirience);
+		crit.add(crExpirience);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = crit.list();
+		session.close();
+		log.info("get " + title + " with expirience " + workExpirience + ", amount = " + list.size());
+ 
+		return list;
 	}
 
 
-	public List<CVForm> getCVFormByName(String name)
+	public List<CVFormApplicant> getCVFormByEducation(String education)
 			throws PersistException {
 
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVForm> cvForms = new ArrayList<CVForm>();
-		
-		try {
-			log.trace("get CVFormApplicants with login " + name);
-			String sqlSelect = getSelectQuery() + " WHERE name = '" + name + "'";
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			List<CVForm> parsedList = parseResultSet(rs);
-			if (parsedList != null) {
-				cvForms = parsedList;
-			}
-			if (cvForms.size() < 1) {
-				log.warn("no CVFormApplicants with login " + name);
-			}
-		} catch (SQLException e) {
-			log.error("can't get CVFormApplicants with login " + name);
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return cvForms;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(CVFormApplicant.class);
+		Criterion crExpirience = Restrictions.eq("education", education);
+		crit.add(crExpirience);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = crit.list();
+		session.close();
+		log.info("get " + title + " with education " + education + ", amount = " + list.size());
+ 
+		return list;
 	}
 
 
-	public List<CVForm> geyCVFormByDesiredSalary(int desiredSalary)
+	public List<CVFormApplicant> geyCVFormByDesiredSalary(int desiredSalary)
 			throws PersistException {
 
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVForm> cvForms = null;
-		
-		try {
-			log.trace("get CVFormApplicants with desiredSalary " + desiredSalary);
-			String sqlSelect = getSelectQuery() + " WHERE desiredSalary = " + desiredSalary;
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("resultset got");
-			cvForms = parseResultSet(rs);
-			if (cvForms.size() < 1) {
-				log.warn("no CVFormApplicants with desiredSalary " + desiredSalary);
-				throw new PersistException("No CVFormApplicants with desiredSalary = " + desiredSalary);
-			}
-		} catch (SQLException e) {
-			log.error("can't get CVFormApplicants with desiredSalary " + desiredSalary);
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		return cvForms;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(CVFormApplicant.class);
+		Criterion crExpirience = Restrictions.eq("desiredSalary", desiredSalary);
+		crit.add(crExpirience);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = crit.list();
+		session.close();
+		log.info("get " + title + " with desiredSalary " + desiredSalary + ", amount = " + list.size());
+ 
+		return list;
 	}
 
 	
-	public List<CVForm> getCVForm(Map<String, List<String>> queries) throws PersistException {
+	public List<CVFormApplicant> getCVForm(Map<String, List<String>> queries) throws PersistException {
 		
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet rs = null;
-		List<CVForm> cvForms = null;
+		List<CVFormApplicant> cvForms = new ArrayList<CVFormApplicant>();
 		
 		try {
-			log.trace("get CVFormApplicants with different query parameters");
+			log.trace("get CVForms with different query parameters");
 			StringBuilder selectBuilder = new StringBuilder();
 			String selectSql = "";
 			String selectPhrase = getSelectQuery();
@@ -497,11 +170,10 @@ public class CVFormApplicantDAO {
 			log.trace("resultset got");
 			cvForms = parseResultSet(rs);
 			if (cvForms.size() < 1) {
-				log.warn("no CVFormApplicants with different query parameters");
-				throw new PersistException("No CVFormApplicants with different query parameters");
+				log.warn("no CVForms with different query parameters");
 			}
 		} catch (SQLException e) {
-			log.error("can't get CVFormApplicants with different query parameters");
+			log.error("can't get CVForms with different query parameters");
 			throw new PersistException();
 		} finally {
 			if (null != rs) {
@@ -530,275 +202,111 @@ public class CVFormApplicantDAO {
 		return cvForms;
 	}
 
-	public void updateCVForm(CVForm cv) throws PersistException {
+	
+	public void updateCVForm(CVFormApplicant cv) throws PersistException {
 
-		Connection connection = null;
-		PreparedStatement pStatement = null;
+		boolean candidatePersisted = isCVFormPersisted(cv);
 		
-		// check if there is CVForm entity
-		if (null == cv) {
-			throw new IllegalArgumentException();
-		}
-		if (null == cv.getId()) {
-			log.warn("CVFormApplicant with id " + cv.getId() + " is not persist");
-			throw new PersistException("CVFormApplicant does not persist yet");
-		}
-		CVForm selectedApp = this.getCVFormById(cv.getId());
-		if (null == selectedApp) {
-			log.warn("CVFormApplicant with id " + cv.getId() + " is not persist");
-			throw new PersistException("CVFormApplicant does not persist yet");
-		}	
-		
-		// update CVFormApplicant entity
-		String sqlUpdate = getUpdateQuery() + " WHERE id = " + cv.getId();
-		try {
-			if(log.isTraceEnabled()) {
-				log.trace("try to update CVFormApplicant with id " + cv.getId()); 
-			}
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			pStatement = connection.prepareStatement(sqlUpdate, Statement.RETURN_GENERATED_KEYS);
-			log.trace("create pStatement");
-			prepareStatementForInsert(pStatement, cv);
-			int count = pStatement.executeUpdate();
-			if (count > 1) {
-				log.warn("update more then one CVForm");
-				throw new PersistException("Updated more than one CVForm");
-			} else if (count < 1) {
-				log.warn("no CVFormApplicant update");
-				throw new PersistException("No one CVFormApplicant was updated");
-			}
-		} catch (SQLException e) {
-			log.error("can't update CVForm");
-			throw new PersistException();
-		} finally {
-			if (null != pStatement) {
-				try {
-					pStatement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
+		if (candidatePersisted) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction t = session.beginTransaction();
+			String updateHQL = getUpdateQuery();
+			Query query = session.createQuery(updateHQL);
+			prepareInsertData(query, cv);
+			try {
+				int count = query.executeUpdate();
+				if (1 != count) {
+					throw new PersistException("updated " + count + " " + title + " records");
 				}
+			} finally {
+				t.commit();
+				session.close();
 			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			log.info("update " + title + " with id " + cv.getId());
+		} else {
+			log.error(title + " not persisted yet");
+			throw new PersistException(title + " not persisted yet");
 		}
 		
 	}
 
 
-	public void deleteCVForm(CVForm cv) throws PersistException {
+	public void deleteCVForm(CVFormApplicant cv) throws PersistException {
 				
-		Connection connection = null;
-		Statement statement = null;
+		boolean CVFormPersisted = isCVFormPersisted(cv);
 		
-		// check if there is CVFormApplicant entity
-		if (null == cv) {
-			throw new IllegalArgumentException();
+		if (CVFormPersisted) {
+			Session session = HibernateUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			try {
+				session.delete(cv);
+				transaction.commit();
+			} finally {
+				session.close();
+			}
+			log.info("delete " + title + " with id " + cv.getId());
+		} else {
+			log.error(title + " not persisted yet");
+			throw new PersistException(title + " not persisted yet");
 		}
-		if (null == cv.getId()) {
-			log.warn("CVFormApplicant with id " + cv.getId() + " is not persist");
-			throw new PersistException("CVFormApplicant does not persist yet");
-		}
-		CVForm selectedCVForm = this.getCVFormById(cv.getId());
-		if (null == selectedCVForm) {
-			log.warn("CVFormApplicant with id " + cv.getId() + " is not persist");
-			throw new PersistException("CVFormApplicant does not persist yet");
-		}	
-		
-		// delete CVFormApplicant entity
-
-		try {
-			if (log.isTraceEnabled()) {
-				log.trace("try to delete CVFormApplicant with id " + cv.getId());
-			}
-			String sqlDelete = getDeleteQuery() + " WHERE id = " + cv.getId();
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			int count = statement.executeUpdate(sqlDelete);
-			if (1 != count) {
-				log.warn("delete more than one entity");
-				throw new PersistException("On delete modify more then 1 record: " + count);
-			}
-		} catch (SQLException e) {
-			log.error("can't delete CVFormApplicant");
-			throw new PersistException();
-		} finally {
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		
 	}
 
 
-	public List<CVForm> getAllCVForms() throws PersistException {
+	public List<CVFormApplicant> getAllCVForms() throws PersistException {
 
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVForm> cvForms = null;
-		String sqlSelect = getSelectQuery();
-		
-		try {
-			log.trace("try to get all CVForms");
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(sqlSelect);
-			log.trace("get resultset");
-			cvForms = parseResultSet(rs);
-			if (null == cvForms || 0 == cvForms.size()) {
-				log.warn("no one CVFormApplicant persist");
-				throw new PersistException(" there are not CVFormApplicant entities");
-			}
-		} catch (SQLException e) {
-			log.error("can't get all CVForms");
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		log.trace("return Set of cvForms");
-		return cvForms;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		String selectQuery = getSelectQuery();
+		Query query = session.createQuery(selectQuery);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = query.list();
+		session.close();
+		log.info("get all " + title + "s");
+
+		return list;
 	}
 
-	private String getCreateQuery() {
-		String sql = "INSERT INTO cvform_applicant (name, age, education, email, \n"
-				+ "phone, post, skills, work_expirience, desired_salary, additional_info, send_status) \n"
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		return sql;
-	}
-
-
+	
 	private String getUpdateQuery() {
-		String sql = "UPDATE cvform_applicant SET name = ?, age = ?, education = ?, \n"
-				+ "email = ?, phone = ?, post = ?, skills = ?, work_expirience = ?, desired_salary = ?, \n"
-				+ "additional_info = ?, send_status = ?";
-		return sql;
+		return "update CVFormApplicant cv set cv.name=:name, cv.age=:age, cv.education=:education, \n"
+				+ "cv.email=:email, cv.phone=:phone, cv.workExpirience=:workExpirience, \n"
+				+ "cv.skills=:skills, cv.desiredSalary=:desiredSalary, \n"
+				+ "cv.additionalInfo=:additionalInfo, cv.sendStatus=:sendStatus where cv.id=:id";
 	}
 	
-
+	
 	private String getSelectQuery() {
-		String sql = "SELECT * FROM cvform_applicant";
+		String sql = "from CVFormApplicant cv";
 		return sql;
 	}
 	
 	
-	private String getDeleteQuery() {
-		String sql = "DELETE FROM cvform_applicant";
-		return sql;
-	}
-	
-	private List<CVForm> parseResultSet(ResultSet rs) throws PersistException {
-		List<CVForm> cvForms = new ArrayList<CVForm>();
-
-		try {
-			String skill = "";
-			while (rs.next()) {
-				CVForm cv = new CVForm();
-				cv.setId(rs.getInt("id"));
-				cv.setName(rs.getString("name"));
-				if (rs.getString("age") == null) {
-					cv.setAge(null);
-				} else {
-					cv.setAge(rs.getInt("age"));
-				}
-				cv.setEducation(rs.getString("education"));
-				cv.setEmail(rs.getString("email"));
-				cv.setPhone(rs.getString("phone"));
-				cv.setPost(rs.getString("Post"));
-				skill = rs.getString("skills");
-				if (rs.getString("work_expirience") == null) {
-					cv.setWorkExpirience(null);
-				} else {
-					cv.setWorkExpirience(rs.getInt("work_expirience"));
-				}
-				if (rs.getString("desired_salary") == null) {
-					cv.setDesiredSalary(null);
-				} else {
-					cv.setDesiredSalary(rs.getInt("desired_salary"));
-				}
-				cv.setAdditionalInfo(rs.getString("additional_info"));
-				cv.setSendStatus(rs.getString("send_status"));
-				String[] skillArray = skill.split(";");
-				Set<String> skills = new HashSet<String>(Arrays.asList(skillArray));
-				cv.setSkills(skills);
-				log.trace("parsed CVFormApplicant entity");
-				cvForms.add(cv);
-			}
-		} catch (SQLException e) {
-			log.error("can't parse query results");
-			throw new PersistException();
-		}
-		return cvForms;
-	}
-	
-	private void prepareStatementForInsert(PreparedStatement statement,
-			CVForm cv) throws PersistException {
-		String skills = convertString(cv.getSkills());
-		try {
-			statement.setString(1, cv.getName());
-			statement.setInt(2, cv.getAge());
-			statement.setString(3, cv.getEducation());
-			statement.setString(4, cv.getEmail());
-			statement.setString(5, cv.getPhone());
-			statement.setString(6, cv.getPost());
-			statement.setString(7, skills);
-			statement.setInt(8, cv.getWorkExpirience());
-			statement.setInt(9, cv.getDesiredSalary());
-			statement.setString(10, cv.getAdditionalInfo());
-			statement.setString(11, cv.getSendStatus());
-		} catch (SQLException e) {
-			log.error("can't create arguments for pStatement");
-			throw new PersistException();
+	private boolean isCVFormPersisted(CVFormApplicant cv) throws PersistException {
+		
+		if (cv.getId() == null) {
+			return false;
 		}	
-		log.trace("create arguments for pStatement");
+		CVFormApplicant persistedCVFormApplicant = getCVFormById(cv.getId());
+		if (persistedCVFormApplicant == null) {
+			return false;
+		}
+		
+		return true;
 	}
 	
-	private String convertString(Set<String> set) {
-		StringBuilder sb = new StringBuilder();
-		for (String s : set) {
-			sb.append(s);
-			sb.append(";");
-		}
-		return sb.toString();
+	
+	private void prepareInsertData(Query query, CVFormApplicant cv) {
+
+		query.setParameter("name", cv.getName());
+		query.setParameter("age", cv.getAge());
+		query.setParameter("education", cv.getEducation());
+		query.setParameter("email", cv.getEmail());
+		query.setParameter("phone", cv.getPhone());
+		query.setParameter("skills", cv.getSkills());
+		query.setParameter("workExpirience", cv.getWorkExpirience());
+		query.setParameter("desiredSalary", cv.getDesiredSalary());
+		query.setParameter("additionalInfo", cv.getAdditionalInfo());
+		query.setParameter("sendStatus", cv.getSendStatus());
+		query.setParameter("id", cv.getId());
 	}
+
 }
