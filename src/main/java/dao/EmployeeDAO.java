@@ -1,11 +1,5 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +17,6 @@ import org.hibernate.criterion.Restrictions;
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
 import domain.Candidate;
-import domain.Department;
 import domain.Employee;
 import domain.util.LogConfig;
 
@@ -32,10 +25,8 @@ public class EmployeeDAO {
 	private static Logger log = Logger.getLogger(EmployeeDAO.class);
 	
 	private String title = "Employee";
-	private Properties properties;
 	
 	public EmployeeDAO(Properties properties) {
-		this.properties = properties;
 		LogConfig.loadLogConfig(properties);
 	}
 	
@@ -189,17 +180,42 @@ public class EmployeeDAO {
 
 	
 	public Set<Employee> getEmployees(Map<String, List<String>> queries) {
-		dsghfg
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		String selectQuery = getSelectQuery();
-		Query query = session.createQuery(selectQuery);
-		@SuppressWarnings("unchecked")
-		List<Employee> employeesList = query.list();
-		session.close();
-		log.info("get all " + title + "s");
-		Set<Employee> employees = new HashSet<Employee>(employeesList);
 
-		return employees;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(Candidate.class);
+		addCriteria(crit, queries);
+		@SuppressWarnings("unchecked")
+		List<Employee> list = crit.list();
+		session.close();
+		log.info("get " + title + " with expirience different parameters, amount = " + list.size());
+	
+		return new HashSet<Employee>(list);
+	}
+			
+
+	private void addCriteria(Criteria crit, Map<String, List<String>> queries) {
+		
+		for (String key : queries.keySet()) {
+			Criterion cron = makeCriterion(key, queries.get(key));
+			crit.add(cron);
+		}
+	}
+
+
+	private Criterion makeCriterion(String field, List<String> params) {
+		Criterion criterion;
+		if (params.get(1).equals("<=")) {
+			criterion = Restrictions.le(field, params.get(0));	
+		} else if (params.get(1).equals("<")) {
+			criterion = Restrictions.lt(field, params.get(0));	
+		} else if (params.get(1).equals(">=")) {
+			criterion = Restrictions.ge(field, params.get(0));
+		} else if (params.get(1).equals(">")) {
+			criterion = Restrictions.gt(field, params.get(0));
+		} else {
+			criterion = Restrictions.eq(field, params.get(0));	 
+		}
+		return criterion;
 	}
 	
 	

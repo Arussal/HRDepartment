@@ -138,7 +138,7 @@ public class DepartmentDAO{
 	}
 
 
-	public List<Department> getAllDepartments() throws PersistException {
+	public List<Department> getAllDepartments() {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		String selectQuery = getSelectQuery();

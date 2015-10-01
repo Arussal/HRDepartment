@@ -15,10 +15,11 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import dao.ApplicationFormDAO;
-import dao.CVFormApplicantDAO;
+import dao.CVFormDAO;
 import dao.CandidateDAO;
 import dao.EmployeeDAO;
 import dao.exceptions.PersistException;
+import dao.util.DAOFactory;
 import domain.exceptions.NoSuchEmployeeException;
 import domain.exceptions.NoSuitableCandidateException;
 import domain.util.LogConfig;
@@ -33,27 +34,24 @@ public class HRDepartment extends Department implements HRManager{
 	private Set<Employee> staff;
 	
 	private List<ApplicationForm> apps;
-	private CVFormApplicantDAO cvDao;
+	private CVFormDAO cvDao;
 	private EmployeeDAO empDao;
 	private ApplicationFormDAO appDao;
 	private CandidateDAO candDao;
-	private Properties properties;
-	
+		
 	private static Logger log = Logger.getLogger(HRDepartment.class);
 	
 	public HRDepartment(Properties properties)  {
-		this.properties = properties;
 		LogConfig.loadLogConfig(properties);
 		daoFactory = DAOFactory.getFactory();
 		appDao = daoFactory.getApplicationFormDAO();
 		candDao = daoFactory.getCandidateDAO();
 		cvDao = daoFactory.getCVFormDAO();
 		empDao = daoFactory.getEmployeeDAO();
-
 	}
 		
-	@Override
-	public CVForm addCVForm(CVForm form) throws PersistException {
+
+	public CVForm addCVForm(CVFormApplicant form) {
 		if (null == form) {
 			log.error("CVForm is null");
 			throw new IllegalArgumentException();
@@ -61,7 +59,7 @@ public class HRDepartment extends Department implements HRManager{
 		return cvDao.createCVForm(form);
 	}
 
-	@Override
+	
 	public Set<Candidate> findCandidates(ApplicationForm app) 
 			throws NoSuitableCandidateException, PersistException {
 		
@@ -114,7 +112,7 @@ public class HRDepartment extends Department implements HRManager{
 			}
 			
 			log.trace("candidate is found");
-			Candidate candidate = new Candidate(properties);
+			Candidate candidate = new Candidate();
 			candidate.setName(cv.getName());
 			candidate.setAge(cv.getAge());
 			candidate.setEducation(cv.getEducation());
@@ -137,21 +135,18 @@ public class HRDepartment extends Department implements HRManager{
 	}
 	
 	
-	@Override
 	public void changeCVStatusToCandidate(Candidate candidate, CVForm cv) 
 			throws PersistException {
 			candDao.createCandidate(candidate);
 			cvDao.deleteCVForm(cv);
-		
 	}
 	
 	
-	@Override
 	public Candidate createCandidate(Candidate candidate) throws PersistException {
 		return candDao.createCandidate(candidate);
 	}
 
-	@Override
+	
 	public Employee hireEmployee(Candidate candidate, int salary, String post, 
 			Date hireDate, Department department) {
 		
@@ -171,12 +166,12 @@ public class HRDepartment extends Department implements HRManager{
 		return employee;
 	}
 	
-	@Override
+
 	public Employee createEmployee(Employee employee) throws PersistException {
 		return empDao.createEmployee(employee);
 	}
 	
-	@Override
+
 	public void fireEmployee(Employee employee, Date fireDate) 
 			throws PersistException, NoSuchEmployeeException {
 		
@@ -194,7 +189,7 @@ public class HRDepartment extends Department implements HRManager{
 		updateEmployee(employee);
 	}
 
-	@Override
+
 	public void changeSalary(Employee employee, int salary) 
 			throws NoSuchEmployeeException, PersistException {
 		
@@ -212,7 +207,7 @@ public class HRDepartment extends Department implements HRManager{
 		updateEmployee(employee);
 	}
 
-	@Override
+
 	public void changePost(Employee employee, String post) throws NoSuchEmployeeException, PersistException {
 	
 		staff = empDao.getAllEmployees();
@@ -229,13 +224,13 @@ public class HRDepartment extends Department implements HRManager{
 		updateEmployee(employee);
 	}
 	
-	@Override
+
 	public void updateEmployee(Employee employee) throws PersistException {
 		log.info("employee with id " + employee.getId() + " updated");
 		empDao.updateEmployee(employee); 
 	}
 	
-	@Override
+
 	public ApplicationForm formApplicationForm(int age, String education, Set<String> requirements, 
 			String post, int salary, int workExpirience, Date date){
 		
@@ -252,7 +247,7 @@ public class HRDepartment extends Department implements HRManager{
 		return app;
 	}
 	
-	@Override
+
 	public ApplicationForm createApplicationForm(ApplicationForm app) throws PersistException {
 		ApplicationForm createdApplicationForm = appDao.createApplicationForm(app);
 		return createdApplicationForm;
@@ -280,16 +275,6 @@ public class HRDepartment extends Department implements HRManager{
 		this.apps = apps;
 	}
 
-	public CVFormApplicantDAO getCvDao() {
-		return cvDao;
-	}
-
-	public void setCvDao(CVFormApplicantDAO cvDao) {
-		if (null == cvDao) {
-			throw new IllegalArgumentException("cvDao is null");
-		}
-		this.cvDao = cvDao;
-	}
 
 	public CandidateDAO getCandDao() {
 		return candDao;
@@ -323,4 +308,5 @@ public class HRDepartment extends Department implements HRManager{
 		}
 		this.appDao = appDao;
 	}
+
 }

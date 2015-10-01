@@ -10,9 +10,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import dao.exceptions.PersistException;
-
-
 
 /**
  * @author Ruslan
@@ -41,9 +38,10 @@ public class Candidate extends Person{
 	public Candidate() {
 	}
 	
-	public CVForm formCVForm(String name, int age, Set<String> skills, String education, String phone, 
-			String email, int desiredSalary, String additionalInfo, String post, int workExpirience) {
-		CVForm cv = new CVForm();
+	public CVFormApplicant formCVForm(String name, int age, Set<String> skills, String education, 
+			String phone, String email, int desiredSalary, String additionalInfo, String post, 
+			int workExpirience) {
+		CVFormApplicant cv = new CVFormApplicant();
 		cv.setName(name);
 		cv.setAge(age);
 		cv.setSkills(skills);
@@ -54,11 +52,12 @@ public class Candidate extends Person{
 		cv.setAdditionalInfo(additionalInfo);
 		cv.setPost(post);
 		cv.setWorkExpirience(workExpirience);
-				
+		cv.setSendStatus("not Sent");
 		return cv;
 	}
 	
-	public void sendCVForm(CVForm form, HRDepartment hr) throws PersistException{
+	public void sendCVForm(CVFormApplicant form, HRDepartment hr) {
+		form.setSendStatus("Sent");
 		hr.addCVForm(form);
 	}
 

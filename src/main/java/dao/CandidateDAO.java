@@ -172,14 +172,13 @@ public class CandidateDAO {
 	private void addCriteria(Criteria crit, Map<String, List<String>> queries) {
 		
 		for (String key : queries.keySet()) {
-			Criterion cron = makeCriterian(key, queries.get(key));
+			Criterion cron = makeCriterion(key, queries.get(key));
 			crit.add(cron);
 		}
-		
 	}
 
 
-	private Criterion makeCriterian(String field, List<String> params) {
+	private Criterion makeCriterion(String field, List<String> params) {
 		Criterion criterion;
 		if (params.get(1).equals("<=")) {
 			criterion = Restrictions.le(field, params.get(0));	

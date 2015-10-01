@@ -3,18 +3,9 @@
  */
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -44,7 +35,7 @@ public class CVFormApplicantDAO {
 		LogConfig.loadLogConfig(properties);
 	}
 
-	public CVFormApplicant createCVForm(CVFormApplicant cv) throws PersistException {
+	public CVFormApplicant createCVForm(CVFormApplicant cv) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
@@ -98,8 +89,7 @@ public class CVFormApplicantDAO {
 	}
 
 
-	public List<CVFormApplicant> getCVFormByEducation(String education)
-			throws PersistException {
+	public List<CVFormApplicant> getCVFormByEducation(String education) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Criteria crit = session.createCriteria(CVFormApplicant.class);
@@ -114,8 +104,7 @@ public class CVFormApplicantDAO {
 	}
 
 
-	public List<CVFormApplicant> geyCVFormByDesiredSalary(int desiredSalary)
-			throws PersistException {
+	public List<CVFormApplicant> geyCVFormByDesiredSalary(int desiredSalary) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Criteria crit = session.createCriteria(CVFormApplicant.class);
@@ -128,78 +117,60 @@ public class CVFormApplicantDAO {
  
 		return list;
 	}
+	
+	
+	public List<CVFormApplicant> getCVFormByName(String name) {
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(CVFormApplicant.class);
+		Criterion crExpirience = Restrictions.eq("name", name);
+		crit.add(crExpirience);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = crit.list();
+		session.close();
+		log.info("get " + title + " with name " + name + ", amount = " + list.size());
+ 
+		return list;
+	}
 
 	
-	public List<CVFormApplicant> getCVForm(Map<String, List<String>> queries) throws PersistException {
+	public List<CVFormApplicant> getCVForm(Map<String, List<String>> queries) {
 		
-		Connection connection = null;
-		Statement statement = null;
-		ResultSet rs = null;
-		List<CVFormApplicant> cvForms = new ArrayList<CVFormApplicant>();
-		
-		try {
-			log.trace("get CVForms with different query parameters");
-			StringBuilder selectBuilder = new StringBuilder();
-			String selectSql = "";
-			String selectPhrase = getSelectQuery();
-			selectBuilder.append(selectPhrase);
-			if (queries.size() != 0) {
-				selectBuilder.append(" WHERE ");
-				for (String key : queries.keySet()) {
-					selectBuilder.append(key);
-					if (queries.get(key).get(0) == null) {
-						selectBuilder.append(" is null");
-						selectSql = selectBuilder.toString();
-					} else {
-						selectBuilder.append(queries.get(key).get(1)+"'");
-						selectBuilder.append(queries.get(key).get(0));
-						selectBuilder.append("'");
-						selectBuilder.append(" AND ");
-						selectSql = selectBuilder.substring(0, selectBuilder.length()-5);
-					}
-				}
-			} else {
-				selectSql = selectBuilder.toString();
-			}
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(Candidate.class);
+		addCriteria(crit, queries);
+		@SuppressWarnings("unchecked")
+		List<CVFormApplicant> list = crit.list();
+		session.close();
+		log.info("get " + title + " with expirience different parameters, amount = " + list.size());
+ 
+		return list;
+	}
 			
-			connection = daoFactory.createConnection();
-			log.trace("create connection");
-			statement = connection.createStatement();
-			log.trace("create statement");
-			rs = statement.executeQuery(selectSql);
-			log.trace("resultset got");
-			cvForms = parseResultSet(rs);
-			if (cvForms.size() < 1) {
-				log.warn("no CVForms with different query parameters");
-			}
-		} catch (SQLException e) {
-			log.error("can't get CVForms with different query parameters");
-			throw new PersistException();
-		} finally {
-			if (null != rs) {
-				try {
-					rs.close();
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != statement) {
-				try {
-					statement.close();						
-				} catch (SQLException se) {
-					se.printStackTrace();
-				}
-			}
-			if (null != connection) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+
+	private void addCriteria(Criteria crit, Map<String, List<String>> queries) {
+			
+		for (String key : queries.keySet()) {
+			Criterion cron = makeCriterion(key, queries.get(key));
+			crit.add(cron);
 		}
-		
-		return cvForms;
+	}
+
+
+	private Criterion makeCriterion(String field, List<String> params) {
+		Criterion criterion;
+		if (params.get(1).equals("<=")) {
+			criterion = Restrictions.le(field, params.get(0));	
+		} else if (params.get(1).equals("<")) {
+			criterion = Restrictions.lt(field, params.get(0));	
+		} else if (params.get(1).equals(">=")) {
+			criterion = Restrictions.ge(field, params.get(0));
+		} else if (params.get(1).equals(">")) {
+			criterion = Restrictions.gt(field, params.get(0));
+		} else {
+			criterion = Restrictions.eq(field, params.get(0));	 
+		}
+		return criterion;
 	}
 
 	
@@ -252,7 +223,7 @@ public class CVFormApplicantDAO {
 	}
 
 
-	public List<CVFormApplicant> getAllCVForms() throws PersistException {
+	public List<CVFormApplicant> getAllCVForms() {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		String selectQuery = getSelectQuery();
@@ -280,7 +251,7 @@ public class CVFormApplicantDAO {
 	}
 	
 	
-	private boolean isCVFormPersisted(CVFormApplicant cv) throws PersistException {
+	private boolean isCVFormPersisted(CVFormApplicant cv) {
 		
 		if (cv.getId() == null) {
 			return false;
@@ -308,5 +279,7 @@ public class CVFormApplicantDAO {
 		query.setParameter("sendStatus", cv.getSendStatus());
 		query.setParameter("id", cv.getId());
 	}
+
+
 
 }
