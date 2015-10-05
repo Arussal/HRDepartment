@@ -6,6 +6,7 @@ package domain;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -21,6 +22,7 @@ public class CVForm extends Person{
 	private String name;
 	
 	@Column(name="skills")
+	@ElementCollection
 	private Set<String> skills;
 	
 	@Column(name="phone")

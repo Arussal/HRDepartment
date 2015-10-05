@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
-import dao.ApplicantDAO;
+import dao.ManagerDAO;
 import dao.exceptions.PersistException;
-import domain.Applicant;
+import domain.Manager;
 
 
 public class Main {
@@ -17,7 +18,6 @@ public class Main {
 			
 		Properties properties = new Properties();
 		File file = new File("src/main/resources/log4j.properties");
-		System.out.println(file.getAbsolutePath());
 		try {
 			properties.load(new FileReader(file));
 		} catch (FileNotFoundException e1) {
@@ -27,27 +27,16 @@ public class Main {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		ApplicantDAO ahDao = new ApplicantDAO(properties);
-		
-//		Applicant applicant = new Applicant();
-//		applicant.setLogin("Arussal");
-//		applicant.setName("Ruslan");
-//		applicant.setPassword("Password");
-//		Applicant newApplicant = null;
-//		try {
-//			newApplicant = ahDao.createApplicant(applicant);
-//		} catch (PersistException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		
-		Applicant applicant = null;
+	
+		ManagerDAO manDao = new ManagerDAO(properties);
 		try {
-			applicant = ahDao.getApplicantByLogin("Arussal");
+			List<Manager> managers = manDao.getAllManagers();
+			System.out.println(managers);
 		} catch (PersistException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(applicant.getId());
+		
 
 	}
 

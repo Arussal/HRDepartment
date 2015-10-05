@@ -10,12 +10,13 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-
+import javax.persistence.ElementCollection;
 
 
 import dao.exceptions.PersistException;
@@ -24,12 +25,15 @@ import dao.exceptions.PersistException;
  * @author Ruslan
  *
  */
+@Entity
+@Table(name="employee")
 public class Employee extends Person{
 
 	@Column(name="name")
 	private String name;
 	
 	@Column(name="skills")
+	@ElementCollection
 	private Set<String> skills;
 	
 	@Column(name="phone")
@@ -37,10 +41,7 @@ public class Employee extends Person{
 	
 	@Column(name="email")
 	private String email;
-	
-	@Column(name="post")
-	private String post;
-	
+		
 	@Temporal(TemporalType.DATE)
 	@Column(name="hireDate")
 	private Date hireDate;
@@ -51,8 +52,8 @@ public class Employee extends Person{
 	
 	@Column(name="salary")
 	private Integer salary;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
+
+	@ManyToOne(targetEntity = Department.class, cascade = CascadeType.ALL)
 	@JoinColumn(name="id_department", referencedColumnName="id")
 	private Department department;
 	
@@ -62,16 +63,6 @@ public class Employee extends Person{
 	public Employee() {
 	}
 
-	public String getPost() {
-		return post;
-	}
-
-	public void setPost(String post) {
-		if (post == null || post.equals("")) {
-			throw new IllegalArgumentException();
-		}
-		this.post = post;
-	}
 
 	public Date getHireDate() {
 		return hireDate;

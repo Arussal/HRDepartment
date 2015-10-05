@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -25,6 +26,7 @@ public class ApplicationForm extends Person {
 	private int salary;
 	
 	@Column(name="requirements")
+	@ElementCollection
 	private Set<String> requirements;
 	
 	@Column(name="date")

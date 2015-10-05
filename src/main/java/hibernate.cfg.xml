@@ -30,16 +30,15 @@
  
       <!-- Mapping files -->
       <mapping class="domain.Applicant"/>
-       <!-- 
-      <mapping class="main.com.mentat.nine.domain.Application"/>
-      <mapping class="main.com.mentat.nine.domain.Candidate"/>
-      <mapping class="main.com.mentat.nine.domain.CVFormApplicant"/>
-      <mapping class="main.com.mentat.nine.domain.CVForm"/>
-      <mapping class="main.com.mentat.nine.domain.Department"/>
-      <mapping class="main.com.mentat.nine.domain.Employee"/>
-      <mapping class="main.com.mentat.nine.domain.Manager"/>
-      <mapping class="main.com.mentat.nine.domain.Person"/>
-       -->
+      <mapping class="domain.ApplicationForm"/>
+      <mapping class="domain.Candidate"/>
+      <mapping class="domain.CVFormApplicant"/>
+      <mapping class="domain.CVForm"/>
+      <mapping class="domain.Department"/>
+	  <mapping class="domain.Employee"/>
+      <mapping class="domain.Manager"/>
+      <mapping class="domain.Person"/>
+
  
     </session-factory>
  
