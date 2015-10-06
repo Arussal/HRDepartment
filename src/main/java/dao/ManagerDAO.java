@@ -51,7 +51,7 @@ public class ManagerDAO {
 	public Manager getManagerByLogin(String login) throws PersistException {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		String selectQuery = getSelectQuery() + " where a.login=:login";
+		String selectQuery = getSelectQuery() + " where m.login=:login";
 		Query query = session.createQuery(selectQuery).setString("login", login);
 		
 		@SuppressWarnings("unchecked")

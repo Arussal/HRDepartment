@@ -6,9 +6,12 @@ package domain;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,8 +28,10 @@ public class ApplicationForm extends Person {
 	@Column(name="salary")
 	private int salary;
 	
-	@Column(name="requirements")
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
+	@CollectionTable(name="requirements_table", 
+		joinColumns=@JoinColumn(name="id_requirements"))
+	@Column(name="requirement")
 	private Set<String> requirements;
 	
 	@Column(name="date")

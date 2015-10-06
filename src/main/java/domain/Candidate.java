@@ -6,10 +6,13 @@ package domain;
 
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Table;
 import javax.persistence.ElementCollection;
+import javax.persistence.JoinColumn;
 
 
 /**
@@ -23,8 +26,10 @@ public class Candidate extends Person{
 	@Column(name="name")
 	private String name;
 	
-	@Column(name="skills")
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
+	@CollectionTable(name="skills_table", 
+		joinColumns=@JoinColumn(name="id_skill"))
+	@Column(name="skill")
 	private Set<String> skills;
 	
 	@Column(name="phone")
