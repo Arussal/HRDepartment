@@ -85,22 +85,9 @@ public class ApplicantDAO {
 		if (applicantPersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = updateQuery();
-			Query query = session.createQuery(updateHQL);
-			preparedApplicantData(query, applicant);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " applicant records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update applicant with id " + applicant.getId());
-		} else {
-			log.error("applicant not persisted yet");
-			throw new PersistException("applicant not persisted yet");
+			session.update(applicant);
+			t.commit();
+			session.close();
 		}
 	}
 	
@@ -137,18 +124,5 @@ public class ApplicantDAO {
 			
 		}
 		return true;
-	}
-	
-	
-	private void preparedApplicantData(Query query, Applicant applicant) {
-
-		query.setParameter("password", applicant.getPassword());
-		query.setParameter("id", applicant.getId());
-	}
-	
-	
-	private String updateQuery() {
-		return "update Applicant a set a.password=:password where a.id=:id";
-	}
-		
+	}		
 }

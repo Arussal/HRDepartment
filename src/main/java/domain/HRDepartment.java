@@ -51,7 +51,7 @@ public class HRDepartment extends Department implements HRManager{
 	}
 		
 
-	public CVForm addCVForm(CVFormApplicant form) {
+	public CVForm addCVForm(CVForm form) {
 		if (null == form) {
 			log.error("CVForm is null");
 			throw new IllegalArgumentException();

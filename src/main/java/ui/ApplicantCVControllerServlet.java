@@ -24,7 +24,6 @@ import dao.util.DAOFactory;
 import domain.Applicant;
 import domain.CVForm;
 import domain.CVFormApplicant;
-import domain.Candidate;
 import domain.HRDepartment;
 import ui.util.*;
 
@@ -176,17 +175,34 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		HRDepartment hr = new HRDepartment(properties);
 		for (Integer id : idList) {
 			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
-			Candidate cand = new Candidate();
-			cand.sendCVForm(cv, hr);
+			cv.setSendStatus("Sent");
 			try {
 				cvApplicantDao.updateCVForm(cv);
 			} catch (PersistException e) {
 				throw new ServletException();
 			}
+			CVForm cvManagerCopy = makeCVForHRDepartment(cv);
+			hr.addCVForm(cvManagerCopy);
 		}
 		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
 
+	}
+
+	
+	private CVForm makeCVForHRDepartment(CVFormApplicant cv) {
+		CVForm cvManagerCopy = new CVForm();
+		cvManagerCopy.setName(cv.getName());
+		cvManagerCopy.setAge(cv.getAge());
+		cvManagerCopy.setAdditionalInfo(cv.getAdditionalInfo());
+		cvManagerCopy.setDesiredSalary(cv.getDesiredSalary());
+		cvManagerCopy.setEducation(cv.getEducation());
+		cvManagerCopy.setEmail(cv.getEmail());
+		cvManagerCopy.setPhone(cv.getPhone());
+		cvManagerCopy.setPost(cv.getPost());
+		cvManagerCopy.setSkills(cv.getSkills());
+		cvManagerCopy.setWorkExpirience(cv.getWorkExpirience());
+		return cvManagerCopy;
 	}
 
 	

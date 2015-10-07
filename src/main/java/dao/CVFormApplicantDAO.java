@@ -181,24 +181,10 @@ public class CVFormApplicantDAO {
 		if (candidatePersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = getUpdateQuery();
-			Query query = session.createQuery(updateHQL);
-			prepareInsertData(query, cv);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " " + title + " records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update " + title + " with id " + cv.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
+			session.update(cv);
+			t.commit();
+			session.close();
 		}
-		
 	}
 
 
@@ -235,14 +221,6 @@ public class CVFormApplicantDAO {
 
 		return list;
 	}
-
-	
-	private String getUpdateQuery() {
-		return "update CVFormApplicant cv set cv.name=:name, cv.age=:age, cv.education=:education, \n"
-				+ "cv.email=:email, cv.phone=:phone, cv.workExpirience=:workExpirience, \n"
-				+ "cv.skills=:skills, cv.desiredSalary=:desiredSalary, \n"
-				+ "cv.additionalInfo=:additionalInfo, cv.sendStatus=:sendStatus where cv.id=:id";
-	}
 	
 	
 	private String getSelectQuery() {
@@ -263,23 +241,4 @@ public class CVFormApplicantDAO {
 		
 		return true;
 	}
-	
-	
-	private void prepareInsertData(Query query, CVFormApplicant cv) {
-
-		query.setParameter("name", cv.getName());
-		query.setParameter("age", cv.getAge());
-		query.setParameter("education", cv.getEducation());
-		query.setParameter("email", cv.getEmail());
-		query.setParameter("phone", cv.getPhone());
-		query.setParameter("skills", cv.getSkills());
-		query.setParameter("workExpirience", cv.getWorkExpirience());
-		query.setParameter("desiredSalary", cv.getDesiredSalary());
-		query.setParameter("additionalInfo", cv.getAdditionalInfo());
-		query.setParameter("sendStatus", cv.getSendStatus());
-		query.setParameter("id", cv.getId());
-	}
-
-
-
 }

@@ -74,22 +74,9 @@ public class ManagerDAO {
 		if (managerPersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = getUpdateQuery();
-			Query query = session.createQuery(updateHQL);
-			prepareInsertData(query, manager);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " " + title + " records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update " + title + " with id " + manager.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
+			session.update(manager);
+			t.commit();
+			session.close();
 		}
 	}
 	
@@ -129,11 +116,6 @@ public class ManagerDAO {
 	}
 
 	
-	private String getUpdateQuery() {
-		return "update Manager m set m.login=:login, m.password=:password";
-	}
-	
-	
 	private String getSelectQuery() {
 		String sql = "from Manager m";
 		return sql;
@@ -152,14 +134,4 @@ public class ManagerDAO {
 		
 		return true;
 	}
-	
-	
-	private void prepareInsertData(Query query, Manager manager) {
-
-		query.setParameter("login", manager.getLogin());
-		query.setParameter("password", manager.getPassword());
-		query.setParameter("id", manager.getId());
-	}
-	
-
 }

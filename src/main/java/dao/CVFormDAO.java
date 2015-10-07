@@ -105,7 +105,7 @@ public class CVFormDAO {
 	}
 
 
-	public List<CVForm> geyCVFormByDesiredSalary(int desiredSalary)
+	public List<CVForm> getCVFormByDesiredSalary(int desiredSalary)
 			throws PersistException {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -168,24 +168,10 @@ public class CVFormDAO {
 		if (candidatePersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = getUpdateQuery();
-			Query query = session.createQuery(updateHQL);
-			prepareInsertData(query, cv);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " " + title + " records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update " + title + " with id " + cv.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
+			session.update(cv);
+			t.commit();
+			session.close();
 		}
-		
 	}
 
 
@@ -222,14 +208,6 @@ public class CVFormDAO {
 
 		return list;
 	}
-
-	
-	private String getUpdateQuery() {
-		return "update CVForm cv set cv.name=:name, cv.age=:age, cv.education=:education, \n"
-				+ "cv.email=:email, cv.phone=:phone, cv.workExpirience=:workExpirience, \n"
-				+ "cv.skills=:skills, cv.desiredSalary=:desiredSalary, \n"
-				+ "cv.additionalInfo=:additionalInfo where cv.id=:id";
-	}
 	
 	
 	private String getSelectQuery() {
@@ -250,20 +228,4 @@ public class CVFormDAO {
 		
 		return true;
 	}
-	
-	
-	private void prepareInsertData(Query query, CVForm cv) {
-
-		query.setParameter("name", cv.getName());
-		query.setParameter("age", cv.getAge());
-		query.setParameter("education", cv.getEducation());
-		query.setParameter("email", cv.getEmail());
-		query.setParameter("phone", cv.getPhone());
-		query.setParameter("skills", cv.getSkills());
-		query.setParameter("workExpirience", cv.getWorkExpirience());
-		query.setParameter("desiredSalary", cv.getDesiredSalary());
-		query.setParameter("additionalInfo", cv.getAdditionalInfo());
-		query.setParameter("id", cv.getId());
-	}
-
 }

@@ -98,22 +98,9 @@ public class CandidateDAO {
 		if (candidatePersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = getUpdateQuery();
-			Query query = session.createQuery(updateHQL);
-			prepareInsertData(query, candidate);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " " + title + " records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update " + title + " with id " + candidate.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
+			session.update(candidate);
+			t.commit();
+			session.close();
 		}
 	}
 	
@@ -198,13 +185,6 @@ public class CandidateDAO {
 	private String getSelectQuery() {
 		return "from Candidate c";
 	}
-	
-	
-	private String getUpdateQuery() {
-		return "update Candidate c set c.name=:name, c.age=:age, c.education=:education, \n"
-				+ "c.email=:email, c.phone=:phone, c.skills=:skills, \n"
-				+ "c.workExpirience=:workExpirience where c.id=:id";
-	}
 
 		
 	private boolean isCandidatePersisted(Candidate candidate) {
@@ -218,18 +198,5 @@ public class CandidateDAO {
 		}
 		
 		return true;
-	}
-	
-	
-	private void prepareInsertData(Query query, Candidate candidate) {
-
-		query.setParameter("name", candidate.getName());
-		query.setParameter("age", candidate.getAge());
-		query.setParameter("education", candidate.getEducation());
-		query.setParameter("email", candidate.getEmail());
-		query.setParameter("phone", candidate.getPhone());
-		query.setParameter("skills", candidate.getSkills());
-		query.setParameter("workExpirience", candidate.getWorkExpirience());
-		query.setParameter("id", candidate.getId());
 	}
 }

@@ -97,24 +97,10 @@ public class DepartmentDAO{
 		if (departmentPersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = getUpdateQuery();
-			Query query = session.createQuery(updateHQL);
-			prepareInsertData(query, department);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " " + title + " records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update " + title + " with id " + department.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
-		}	
-		
+			session.update(department);
+			t.commit();
+			session.close();	
+		}
 	}
 
 	public void deleteDepartment(Department department) throws PersistException {
@@ -151,12 +137,6 @@ public class DepartmentDAO{
 		return departments;	
 	}
 
-
-	private String getUpdateQuery() {
-		String sql = "UPDATE department SET name = ?, head = ? employees = ?";
-		return sql;
-	}
-	
 	
 	private String getSelectQuery() {
 		String sql = "from Department d";
@@ -175,14 +155,5 @@ public class DepartmentDAO{
 		}
 		
 		return true;
-	}
-	
-	
-	private void prepareInsertData(Query query, Department department) {
-
-		query.setParameter("name", department.getName());
-		query.setParameter("head", department.getHead());
-		query.setParameter("employees", department.getEmployees());
-		query.setParameter("id", department.getId());
 	}
 }

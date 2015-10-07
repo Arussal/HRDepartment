@@ -61,22 +61,9 @@ public class ApplicationFormDAO {
 		if (applicantPersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
-			String updateHQL = getUpdateQuery();
-			Query query = session.createQuery(updateHQL);
-			prepareInsertData(query, appForm);
-			try {
-				int count = query.executeUpdate();
-				if (1 != count) {
-					throw new PersistException("updated " + count + " " + title + " records");
-				}
-			} finally {
-				t.commit();
-				session.close();
-			}
-			log.info("update " + title + " with id " + appForm.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
+			session.update(appForm);
+			t.commit();
+			session.close();
 		}
 	}
 
@@ -113,15 +100,7 @@ public class ApplicationFormDAO {
 		log.info("get all " + title + "s");
 		
 		return appForms;
-	}
-
-
-	private String getUpdateQuery() {
-		return "update ApplicationForm af set af.date=:date, af.age=:age, af.education=:education, \n"
-				+ "af.requirements=:requirements, af.post=:post, af.salary=:salary, \n"
-				+ "af.workExpirience=:workExpirience where af.id=:id";
-	}
-	
+	}	
 
 	private String getSelectQuery() {
 		return "from ApplicationForm af";
@@ -140,18 +119,4 @@ public class ApplicationFormDAO {
 		}
 		return true;
 	}
-	
-	
-	private void prepareInsertData(Query query, ApplicationForm appForm) {
-
-		query.setParameter("date", appForm.getDate());
-		query.setParameter("age", appForm.getAge());
-		query.setParameter("education", appForm.getEducation());
-		query.setParameter("requirements", appForm.getRequirements());
-		query.setParameter("post", appForm.getPost());
-		query.setParameter("salary", appForm.getSalary());
-		query.setParameter("workExpirience", appForm.getWorkExpirience());
-		query.setParameter("id", appForm.getId());
-	}
-
 }

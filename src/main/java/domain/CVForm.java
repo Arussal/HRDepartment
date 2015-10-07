@@ -29,12 +29,12 @@ import javax.persistence.TableGenerator;
 public class CVForm {
 	
 	@Id
-	@GeneratedValue(generator="LICENSE_TABLE_SEQ",strategy=GenerationType.TABLE)
-	@TableGenerator(name="LICENSE_TABLE_SEQ",
+	@GeneratedValue(generator="TABLE_SEQ",strategy=GenerationType.TABLE)
+	@TableGenerator(name="TABLE_SEQ",
 	table="sequences",
-	pkColumnName="seq_name", // Specify the name of the column of the primary key
-	valueColumnName="seq_number", // Specify the name of the column that stores the last value generated
-	pkColumnValue="id", // Specify the primary key column value that would be considered as a primary key generator
+	pkColumnName="seq_name", // primary key
+	valueColumnName="seq_number", // the last value generated
+	pkColumnValue="id", // primary key generator
 	allocationSize=1)
 	protected Integer id;
 	
