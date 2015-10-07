@@ -27,7 +27,7 @@ public class Candidate extends Person{
 	private String name;
 	
 	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="skills_table", 
+	@CollectionTable(name="candidate_skills", 
 		joinColumns=@JoinColumn(name="id_skill"))
 	@Column(name="skill")
 	private Set<String> skills;

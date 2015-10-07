@@ -20,9 +20,6 @@ public class Person {
 	@Column(name="id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected Integer id;
-	
-	//protected String name;
-
 
 	@Column(name="age")
 	protected Integer age;
@@ -30,12 +27,8 @@ public class Person {
 	@Column(name="work_expirience")
 	protected Integer workExpirience;
 	
-	//protected Set<String> skills;
-	
 	@Column(name="education")
 	protected String education;
-	//protected String phone;
-	//protected String email;
 	
 	@Column(name="post")
 	protected String post;

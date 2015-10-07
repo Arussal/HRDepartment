@@ -11,12 +11,11 @@ import javax.persistence.Table;
  * @author Ruslan
  *
  */
-//TODO Inheritance
 @Entity
 @Table(name="cvform_applicant")
 public class CVFormApplicant extends CVForm{
 			
-	@Column(name="sendStatus")
+	@Column(name="send_status")
 	private String sendStatus;
 	
 	
