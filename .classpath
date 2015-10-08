@@ -32,9 +32,9 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/Ruslan/Мои документы/Dropbox/Java/JARs/log4j-1.2.17/apache-log4j-1.2.17/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/Ruslan/Мои документы/Dropbox/Java/JARs/postgresql-9.4-1201.jdbc41.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/Ruslan/Мои документы/Dropbox/Java/JARs/jstl-1.2.jar"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/Ruslan/Мои документы/Dropbox/Java/JARs/postgresql-9.3-1103.jdbc41.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/hrDepartmentHiber/libs/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/hrDepartmentHiber/libs/jstl-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/hrDepartmentHiber/libs/postgresql-9.3-1103.jdbc41.jar"/>
+	<classpathentry kind="lib" path="C:/workspace/hrDepartmentHiber/libs/postgresql-9.4-1201.jdbc41.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -46,7 +46,7 @@ public class HRDepartment extends Department implements HRManager{
 		daoFactory = DAOFactory.getFactory();
 		appDao = daoFactory.getApplicationFormDAO();
 		candDao = daoFactory.getCandidateDAO();
-		cvDao = daoFactory.getCVFormDAO();
+		cvDao = daoFactory.getCVFormManagerDAO();
 		empDao = daoFactory.getEmployeeDAO();
 	}
 		
@@ -62,6 +62,15 @@ public class HRDepartment extends Department implements HRManager{
 
 	
 	private CVFormManager makeCVForHRDepartment(CVFormApplicant cv) {
+		
+		Set<SkillManagerCV> skillsManagerCV = new HashSet<SkillManagerCV>();
+		for(SkillApplicantCV skillApplicantCV : cv.getSkills()) {
+			String oneSkillApplicantCV = skillApplicantCV.getSkill();
+			SkillManagerCV skillManagerCV = new SkillManagerCV();
+			skillManagerCV.setSkill(oneSkillApplicantCV);
+			skillsManagerCV.add(skillManagerCV);
+		}
+		
 		CVFormManager cvManager = new CVFormManager();
 		cvManager.setName(cv.getName());
 		cvManager.setAge(cv.getAge());
@@ -71,7 +80,7 @@ public class HRDepartment extends Department implements HRManager{
 		cvManager.setEmail(cv.getEmail());
 		cvManager.setPhone(cv.getPhone());
 		cvManager.setPost(cv.getPost());
-		cvManager.setSkills(cv.getSkills());
+		cvManager.setSkills(skillsManagerCV);
 		cvManager.setWorkExpirience(cv.getWorkExpirience());
 		return cvManager;
 	}
@@ -128,6 +137,14 @@ public class HRDepartment extends Department implements HRManager{
 				}
 			}
 			
+			Set<SkillCandidate> candidateSkills = new HashSet<SkillCandidate>();
+			for(SkillManagerCV skillManagerCV : cv.getSkills()) {
+				String oneSkillManagerCV = skillManagerCV.getSkill();
+				SkillCandidate skillCandidate = new SkillCandidate();
+				skillCandidate.setSkill(oneSkillManagerCV);
+				candidateSkills.add(skillCandidate);
+			}
+			
 			log.trace("candidate is found");
 			Candidate candidate = new Candidate();
 			candidate.setName(cv.getName());
@@ -136,7 +153,7 @@ public class HRDepartment extends Department implements HRManager{
 			candidate.setEmail(cv.getEmail());
 			candidate.setPhone(cv.getPhone());
 			candidate.setPost(cv.getPost());
-			candidate.setSkills(cv.getSkills());
+			candidate.setSkills(candidateSkills);
 			candidate.setWorkExpirience(cv.getWorkExpirience());
 			candidates.add(candidate);
 			changeCVStatusToCandidate(candidate, cv); 
@@ -173,7 +190,6 @@ public class HRDepartment extends Department implements HRManager{
 		employee.setEmail(candidate.getEmail());
 		employee.setName(candidate.getName());
 		employee.setPhone(candidate.getPhone());
-		employee.setSkills(candidate.getSkills());
 		employee.setDepartment(department);
 		employee.setPost(post);
 		employee.setSalary(salary);

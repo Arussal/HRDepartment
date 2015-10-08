@@ -6,13 +6,12 @@ package domain;
 
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.ElementCollection;
-import javax.persistence.JoinColumn;
 
 
 /**
@@ -26,11 +25,9 @@ public class Candidate extends Person{
 	@Column(name="name")
 	private String name;
 	
-	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="candidate_skills", 
-		joinColumns=@JoinColumn(name="id_skill"))
-	@Column(name="skill")
-	private Set<String> skills;
+	@OneToMany(targetEntity = SkillCandidate.class, mappedBy = "skill", 
+    cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<SkillCandidate> skills;
 	
 	@Column(name="phone")
 	private String phone;
@@ -45,7 +42,7 @@ public class Candidate extends Person{
 	public Candidate() {
 	}
 	
-	public CVFormApplicant formCVForm(String name, int age, Set<String> skills, String education, 
+	public CVFormApplicant formCVForm(String name, int age, Set<SkillApplicantCV> skills, String education, 
 			String phone, String email, int desiredSalary, String additionalInfo, String post, 
 			int workExpirience) {
 		CVFormApplicant cv = new CVFormApplicant();
@@ -76,11 +73,11 @@ public class Candidate extends Person{
 		this.name = name;
 	}
 
-	public Set<String> getSkills() {
+	public Set<SkillCandidate> getSkills() {
 		return skills;
 	}
 
-	public void setSkills(Set<String> skills) {
+	public void setSkills(Set<SkillCandidate> skills) {
 		this.skills = skills;
 	}
 

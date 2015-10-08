@@ -96,10 +96,6 @@
 			<td><input type="text" name="phone" value="${emp.phone}"/></td>
 		</tr>
 		<tr>
-			<td>Навыки:</td>
-			<td><input type="text" name="skills" value="${emp.skills}"/></td>
-		</tr>
-		<tr>
 			<td colspan="2"><input type="submit" name="saveEmployeeChanges" value="Сохранить"></td>
 		</tr>
 	</table>

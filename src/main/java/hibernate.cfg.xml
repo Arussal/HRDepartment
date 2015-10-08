@@ -39,8 +39,11 @@
 	  <mapping class="domain.Employee"/>
       <mapping class="domain.Manager"/>
       <mapping class="domain.Person"/>
+      <mapping class="domain.Skill" />
+      <mapping class="domain.SkillApplicantCV" />
+      <mapping class="domain.SkillManagerCV" />
+      <mapping class="domain.SkillCandidate" />
 
- 
     </session-factory>
  
 </hibernate-configuration>

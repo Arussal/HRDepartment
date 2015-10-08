@@ -261,18 +261,6 @@ public class EmployeeControllerServlet extends HttpServlet {
 			String workExpirience = request.getParameter("expirience");
 			String email = request.getParameter("email");
 			String phone = request.getParameter("phone");
-			String skills = request.getParameter("skills");
-			
-			//delete '[' and ']' symbols from skills to avoid double symbols
-			String formattedSkills = skills;
-			if (skills.startsWith("[")) {
-				formattedSkills = skills.substring(1, skills.length());
-				skills = formattedSkills;
-			} 
-			if (skills.endsWith("]")) {
-				formattedSkills = skills.substring(0, skills.length()-1);
-				skills = formattedSkills;
-			}
 			
 			//get Hire Date from date Fields
 			String yearHire = request.getParameter("yearHire");
@@ -333,7 +321,6 @@ public class EmployeeControllerServlet extends HttpServlet {
 					}
 				}
 
-				Set<String> parsedSkills = new HashSet<String>(Arrays.asList(skills.split(";")));
 				employee.setAge(parsedAge);
 				employee.setDepartment(parsedDepartment);
 				employee.setEducation(education);
@@ -344,7 +331,6 @@ public class EmployeeControllerServlet extends HttpServlet {
 				employee.setPost(post);
 				employee.setSalary(parsedSalary);
 				employee.setWorkExpirience(parsedWorkExpirience);
-				employee.setSkills(parsedSkills);
 			
 			} else {
 				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);

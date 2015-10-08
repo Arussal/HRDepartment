@@ -2,7 +2,6 @@ package ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,12 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.CVFormApplicantDAO;
+import dao.SkillDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
 import domain.Applicant;
 import domain.CVFormApplicant;
 import domain.HRDepartment;
+import domain.SkillApplicantCV;
 import ui.util.*;
 
 /**
@@ -36,6 +37,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private CVFormApplicantDAO cvApplicantDao;
 	private DAOFactory daoFactory;
 	private Properties properties;
+	private SkillDAO skillDao;
 	
     /**
      * @throws ServletException 
@@ -76,6 +78,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
         this.properties = properties;
         daoFactory.setLogPath(properties);
         cvApplicantDao = daoFactory.getCVFormApplicantDAO();
+        skillDao = daoFactory.getSkillDAO();
         
 	    try {
 			DAOFactory.loadConnectProperties(properties);
@@ -176,12 +179,13 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		for (Integer id : idList) {
 			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
 			cv.setSendStatus("Sent");
+			hr.addCVForm(cv);
 			try {
 				cvApplicantDao.updateCVForm(cv);
 			} catch (PersistException p){
 				throw new ServletException();
 			}
-			hr.addCVForm(cv);
+			
 		}
 		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
@@ -248,7 +252,14 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				int parsedAge = Integer.parseInt(age);
 				int parsedSalary = Integer.parseInt(salary);
 				int parsedWorkExpirience = Integer.parseInt(workExpirience);
-				Set<String> parsedSkills = new HashSet<String>(Arrays.asList(skills.split(",")));
+				String[] skillsArray = skills.split(", ");
+				Set<SkillApplicantCV> applicantSkills = new HashSet<SkillApplicantCV>();
+				for (int i = 0; i < skillsArray.length; i++) {
+					SkillApplicantCV oneSkillApplicant = new SkillApplicantCV();
+					oneSkillApplicant.setSkill(skillsArray[i]);
+					SkillApplicantCV createdSkill = (SkillApplicantCV) skillDao.createSkill(oneSkillApplicant);
+					applicantSkills.add(createdSkill);
+				}
 
 				HttpSession session = request.getSession(false);
 				Applicant applicant = (Applicant)session.getAttribute("applicant"); 
@@ -258,7 +269,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				newCV.setEmail(email);
 				newCV.setPhone(phone);
 				newCV.setPost(post);
-				newCV.setSkills(parsedSkills);
+				newCV.setSkills(applicantSkills);
 				newCV.setAdditionalInfo(addInfo);
 				newCV.setWorkExpirience(parsedWorkExpirience);
 				newCV.setDesiredSalary(parsedSalary);

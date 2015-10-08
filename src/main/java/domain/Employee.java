@@ -5,22 +5,14 @@ package domain;
 
 import java.util.Date;
 
-
-import java.util.Set;
-
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.ElementCollection;
-
-
 
 import dao.exceptions.PersistException;
 
@@ -34,12 +26,6 @@ public class Employee extends Person{
 
 	@Column(name="name")
 	private String name;
-	
-	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="employee_skills", 
-		joinColumns=@JoinColumn(name="id_skill"))
-	@Column(name="skill")
-	private Set<String> skills;
 	
 	@Column(name="phone")
 	private String phone;
@@ -115,14 +101,6 @@ public class Employee extends Person{
 		this.name = name;
 	}
 
-	public Set<String> getSkills() {
-		return skills;
-	}
-
-	public void setSkills(Set<String> skills) {
-		this.skills = skills;
-	}
-
 	public String getPhone() {
 		return phone;
 	}
@@ -183,6 +161,6 @@ public class Employee extends Person{
 		return "post=" + post + ", hireDate=" + hireDate + ", hireDate=" + hireDate + 
 				", salary=" + salary + ", department=" + department + 
 				", education=" + getEducation() + ", name=" + getName() + ", age=" + getAge() + 
-				", skills=" + getSkills() + ", phone=" + getPhone() + ", email=" + getEmail();
+				", phone=" + getPhone() + ", email=" + getEmail();
 	}	
 }
