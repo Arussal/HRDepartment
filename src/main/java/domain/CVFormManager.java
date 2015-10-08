@@ -13,37 +13,24 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+
 /**
  * @author Ruslan
  *
  */
 @Entity
-@Table(name="cvform_applicant")
-public class CVFormApplicant extends CVForm{
-			
-	@Column(name="send_status")
-	private String sendStatus;
+@Table(name="cvform")
+public class CVFormManager extends CVForm {
+				
 	
 	@ElementCollection(fetch=FetchType.EAGER)
-	@CollectionTable(name="cvform_applicant_skills", 
+	@CollectionTable(name="cvform_manager_skills", 
 		joinColumns=@JoinColumn(name="id_skill"))
 	@Column(name="skill")
 	private Set<String> skills;
 	
-
-	/**
-	 * 
-	 */
-	public CVFormApplicant() {
-	}
 	
-	
-	public String getSendStatus() {
-		return sendStatus;
-	}
-
-	public void setSendStatus(String sendStatus) {
-		this.sendStatus = sendStatus;
+	public CVFormManager() {
 	}
 	
 	public Set<String> getSkills() {
@@ -54,13 +41,12 @@ public class CVFormApplicant extends CVForm{
 		this.skills = skills;
 	}
 	
-
 	@Override
 	public String toString() {
 		return "CVForm [desiredSalary=" + getDesiredSalary() + ", additionalInfo="
 				+ getAdditionalInfo() + ", id=" + id + ", name=" + getName() + ", age="
-				+ getAge() + ", workExpirience=" + getWorkExpirience() + ", skills="
-				+ getSkills() + ", education=" + getEducation() + ", phone=" + getPhone()
-				+ ", email=" + getEmail() + ", post=" + getPost() + "]";
+				+ age + ", workExpirience=" + workExpirience + ", skills="
+				+ skills + ", education=" + education + ", phone=" + getPhone()
+				+ ", email=" + getEmail() + ", post=" + post + "]";
 	}
 }

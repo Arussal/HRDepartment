@@ -17,7 +17,7 @@ import org.hibernate.criterion.Restrictions;
 
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
-import domain.CVForm;
+import domain.CVFormManager;
 import domain.Candidate;
 import domain.util.LogConfig;
 
@@ -25,33 +25,33 @@ import domain.util.LogConfig;
  * @author Ruslan
  *
  */
-public class CVFormDAO {
+public class CVFormManagerDAO {
 
-	private static Logger log = Logger.getLogger(CVFormDAO.class);
+	private static Logger log = Logger.getLogger(CVFormManagerDAO.class);
 	
 	private String title = "CVForm";
 	
-	public CVFormDAO(Properties properties) {
+	public CVFormManagerDAO(Properties properties) {
 		LogConfig.loadLogConfig(properties);
 	}
 
-	public CVForm createCVForm(CVForm cv) {
+	public CVFormManager createCVForm(CVFormManager cv) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
 		Integer id = (Integer)session.save(cv);
 		transaction.commit();
-		CVForm createdCV = getCVFormById(id);
+		CVFormManager createdCV = getCVFormById(id);
 		session.close();
 		
 		return createdCV;
 	}
 
 	
-	public CVForm getCVFormById(int id) {
+	public CVFormManager getCVFormById(int id) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		CVForm cv = session.get(CVForm.class, new Integer(id));
+		CVFormManager cv = session.get(CVFormManager.class, new Integer(id));
 		session.close();
 		log.info("get " + title + " with id " + cv.getId());
  
@@ -59,14 +59,14 @@ public class CVFormDAO {
 	}
 
 	
-	public List<CVForm> getCVFormByPost(String post) {
+	public List<CVFormManager> getCVFormByPost(String post) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Criteria crit = session.createCriteria(CVForm.class);
+		Criteria crit = session.createCriteria(CVFormManager.class);
 		Criterion crPost = Restrictions.eq("post", post);
 		crit.add(crPost);
 		@SuppressWarnings("unchecked")
-		List<CVForm> list = crit.list();
+		List<CVFormManager> list = crit.list();
 		session.close();
 		log.info("get " + title + " with post " + post + ", amount = " + list.size());
  
@@ -74,14 +74,14 @@ public class CVFormDAO {
 	}
 
 
-	public List<CVForm> getCVFormByWorkExpirience(int workExpirience) {
+	public List<CVFormManager> getCVFormByWorkExpirience(int workExpirience) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Criteria crit = session.createCriteria(CVForm.class);
+		Criteria crit = session.createCriteria(CVFormManager.class);
 		Criterion crExpirience = Restrictions.eq("workExpirience", workExpirience);
 		crit.add(crExpirience);
 		@SuppressWarnings("unchecked")
-		List<CVForm> list = crit.list();
+		List<CVFormManager> list = crit.list();
 		session.close();
 		log.info("get " + title + " with expirience " + workExpirience + ", amount = " + list.size());
  
@@ -89,15 +89,15 @@ public class CVFormDAO {
 	}
 
 
-	public List<CVForm> getCVFormByEducation(String education)
+	public List<CVFormManager> getCVFormByEducation(String education)
 			throws PersistException {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Criteria crit = session.createCriteria(CVForm.class);
+		Criteria crit = session.createCriteria(CVFormManager.class);
 		Criterion crExpirience = Restrictions.eq("education", education);
 		crit.add(crExpirience);
 		@SuppressWarnings("unchecked")
-		List<CVForm> list = crit.list();
+		List<CVFormManager> list = crit.list();
 		session.close();
 		log.info("get " + title + " with education " + education + ", amount = " + list.size());
  
@@ -105,15 +105,15 @@ public class CVFormDAO {
 	}
 
 
-	public List<CVForm> getCVFormByDesiredSalary(int desiredSalary)
+	public List<CVFormManager> getCVFormByDesiredSalary(int desiredSalary)
 			throws PersistException {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Criteria crit = session.createCriteria(CVForm.class);
+		Criteria crit = session.createCriteria(CVFormManager.class);
 		Criterion crExpirience = Restrictions.eq("desiredSalary", desiredSalary);
 		crit.add(crExpirience);
 		@SuppressWarnings("unchecked")
-		List<CVForm> list = crit.list();
+		List<CVFormManager> list = crit.list();
 		session.close();
 		log.info("get " + title + " with desiredSalary " + desiredSalary + ", amount = " + list.size());
  
@@ -121,13 +121,13 @@ public class CVFormDAO {
 	}
 
 	
-	public List<CVForm> getCVForm(Map<String, List<String>> queries) {
+	public List<CVFormManager> getCVForm(Map<String, List<String>> queries) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Criteria crit = session.createCriteria(Candidate.class);
 		addCriteria(crit, queries);
 		@SuppressWarnings("unchecked")
-		List<CVForm> list = crit.list();
+		List<CVFormManager> list = crit.list();
 		session.close();
 		log.info("get " + title + " with expirience different parameters, amount = " + list.size());
  
@@ -161,7 +161,7 @@ public class CVFormDAO {
 	}
 
 	
-	public void updateCVForm(CVForm cv) throws PersistException {
+	public void updateCVForm(CVFormManager cv) throws PersistException {
 
 		boolean candidatePersisted = isCVFormPersisted(cv);
 		
@@ -175,7 +175,7 @@ public class CVFormDAO {
 	}
 
 
-	public void deleteCVForm(CVForm cv) throws PersistException {
+	public void deleteCVForm(CVFormManager cv) throws PersistException {
 				
 		boolean CVFormPersisted = isCVFormPersisted(cv);
 		
@@ -196,13 +196,13 @@ public class CVFormDAO {
 	}
 
 
-	public List<CVForm> getAllCVForms() throws PersistException {
+	public List<CVFormManager> getAllCVForms() throws PersistException {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		String selectQuery = getSelectQuery();
 		Query query = session.createQuery(selectQuery);
 		@SuppressWarnings("unchecked")
-		List<CVForm> list = query.list();
+		List<CVFormManager> list = query.list();
 		session.close();
 		log.info("get all " + title + "s");
 
@@ -216,12 +216,12 @@ public class CVFormDAO {
 	}
 	
 	
-	private boolean isCVFormPersisted(CVForm cv) throws PersistException {
+	private boolean isCVFormPersisted(CVFormManager cv) throws PersistException {
 		
 		if (cv.getId() == null) {
 			return false;
 		}	
-		CVForm persistedCVForm = getCVFormById(cv.getId());
+		CVFormManager persistedCVForm = getCVFormById(cv.getId());
 		if (persistedCVForm == null) {
 			return false;
 		}

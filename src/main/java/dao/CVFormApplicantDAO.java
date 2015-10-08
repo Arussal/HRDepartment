@@ -184,6 +184,9 @@ public class CVFormApplicantDAO {
 			session.update(cv);
 			t.commit();
 			session.close();
+		} else {
+			log.error(title + " not persisted yet");
+			throw new PersistException(title + " not persisted yet");
 		}
 	}
 

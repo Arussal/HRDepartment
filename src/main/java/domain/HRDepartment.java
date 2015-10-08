@@ -15,7 +15,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import dao.ApplicationFormDAO;
-import dao.CVFormDAO;
+import dao.CVFormManagerDAO;
 import dao.CandidateDAO;
 import dao.EmployeeDAO;
 import dao.exceptions.PersistException;
@@ -34,7 +34,7 @@ public class HRDepartment extends Department implements HRManager{
 	private Set<Employee> staff;
 	
 	private List<ApplicationForm> apps;
-	private CVFormDAO cvDao;
+	private CVFormManagerDAO cvDao;
 	private EmployeeDAO empDao;
 	private ApplicationFormDAO appDao;
 	private CandidateDAO candDao;
@@ -51,14 +51,31 @@ public class HRDepartment extends Department implements HRManager{
 	}
 		
 
-	public CVForm addCVForm(CVForm form) {
+	public CVFormManager addCVForm(CVFormApplicant form) {
 		if (null == form) {
 			log.error("CVForm is null");
 			throw new IllegalArgumentException();
 		}
-		return cvDao.createCVForm(form);
+		CVFormManager cvManager = makeCVForHRDepartment(form);
+		return cvDao.createCVForm(cvManager);
 	}
 
+	
+	private CVFormManager makeCVForHRDepartment(CVFormApplicant cv) {
+		CVFormManager cvManager = new CVFormManager();
+		cvManager.setName(cv.getName());
+		cvManager.setAge(cv.getAge());
+		cvManager.setAdditionalInfo(cv.getAdditionalInfo());
+		cvManager.setDesiredSalary(cv.getDesiredSalary());
+		cvManager.setEducation(cv.getEducation());
+		cvManager.setEmail(cv.getEmail());
+		cvManager.setPhone(cv.getPhone());
+		cvManager.setPost(cv.getPost());
+		cvManager.setSkills(cv.getSkills());
+		cvManager.setWorkExpirience(cv.getWorkExpirience());
+		return cvManager;
+	}
+	
 	
 	public Set<Candidate> findCandidates(ApplicationForm app) 
 			throws NoSuitableCandidateException, PersistException {
@@ -73,11 +90,11 @@ public class HRDepartment extends Department implements HRManager{
 		conditions.put("acceptPost", new Boolean(false));
 		conditions.put("acceptSalary", new Boolean(false));
 		
-		List<CVForm> cvs = cvDao.getAllCVForms();
+		List<CVFormManager> cvs = cvDao.getAllCVForms();
 		log.trace("check conditions to find candidate");
 		
 		
-		outer: for (CVForm cv : cvs) {
+		outer: for (CVFormManager cv : cvs) {
 
 			// set "false" flag to all conditions
 			for (Entry<String, Boolean> condition : conditions.entrySet()) {
@@ -135,7 +152,7 @@ public class HRDepartment extends Department implements HRManager{
 	}
 	
 	
-	public void changeCVStatusToCandidate(Candidate candidate, CVForm cv) 
+	public void changeCVStatusToCandidate(Candidate candidate, CVFormManager cv) 
 			throws PersistException {
 			candDao.createCandidate(candidate);
 			cvDao.deleteCVForm(cv);

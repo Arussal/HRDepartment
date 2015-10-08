@@ -14,11 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.CVFormDAO;
+import dao.CVFormManagerDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
-import domain.CVForm;
+import domain.CVFormManager;
 import ui.util.WebAttributes;
 import ui.util.WebPath;
 
@@ -29,7 +29,7 @@ import ui.util.WebPath;
 public class CVFormControllerServlet extends HttpServlet {
  	
 	private static final long serialVersionUID = 1L;
-	private CVFormDAO cvDao;
+	private CVFormManagerDAO cvDao;
 	private DAOFactory daoFactory;
        
     /**
@@ -117,7 +117,7 @@ public class CVFormControllerServlet extends HttpServlet {
 		makeErrorNoOneSelectedItem(idList, request, response);
 		
 		for (Integer id : idList) {
-			CVForm cv = cvDao.getCVFormById(id);
+			CVFormManager cv = cvDao.getCVFormById(id);
 			try {
 				cvDao.deleteCVForm(cv);
 			} catch (PersistException e) {
@@ -149,9 +149,9 @@ public class CVFormControllerServlet extends HttpServlet {
 		addToParameterMap(parameters, educationParameter, "education", "=");
 		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
 	
-		List<CVForm> cvList = cvDao.getCVForm(parameters);	
+		List<CVFormManager> cvList = cvDao.getCVForm(parameters);	
 		if (null == cvList) {
-			cvList = new ArrayList<CVForm>();
+			cvList = new ArrayList<CVFormManager>();
 		}
 		request.setAttribute("cvIncomeList", cvList);
 		forward(WebPath.CVFORM_BASE_PAGE_SERVLET, request, response);		

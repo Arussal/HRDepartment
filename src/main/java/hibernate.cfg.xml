@@ -33,6 +33,7 @@
       <mapping class="domain.ApplicationForm"/>
       <mapping class="domain.Candidate"/>
       <mapping class="domain.CVFormApplicant"/>
+      <mapping class="domain.CVFormManager"/>
       <mapping class="domain.CVForm"/>
       <mapping class="domain.Department"/>
 	  <mapping class="domain.Employee"/>

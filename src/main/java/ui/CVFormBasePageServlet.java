@@ -15,11 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import dao.CVFormDAO;
+import dao.CVFormManagerDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
-import domain.CVForm;
+import domain.CVFormManager;
 import ui.util.WebPath;
 
 /**
@@ -28,7 +28,7 @@ import ui.util.WebPath;
 @WebServlet("/cvformBaseServlet")
 public class CVFormBasePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private CVFormDAO cvDao;
+	private CVFormManagerDAO cvDao;
 	private DAOFactory daoFactory;
     /**
      * @throws ServletException 
@@ -72,9 +72,9 @@ public class CVFormBasePageServlet extends HttpServlet {
 			throw new ServletException();
 		}
 	    
-		List<CVForm> cvList = null;
+		List<CVFormManager> cvList = null;
 		if (request.getAttribute("cvIncomeList") != null) {
-			cvList = (List<CVForm>)request.getAttribute("cvIncomeList");
+			cvList = (List<CVFormManager>)request.getAttribute("cvIncomeList");
 			createFilterFinder(request, cvList);
 		} 
 		else {
@@ -86,7 +86,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 	}
 	
 	
-	private void createFilterFinder(HttpServletRequest request, List<CVForm> cvList) {
+	private void createFilterFinder(HttpServletRequest request, List<CVFormManager> cvList) {
 		
 		List<String> comparableList = new ArrayList<String>();
 		comparableList.add("меньше или равно");
@@ -112,7 +112,7 @@ public class CVFormBasePageServlet extends HttpServlet {
 		educationCVSet.add("");
 		expirienceCVSet.add("");
 		
-		for (CVForm cv : cvList) {
+		for (CVFormManager cv : cvList) {
 			if (cv.getId() == null) {
 				idCVSet.add(" не указано");
 			} else {
@@ -159,8 +159,8 @@ public class CVFormBasePageServlet extends HttpServlet {
 	}
 	
 	
-	private List<CVForm> getAllCV() throws ServletException {
-		List<CVForm> cvList;
+	private List<CVFormManager> getAllCV() throws ServletException {
+		List<CVFormManager> cvList;
 		try {
 			cvList = cvDao.getAllCVForms();
 		} catch (PersistException e) {

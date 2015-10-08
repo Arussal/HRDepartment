@@ -22,7 +22,6 @@ import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
 import domain.Applicant;
-import domain.CVForm;
 import domain.CVFormApplicant;
 import domain.HRDepartment;
 import ui.util.*;
@@ -32,8 +31,8 @@ import ui.util.*;
  */
 @WebServlet("/applicantCVControllerServlet")
 public class ApplicantCVControllerServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
-    
 	private CVFormApplicantDAO cvApplicantDao;
 	private DAOFactory daoFactory;
 	private Properties properties;
@@ -141,7 +140,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		makeErrorNoOneSelectedItem(idList, request, response);
 		makeErrorTooManySelectedItem(idList,request, response);
 		
-		CVForm cv = cvApplicantDao.getCVFormById(idList.get(0));
+		CVFormApplicant cv = cvApplicantDao.getCVFormById(idList.get(0));
 
 		request.setAttribute("cv", cv);
 		forward(WebPath.APPLICANT_EDIT_CV_JSP, request, response);
@@ -153,6 +152,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		CVFormApplicant cvForm = getDataFromForm(request, response);
+		cvForm.setSendStatus("Not Sent");
 
 		Integer id = Integer.parseInt(request.getParameter("id"));
 		cvForm.setId(id);
@@ -178,31 +178,14 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			cv.setSendStatus("Sent");
 			try {
 				cvApplicantDao.updateCVForm(cv);
-			} catch (PersistException e) {
+			} catch (PersistException p){
 				throw new ServletException();
 			}
-			CVForm cvManagerCopy = makeCVForHRDepartment(cv);
-			hr.addCVForm(cvManagerCopy);
+			hr.addCVForm(cv);
 		}
 		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
 
-	}
-
-	
-	private CVForm makeCVForHRDepartment(CVFormApplicant cv) {
-		CVForm cvManagerCopy = new CVForm();
-		cvManagerCopy.setName(cv.getName());
-		cvManagerCopy.setAge(cv.getAge());
-		cvManagerCopy.setAdditionalInfo(cv.getAdditionalInfo());
-		cvManagerCopy.setDesiredSalary(cv.getDesiredSalary());
-		cvManagerCopy.setEducation(cv.getEducation());
-		cvManagerCopy.setEmail(cv.getEmail());
-		cvManagerCopy.setPhone(cv.getPhone());
-		cvManagerCopy.setPost(cv.getPost());
-		cvManagerCopy.setSkills(cv.getSkills());
-		cvManagerCopy.setWorkExpirience(cv.getWorkExpirience());
-		return cvManagerCopy;
 	}
 
 	

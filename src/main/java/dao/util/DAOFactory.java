@@ -10,7 +10,7 @@ import java.util.Properties;
 import dao.ApplicantDAO;
 import dao.ApplicationFormDAO;
 import dao.CVFormApplicantDAO;
-import dao.CVFormDAO;
+import dao.CVFormManagerDAO;
 import dao.CandidateDAO;
 import dao.DepartmentDAO;
 import dao.EmployeeDAO;
@@ -80,8 +80,8 @@ public class DAOFactory {
 		return new CandidateDAO(properties);
 	}
 
-	public CVFormDAO getCVFormDAO() {
-		return new CVFormDAO(properties);
+	public CVFormManagerDAO getCVFormDAO() {
+		return new CVFormManagerDAO(properties);
 	}
 
 	public DepartmentDAO getDepartmentDAO() {
