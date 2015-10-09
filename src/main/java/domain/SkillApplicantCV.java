@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name="cvform_applicant_skills")
 public class SkillApplicantCV extends Skill{
 	
-	@ManyToOne(targetEntity = SkillApplicantCV.class)
+	@ManyToOne
 	@JoinColumn(name="id_cvapp", referencedColumnName="id")
 	private CVFormApplicant cvApplicant;
 
@@ -29,8 +29,8 @@ public class SkillApplicantCV extends Skill{
 	public void setCvApplicant(CVFormApplicant cvApplicant) {
 		this.cvApplicant = cvApplicant;
 	}
-
-
+	
+	
 	public SkillApplicantCV() {
 	}
 	
@@ -59,5 +59,10 @@ public class SkillApplicantCV extends Skill{
 		} else if (!getSkill().equals(other.getSkill()))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public String toString(){
+		return getSkill();
 	}
 }

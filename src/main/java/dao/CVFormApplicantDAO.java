@@ -18,7 +18,6 @@ import org.hibernate.criterion.Restrictions;
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
 import domain.CVFormApplicant;
-import domain.Candidate;
 import domain.util.LogConfig;
 
 /**
@@ -119,12 +118,14 @@ public class CVFormApplicantDAO {
 	}
 	
 	
+	
 	public List<CVFormApplicant> getCVFormByName(String name) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Criteria crit = session.createCriteria(CVFormApplicant.class);
 		Criterion crExpirience = Restrictions.eq("name", name);
 		crit.add(crExpirience);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		@SuppressWarnings("unchecked")
 		List<CVFormApplicant> list = crit.list();
 		session.close();
@@ -137,7 +138,7 @@ public class CVFormApplicantDAO {
 	public List<CVFormApplicant> getCVForm(Map<String, List<String>> queries) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Criteria crit = session.createCriteria(Candidate.class);
+		Criteria crit = session.createCriteria(CVFormApplicant.class);
 		addCriteria(crit, queries);
 		@SuppressWarnings("unchecked")
 		List<CVFormApplicant> list = crit.list();

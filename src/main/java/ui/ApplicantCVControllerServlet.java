@@ -129,8 +129,19 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		CVFormApplicant cv = getDataFromForm(request, response);
+		Set<SkillApplicantCV> skills = getSkillFromForm(request);
 		cv.setSendStatus("Not sent");
-		cvApplicantDao.createCVForm(cv);
+		CVFormApplicant cvApplicant = cvApplicantDao.createCVForm(cv);
+		for (SkillApplicantCV oneSkill : skills) {
+			oneSkill.setCvApplicant(cvApplicant);
+		}
+		cvApplicant.setSkills(skills);
+		try {
+			cvApplicantDao.updateCVForm(cvApplicant);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
+		
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
 	}
 	
@@ -223,21 +234,10 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			String email = request.getParameter("email");
 			String phone = request.getParameter("phone");
 			String post = request.getParameter("post");
-			String skills = request.getParameter("skills");
 			String workExpirience = request.getParameter("expirience");
 			String salary = request.getParameter("desiredSalary");
 			String addInfo = request.getParameter("addInfo");
-			
-			//delete '[' and ']' symbols from skills to avoid double symbols
-			String formattedSkills = skills;
-			if (skills.startsWith("[")) {
-				formattedSkills = skills.substring(1, skills.length());
-				skills = formattedSkills;
-			} 
-			if (skills.endsWith("]")) {
-				formattedSkills = skills.substring(0, skills.length()-1);
-				skills = formattedSkills;
-			}
+		
 			
 			//check fields with numbers
 			Map<String, String> intData = new HashMap<String, String>();
@@ -252,15 +252,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				int parsedAge = Integer.parseInt(age);
 				int parsedSalary = Integer.parseInt(salary);
 				int parsedWorkExpirience = Integer.parseInt(workExpirience);
-				String[] skillsArray = skills.split(", ");
-				Set<SkillApplicantCV> applicantSkills = new HashSet<SkillApplicantCV>();
-				for (int i = 0; i < skillsArray.length; i++) {
-					SkillApplicantCV oneSkillApplicant = new SkillApplicantCV();
-					oneSkillApplicant.setSkill(skillsArray[i]);
-					SkillApplicantCV createdSkill = (SkillApplicantCV) skillDao.createSkill(oneSkillApplicant);
-					applicantSkills.add(createdSkill);
-				}
-
+				
 				HttpSession session = request.getSession(false);
 				Applicant applicant = (Applicant)session.getAttribute("applicant"); 
 				newCV.setName(applicant.getName());
@@ -269,7 +261,6 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 				newCV.setEmail(email);
 				newCV.setPhone(phone);
 				newCV.setPost(post);
-				newCV.setSkills(applicantSkills);
 				newCV.setAdditionalInfo(addInfo);
 				newCV.setWorkExpirience(parsedWorkExpirience);
 				newCV.setDesiredSalary(parsedSalary);
@@ -285,6 +276,32 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 		return newCV; 
 		
+	}
+	
+	private Set<SkillApplicantCV> getSkillFromForm(HttpServletRequest request){
+		
+		String skills = request.getParameter("skills");
+		//delete '[' and ']' symbols from skills to avoid double symbols
+		String formattedSkills = skills;
+		if (skills.startsWith("[")) {
+			formattedSkills = skills.substring(1, skills.length());
+			skills = formattedSkills;
+		} 
+		if (skills.endsWith("]")) {
+			formattedSkills = skills.substring(0, skills.length()-1);
+			skills = formattedSkills;
+		}
+		
+		String[] skillsArray = skills.split(", ");
+		Set<SkillApplicantCV> applicantSkills = new HashSet<SkillApplicantCV>();
+		for (int i = 0; i < skillsArray.length; i++) {
+			SkillApplicantCV oneSkillApplicant = new SkillApplicantCV();
+			oneSkillApplicant.setSkill(skillsArray[i]);
+			SkillApplicantCV createdSkill = (SkillApplicantCV) skillDao.createSkill(oneSkillApplicant);
+			applicantSkills.add(createdSkill);
+		}
+		
+		return applicantSkills;
 	}
 
 

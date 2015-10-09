@@ -68,6 +68,7 @@ public class ApplicationFormBasePageServlet extends HttpServlet {
 	    
 		try {
 			apps = getApps();
+		
 		} catch (PersistException e) {
 			e.printStackTrace();
 		}

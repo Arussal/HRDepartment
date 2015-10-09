@@ -98,7 +98,6 @@ public class ApplicationFormDAO {
 		List<ApplicationForm> appForms = query.list();
 		session.close();
 		log.info("get all " + title + "s");
-		
 		return appForms;
 	}	
 

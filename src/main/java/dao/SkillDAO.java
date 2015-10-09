@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
@@ -39,32 +41,19 @@ public class SkillDAO {
 	
 	public SkillApplicantCV getSkillById(Integer id) {
 		
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		SkillApplicantCV skill = session.get(SkillApplicantCV.class, new Integer(id));
-		session.close();
-		log.info("get " + title + " with id " + skill.getId());
- 
-		return skill;
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();  
+	    return (SkillApplicantCV)session.createCriteria(SkillApplicantCV.class)
+	    		.add(Restrictions.eq("id", id))  
+	    		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list().get(0);  
 	}
 	
-	
-	
-	public Skill getSkillByTitle(String title) throws PersistException {
-		
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		String selectQuery = getSelectQuery() + " where s.skill=:skill";
-		Query query = session.createQuery(selectQuery).setString("skill", title);
-		
-		@SuppressWarnings("unchecked")
-		List<Skill> list = query.list();
-		session.close();
-		if (list.size() != 1) {
-			log.error(list.size() + title + " persists with skill " + title);
-			throw new PersistException(list.size() + " persists with skill " + title);		
-		}
-		log.info("get " + title + " with skill " + list.get(0));
-		
-		return list.get(0);
+	@SuppressWarnings("unchecked")
+	public List<SkillApplicantCV> getSkillByTitle(String title) throws PersistException {
+			
+		Session session = HibernateUtil.getSessionFactory().getCurrentSession();  
+	    return (List<SkillApplicantCV>)session.createCriteria(SkillApplicantCV.class)
+	    		.add(Restrictions.eq("skill", title))  
+	    		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();  
 	}
 	
 	
