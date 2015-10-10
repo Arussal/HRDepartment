@@ -201,7 +201,7 @@ public class ApplicationFormControllerServlet extends HttpServlet {
 				int parsedAge = Integer.parseInt(age);
 				int parsedSalary = Integer.parseInt(salary);
 				int parsedWorkExpirience = Integer.parseInt(workExpirience);
-				Set<String> parsedRequirements = new HashSet<String>(Arrays.asList(formattedRequirements.split(";")));
+				Set<String> parsedRequirements = new HashSet<String>(Arrays.asList(formattedRequirements.split(", ")));
 				appForm = hrDep.formApplicationForm(parsedAge, education, 
 						parsedRequirements, post, parsedSalary, parsedWorkExpirience, parsedDate);
 			} else {

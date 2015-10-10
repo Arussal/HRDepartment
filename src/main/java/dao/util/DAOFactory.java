@@ -15,7 +15,10 @@ import dao.CandidateDAO;
 import dao.DepartmentDAO;
 import dao.EmployeeDAO;
 import dao.ManagerDAO;
-import dao.SkillDAO;
+import dao.SkillApplicantDAO;
+import dao.SkillCandidateDAO;
+import dao.SkillEmployeeDAO;
+import dao.SkillManagerDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 
 
@@ -105,8 +108,20 @@ public class DAOFactory {
 		return new CVFormApplicantDAO(properties);
 	}
 
-	public SkillDAO getSkillDAO() {
-		return new SkillDAO(properties);
+	public SkillApplicantDAO getSkillApplicantDAO() {
+		return new SkillApplicantDAO(properties);
+	}
+
+	public SkillManagerDAO getSkillManagerDAO() {
+		return new SkillManagerDAO(properties);
+	}
+
+	public SkillCandidateDAO getSkillCandidateDAO() {
+		return new SkillCandidateDAO(properties);
+	}
+
+	public SkillEmployeeDAO getSkillEmployeeDAO() {
+		return new SkillEmployeeDAO(properties);
 	}
 
 }

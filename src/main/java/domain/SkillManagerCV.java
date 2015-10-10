@@ -16,13 +16,23 @@ import javax.persistence.Table;
 @Table(name="cvform_manager_skills")
 public class SkillManagerCV extends Skill{
 	
-	@ManyToOne(targetEntity = SkillManagerCV.class)
-	@JoinColumn(name="id_manager", referencedColumnName="id")
-	private Manager manager;
+	@ManyToOne
+	@JoinColumn(name="id_cvmanager", referencedColumnName="id")
+	private CVFormManager cvManager;
 
 	public SkillManagerCV(){	
 	}
 	
+
+	public CVFormManager getCvManager() {
+		return cvManager;
+	}
+
+
+	public void setCvManager(CVFormManager cvManager) {
+		this.cvManager = cvManager;
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -50,4 +60,11 @@ public class SkillManagerCV extends Skill{
 		return true;
 	}
 
+
+	@Override
+	public String toString() {
+		return getSkill();
+	}
+
+	
 }

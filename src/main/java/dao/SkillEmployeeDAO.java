@@ -8,52 +8,82 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
+import domain.Employee;
 import domain.Skill;
-import domain.SkillApplicantCV;
+import domain.SkillEmployee;
 import domain.util.LogConfig;
 
-public class SkillDAO {
+public class SkillEmployeeDAO {
 
-	private static Logger log = Logger.getLogger(SkillDAO.class);
+	private static Logger log = Logger.getLogger(SkillEmployeeDAO.class);
 	
-	private String title = "Skill";
+	private String title = "EmployeeSkill";
 	
-	public SkillDAO(Properties properties) {
+	public SkillEmployeeDAO(Properties properties) {
 		LogConfig.loadLogConfig(properties);
 	}
-	
-	public Skill createSkill(Skill skill) {
+
+	public SkillEmployee createSkill(Skill skill) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
 		Integer id = (Integer)session.save(skill);
 		transaction.commit();
-		SkillApplicantCV createdSkill = getSkillById(id);
+		SkillEmployee createdSkill = getSkillById(id);
 		session.close();
 		
 		return createdSkill;
 	}
 	
 	
-	public SkillApplicantCV getSkillById(Integer id) {
+	public SkillEmployee getSkillById(Integer id) {
 		
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();  
-	    return (SkillApplicantCV)session.createCriteria(SkillApplicantCV.class)
-	    		.add(Restrictions.eq("id", id))  
-	    		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list().get(0);  
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(SkillEmployee.class);
+		Criterion crId = Restrictions.eq("id", id);
+		crit.add(crId);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		@SuppressWarnings("unchecked")
+		List<SkillEmployee> list = crit.list();
+		session.close();
+		log.info("get " + title + " with id " + id);
+ 
+		return list.get(0);
+	}
+	
+	public List<SkillEmployee> getSkillsByEmployee(Employee employee) {
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(SkillEmployee.class);
+		Criterion crEmployee = Restrictions.eq("employee", employee);
+		crit.add(crEmployee);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		@SuppressWarnings("unchecked")
+		List<SkillEmployee> list = crit.list();
+		session.close();
+		log.info("get " + title + " with id_cvapp " + employee);
+ 
+		return list;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<SkillApplicantCV> getSkillByTitle(String title) throws PersistException {
-			
-		Session session = HibernateUtil.getSessionFactory().getCurrentSession();  
-	    return (List<SkillApplicantCV>)session.createCriteria(SkillApplicantCV.class)
-	    		.add(Restrictions.eq("skill", title))  
-	    		.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();  
+	public List<SkillEmployee> getSkillByTitle(String skill) throws PersistException {
+		
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Criteria crit = session.createCriteria(SkillEmployee.class);
+		Criterion crSkill = Restrictions.eq("skill", skill);
+		crit.add(crSkill);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<SkillEmployee> list = crit.list();
+		session.close();
+		log.info("get " + title + " with skill " + skill + ", amount = " + list.size());
+ 
+		return list;
 	}
 	
 	
@@ -107,7 +137,7 @@ public class SkillDAO {
 
 	
 	private String getSelectQuery() {
-		String sql = "from Skill s";
+		String sql = "from SkillEmployee s";
 		return sql;
 	}
 
@@ -125,3 +155,4 @@ public class SkillDAO {
 		return true;
 	}
 }
+

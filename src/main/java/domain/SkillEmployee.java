@@ -1,6 +1,3 @@
-/**
- * 
- */
 package domain;
 
 import javax.persistence.Entity;
@@ -8,29 +5,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/**
- * @author Ruslan
- *
- */
+
 @Entity
-@Table(name="candidate_skills")
-public class SkillCandidate extends Skill{
+@Table(name="employee_skills")
+public class SkillEmployee extends Skill{
 	
 	@ManyToOne
-	@JoinColumn(name="id_candidate", referencedColumnName="id")
-	private Candidate candidate;
-
-	public SkillCandidate() {
-	}
+	@JoinColumn(name="id_employee", referencedColumnName="id")
+	private Employee employee;
 	
-	
-	public Candidate getCandidate() {
-		return candidate;
+	public SkillEmployee() {
 	}
 
 
-	public void setCandidate(Candidate candidate) {
-		this.candidate = candidate;
+	public Employee getEmployee() {
+		return employee;
+	}
+
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
 	}
 
 

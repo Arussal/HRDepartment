@@ -59,7 +59,7 @@ public class CVFormManager {
 	@Column(name="additional_info")
 	private String additionalInfo;
 	
-	@OneToMany(targetEntity = SkillManagerCV.class, mappedBy = "skill", 
+	@OneToMany(targetEntity = SkillManagerCV.class, mappedBy = "cvManager", 
     cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<SkillManagerCV> skills;
 		

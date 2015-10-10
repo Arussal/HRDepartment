@@ -143,11 +143,11 @@ public class CVFormControllerServlet extends HttpServlet {
 		String ageSymbol = request.getParameter("ageComparable");
 		String expirienceSymbol = request.getParameter("expirienceComparable");
 		
-		addToParameterMap(parameters, idParameter, "id", "=");
-		addToParameterMap(parameters, ageParameter, "age", ageSymbol);
-		addToParameterMap(parameters, postParameter, "post", "=");
-		addToParameterMap(parameters, educationParameter, "education", "=");
-		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
+		addToParameterMap(parameters, idParameter, "id", "=", "integer");
+		addToParameterMap(parameters, ageParameter, "age", ageSymbol, "integer");
+		addToParameterMap(parameters, postParameter, "post", "=", "string");
+		addToParameterMap(parameters, educationParameter, "education", "=", "string");
+		addToParameterMap(parameters, expirienceParameter, "workExpirience", expirienceSymbol, "integer");
 	
 		List<CVFormManager> cvList = cvDao.getCVForm(parameters);	
 		if (null == cvList) {
@@ -159,17 +159,19 @@ public class CVFormControllerServlet extends HttpServlet {
 	
 	
 	private void addToParameterMap(Map <String, List<String>> map, 
-			String parameter, String field, String symbol) {
+			String parameter, String field, String symbol, String type) {
 		
 		if (!parameter.equals("")) {
 			List<String> queryParameters = new ArrayList<String>();
 			if (parameter.equals("не указано")) {
 				queryParameters.add(null);
 				queryParameters.add("is");
+				queryParameters.add(type);
 				map.put(field, queryParameters);
 			} else {
 				queryParameters.add(parameter);
 				queryParameters.add(convertCondition(symbol));
+				queryParameters.add(type);
 				map.put(field, queryParameters);
 			}
 		}

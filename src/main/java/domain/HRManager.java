@@ -28,7 +28,7 @@ public interface HRManager {
 	public Candidate createCandidate(Candidate candidate) throws PersistException;
 	
 	public Employee hireEmployee(Candidate candidate, int salary, String post, Date date, 
-			Department department);
+			Department department) throws PersistException;
 	
 	public Employee createEmployee(Employee employee) throws PersistException;
 	
@@ -45,7 +45,7 @@ public interface HRManager {
 	
 	public CVFormManager addCVForm(CVFormApplicant form) throws PersistException;
 
-	void changeCVStatusToCandidate(Candidate candidate, CVFormManager cv)
+	public Candidate changeCVStatusToCandidate(Candidate candidate, CVFormManager cv)
 			throws PersistException;
 
 }

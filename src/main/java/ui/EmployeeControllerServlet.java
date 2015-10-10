@@ -98,6 +98,8 @@ public class EmployeeControllerServlet extends HttpServlet {
 			editEmployee(request, response);
 		} else if (4 == action) {
 			saveEmployeeChanges(request, response);
+		} else if (5 == action) {
+			submitFireEmployee(request, response);
 		} else {
 			fireEmployee(request, response);
 		}
@@ -113,6 +115,8 @@ public class EmployeeControllerServlet extends HttpServlet {
 			return 3;
 		} else if (request.getParameter("saveEmployeeChanges") != null) {
 			return 4;
+		} else if (request.getParameter("submitFireEmployee") != null) {
+			return 5;
 		}
 		return 0;
 	}
@@ -139,40 +143,46 @@ public class EmployeeControllerServlet extends HttpServlet {
 		String fireDateSymbol = request.getParameter("fireDateComparable");
 		
 		Department department;
-		try {
+		if (!departmentParameter.equals("")) {
 			department = depDao.getDepartmentByName(departmentParameter);
-		} catch (PersistException e) {
+			addToParameterMap(parameters, String.valueOf(department.getId()), "department.id", "=", "integer");
+		}
+
+		addToParameterMap(parameters, idParameter, "id", "=", "integer");
+		addToParameterMap(parameters, ageParameter, "age", ageSymbol, "integer");
+		addToParameterMap(parameters, postParameter, "post", "=", "string");
+		addToParameterMap(parameters, educationParameter, "education", "=", "string");
+		addToParameterMap(parameters, expirienceParameter, "workExpirience", expirienceSymbol, "integer");	
+		addToParameterMap(parameters, salaryParameter, "salary", salarySymbol, "integer");
+		addToParameterMap(parameters, hireDateParameter, "hireDate", hireDateSymbol, "date");
+		addToParameterMap(parameters, fireDateParameter, "fireDate", fireDateSymbol, "date");
+	
+		Set<Employee> employees;
+		try {
+			employees = empDao.getEmployees(parameters);
+		} catch (ParseException e) {
 			throw new ServletException();
 		}
-	
-		addToParameterMap(parameters, idParameter, "id", "=");
-		addToParameterMap(parameters, ageParameter, "id", ageSymbol);
-		addToParameterMap(parameters, postParameter, "post", "=");
-		addToParameterMap(parameters, educationParameter, "education", "=");
-		addToParameterMap(parameters, expirienceParameter, "work_expirience", expirienceSymbol);
-		addToParameterMap(parameters, String.valueOf(department.getId()), "id_department", "=");
-		addToParameterMap(parameters, salaryParameter, "salary", salarySymbol);
-		addToParameterMap(parameters, hireDateParameter, "hireDate", hireDateSymbol);
-		addToParameterMap(parameters, fireDateParameter, "fireDate", fireDateSymbol);
-	
-		Set<Employee> employees = empDao.getEmployees(parameters);
 		
 		request.setAttribute("empIncomeList", employees);
 		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
 	}
 
 	
-	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, String symbol) {
+	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, 
+			String symbol, String type) {
 		
 		if (!parameter.equals("")) {
 			List<String> queryParameters = new ArrayList<String>();
 			if (parameter.equals("не указано")) {
 				queryParameters.add(null);
 				queryParameters.add("is");
+				queryParameters.add(type);
 				map.put(field, queryParameters);
 			} else {
 				queryParameters.add(parameter);
 				queryParameters.add(convertCondition(symbol));
+				queryParameters.add(type);
 				map.put(field, queryParameters);
 			}
 		}
@@ -411,17 +421,24 @@ public class EmployeeControllerServlet extends HttpServlet {
 	private void fireEmployee(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		if (request.getParameter("fireEmployee") != null) {
-			List<Integer> idList = getSelectedItems(request);
-			makeErrorNoOneSelectedItem(idList, request, response);
-			Set<Employee> empList = getSelectedEmployees(idList);
-			setDateFields(request);
-			request.setAttribute("empList", empList);
-			forward(WebPath.HR_FIRE_EMPLOYEE_JSP, request, response);
-		}
+		List<Integer> idList = getSelectedItems(request);
+		
+		makeErrorNoOneSelectedItem(idList, request, response);
+		
+		Set<Employee> empList = getSelectedEmployees(idList);
+		setDateFields(request);
+		request.setAttribute("empList", empList);
+		forward(WebPath.HR_FIRE_EMPLOYEE_JSP, request, response);		
+	}
+	
+	
+	private void submitFireEmployee(HttpServletRequest request, HttpServletResponse response) 
+			throws ServletException, IOException {
 		
 		List<Integer> idList = getSelectedItems(request);
+		
 		makeErrorNoOneSelectedItem(idList, request, response);
+		
 		String year = request.getParameter("year");
 		String month = request.getParameter("month");
 		String day = request.getParameter("day");
@@ -449,9 +466,7 @@ public class EmployeeControllerServlet extends HttpServlet {
 			throw new ServletException();
 		}
 		forward(WebPath.EMPLOYEE_BASE_PAGE_SERVLET, request, response);
-		
 	}
-	
 	
 	private Set<Employee> getSelectedEmployees(List<Integer> idList) throws ServletException {
 		Set<Employee> empList = new HashSet<Employee>();

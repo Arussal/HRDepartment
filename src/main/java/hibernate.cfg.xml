@@ -43,7 +43,7 @@
       <mapping class="domain.SkillApplicantCV" />
       <mapping class="domain.SkillManagerCV" />
       <mapping class="domain.SkillCandidate" />
-
+	  <mapping class="domain.SkillEmployee" />
     </session-factory>
  
 </hibernate-configuration>

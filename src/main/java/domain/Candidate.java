@@ -4,6 +4,7 @@
  */
 package domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import dao.exceptions.PersistException;
 
 
 /**
@@ -25,8 +28,8 @@ public class Candidate extends Person{
 	@Column(name="name")
 	private String name;
 	
-	@OneToMany(targetEntity = SkillCandidate.class, mappedBy = "skill", 
-    cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = SkillCandidate.class, mappedBy = "candidate", 
+    cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<SkillCandidate> skills;
 	
 	@Column(name="phone")
@@ -42,7 +45,7 @@ public class Candidate extends Person{
 	public Candidate() {
 	}
 	
-	public CVFormApplicant formCVForm(String name, int age, Set<SkillApplicantCV> skills, String education, 
+	public CVFormApplicant formCVForm(String name, int age, List<SkillApplicantCV> skills, String education, 
 			String phone, String email, int desiredSalary, String additionalInfo, String post, 
 			int workExpirience) {
 		CVFormApplicant cv = new CVFormApplicant();
@@ -60,7 +63,7 @@ public class Candidate extends Person{
 		return cv;
 	}
 	
-	public void sendCVForm(CVFormApplicant form, HRDepartment hr) {
+	public void sendCVForm(CVFormApplicant form, HRDepartment hr) throws PersistException {
 		form.setSendStatus("Sent");
 		hr.addCVForm(form);
 	}

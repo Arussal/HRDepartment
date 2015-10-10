@@ -4,12 +4,15 @@
 package domain;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,6 +50,10 @@ public class Employee extends Person{
 	@ManyToOne(targetEntity = Department.class, cascade = CascadeType.ALL)
 	@JoinColumn(name="id_department", referencedColumnName="id")
 	private Department department;
+	
+	@OneToMany(targetEntity = SkillEmployee.class, cascade = CascadeType.ALL, 
+			mappedBy = "employee", fetch = FetchType.EAGER)
+	private Set<SkillEmployee> skills;
 	
 	/**
 	 * 
@@ -116,6 +123,16 @@ public class Employee extends Person{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public Set<SkillEmployee> getSkills() {
+		return skills;
+	}
+
+
+	public void setSkills(Set<SkillEmployee> skills) {
+		this.skills = skills;
+	}
+
 
 	@Override
 	public int hashCode() {

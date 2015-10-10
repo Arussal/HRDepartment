@@ -166,19 +166,29 @@ public class CandidateDAO {
 
 
 	private Criterion makeCriterion(String field, List<String> params) {
+		Object correctTypeParameter = setCorrectTypeOfParameter(params.get(0), params.get(2));
 		Criterion criterion;
 		if (params.get(1).equals("<=")) {
-			criterion = Restrictions.le(field, params.get(0));	
+			criterion = Restrictions.le(field, correctTypeParameter);	
 		} else if (params.get(1).equals("<")) {
-			criterion = Restrictions.lt(field, params.get(0));	
+			criterion = Restrictions.lt(field, correctTypeParameter);	
 		} else if (params.get(1).equals(">=")) {
-			criterion = Restrictions.ge(field, params.get(0));
+			criterion = Restrictions.ge(field, correctTypeParameter);
 		} else if (params.get(1).equals(">")) {
-			criterion = Restrictions.gt(field, params.get(0));
+			criterion = Restrictions.gt(field, correctTypeParameter);
 		} else {
-			criterion = Restrictions.eq(field, params.get(0));	 
+			criterion = Restrictions.eq(field, correctTypeParameter);	 
 		}
 		return criterion;
+	}
+
+	
+	public Object setCorrectTypeOfParameter(String incomeParameter, String type) {
+		if (type.equals("integer")) {
+			return Integer.valueOf(incomeParameter);
+		} else {
+			return incomeParameter;
+		}
 	}
 
 

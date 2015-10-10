@@ -3,11 +3,9 @@ package ui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import dao.CVFormApplicantDAO;
-import dao.SkillDAO;
+import dao.SkillApplicantDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
@@ -37,7 +35,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private CVFormApplicantDAO cvApplicantDao;
 	private DAOFactory daoFactory;
 	private Properties properties;
-	private SkillDAO skillDao;
+	private SkillApplicantDAO skillDao;
 	
     /**
      * @throws ServletException 
@@ -78,7 +76,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
         this.properties = properties;
         daoFactory.setLogPath(properties);
         cvApplicantDao = daoFactory.getCVFormApplicantDAO();
-        skillDao = daoFactory.getSkillDAO();
+        skillDao = daoFactory.getSkillApplicantDAO();
         
 	    try {
 			DAOFactory.loadConnectProperties(properties);
@@ -129,7 +127,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		
 		CVFormApplicant cv = getDataFromForm(request, response);
-		Set<SkillApplicantCV> skills = getSkillFromForm(request);
+		List<SkillApplicantCV> skills = getSkillFromForm(request);
 		cv.setSendStatus("Not sent");
 		CVFormApplicant cvApplicant = cvApplicantDao.createCVForm(cv);
 		for (SkillApplicantCV oneSkill : skills) {
@@ -165,14 +163,29 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private void saveChangesCV(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-		CVFormApplicant cvForm = getDataFromForm(request, response);
-		cvForm.setSendStatus("Not Sent");
-
+		CVFormApplicant cvApplicant = getDataFromForm(request, response);
 		Integer id = Integer.parseInt(request.getParameter("id"));
-		cvForm.setId(id);
+		cvApplicant.setId(id);
+		cvApplicant.setSendStatus("Not Sent");
+		
+		List<SkillApplicantCV> applicantSkills = skillDao.getSkillsByApplicantCV(cvApplicant);
+		for (SkillApplicantCV oneApplicantSkill : applicantSkills) {
+			try {
+				skillDao.deleteSkill(oneApplicantSkill);
+			} catch (PersistException e) {
+				throw new ServletException();
+			}
+		}
 
+		applicantSkills = getSkillFromForm(request);
+		for (SkillApplicantCV oneSkill : applicantSkills) {
+			oneSkill.setCvApplicant(cvApplicant);
+		}
+		
+		cvApplicant.setSkills(applicantSkills);
+		
 		try {
-			cvApplicantDao.updateCVForm(cvForm);
+			cvApplicantDao.updateCVForm(cvApplicant);
 		} catch (PersistException e) {
 			throw new ServletException();
 		}
@@ -190,7 +203,11 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		for (Integer id : idList) {
 			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
 			cv.setSendStatus("Sent");
-			hr.addCVForm(cv);
+			try {
+				hr.addCVForm(cv);
+			} catch (PersistException e) {
+				throw new ServletException();
+			}
 			try {
 				cvApplicantDao.updateCVForm(cv);
 			} catch (PersistException p){
@@ -278,7 +295,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		
 	}
 	
-	private Set<SkillApplicantCV> getSkillFromForm(HttpServletRequest request){
+	private List<SkillApplicantCV> getSkillFromForm(HttpServletRequest request){
 		
 		String skills = request.getParameter("skills");
 		//delete '[' and ']' symbols from skills to avoid double symbols
@@ -293,7 +310,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		}
 		
 		String[] skillsArray = skills.split(", ");
-		Set<SkillApplicantCV> applicantSkills = new HashSet<SkillApplicantCV>();
+		List<SkillApplicantCV> applicantSkills = new ArrayList<SkillApplicantCV>();
 		for (int i = 0; i < skillsArray.length; i++) {
 			SkillApplicantCV oneSkillApplicant = new SkillApplicantCV();
 			oneSkillApplicant.setSkill(skillsArray[i]);

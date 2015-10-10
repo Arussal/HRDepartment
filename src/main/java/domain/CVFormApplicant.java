@@ -3,7 +3,7 @@
  */
 package domain;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,7 +52,7 @@ public class CVFormApplicant {
 	
 	@OneToMany(targetEntity = SkillApplicantCV.class, mappedBy = "cvApplicant", 
     cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	private Set<SkillApplicantCV> skills;
+	private List<SkillApplicantCV> skills;
 	
 	@Column(name="name")
 	private String name;
@@ -163,11 +163,11 @@ public class CVFormApplicant {
 		this.sendStatus = sendStatus;
 	}
 	
-	public Set<SkillApplicantCV> getSkills() {
+	public List<SkillApplicantCV> getSkills() {
 		return skills;
 	}
 
-	public void setSkills(Set<SkillApplicantCV> skills) {
+	public void setSkills(List<SkillApplicantCV> skills) {
 		this.skills = skills;
 	}
 	

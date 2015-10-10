@@ -18,7 +18,6 @@ import org.hibernate.criterion.Restrictions;
 import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
 import domain.CVFormManager;
-import domain.Candidate;
 import domain.util.LogConfig;
 
 /**
@@ -124,8 +123,9 @@ public class CVFormManagerDAO {
 	public List<CVFormManager> getCVForm(Map<String, List<String>> queries) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
-		Criteria crit = session.createCriteria(Candidate.class);
+		Criteria crit = session.createCriteria(CVFormManager.class);
 		addCriteria(crit, queries);
+		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		@SuppressWarnings("unchecked")
 		List<CVFormManager> list = crit.list();
 		session.close();
@@ -145,21 +145,30 @@ public class CVFormManagerDAO {
 
 
 	private Criterion makeCriterion(String field, List<String> params) {
+		Object correctTypeParameter = setCorrectTypeOfParameter(params.get(0), params.get(2));
 		Criterion criterion;
 		if (params.get(1).equals("<=")) {
-			criterion = Restrictions.le(field, params.get(0));	
+			criterion = Restrictions.le(field, correctTypeParameter);	
 		} else if (params.get(1).equals("<")) {
-			criterion = Restrictions.lt(field, params.get(0));	
+			criterion = Restrictions.lt(field, correctTypeParameter);	
 		} else if (params.get(1).equals(">=")) {
-			criterion = Restrictions.ge(field, params.get(0));
+			criterion = Restrictions.ge(field, correctTypeParameter);
 		} else if (params.get(1).equals(">")) {
-			criterion = Restrictions.gt(field, params.get(0));
+			criterion = Restrictions.gt(field, correctTypeParameter);
 		} else {
-			criterion = Restrictions.eq(field, params.get(0));	 
+			criterion = Restrictions.eq(field, correctTypeParameter);	 
 		}
 		return criterion;
 	}
 
+	
+	public Object setCorrectTypeOfParameter(String incomeParameter, String type) {
+		if (type.equals("integer")) {
+			return Integer.valueOf(incomeParameter);
+		} else {
+			return incomeParameter;
+		}
+	}
 	
 	public void updateCVForm(CVFormManager cv) throws PersistException {
 
@@ -211,7 +220,7 @@ public class CVFormManagerDAO {
 	
 	
 	private String getSelectQuery() {
-		String sql = "from CVForm cv";
+		String sql = "from CVFormManager cv";
 		return sql;
 	}
 	

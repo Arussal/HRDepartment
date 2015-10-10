@@ -25,13 +25,11 @@ import javax.servlet.http.HttpSession;
 
 import dao.CandidateDAO;
 import dao.DepartmentDAO;
-import dao.EmployeeDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
 import domain.Candidate;
 import domain.Department;
-import domain.Employee;
 import domain.HRDepartment;
 import ui.util.WebAttributes;
 import ui.util.WebPath;
@@ -45,7 +43,6 @@ public class CandidateControllerServlet extends HttpServlet {
 	
 	private CandidateDAO candDao;
 	private DepartmentDAO depDao;
-	private EmployeeDAO empDao;
 	private Properties properties;
 	private DAOFactory daoFactory;
        
@@ -82,7 +79,6 @@ public class CandidateControllerServlet extends HttpServlet {
         Properties properties = (Properties) session.getAttribute("properties");
         this.properties = properties;
         daoFactory.setLogPath(properties);
-		empDao = daoFactory.getEmployeeDAO();
 		candDao = daoFactory.getCandidateDAO();
 	    depDao = daoFactory.getDepartmentDAO();
         
@@ -138,11 +134,11 @@ public class CandidateControllerServlet extends HttpServlet {
 		String ageSymbol = request.getParameter("ageComparable");
 		String expirienceSymbol = request.getParameter("expirienceComparable");
 		
-		addToParameterMap(parameters, idParameter, "id", "=");
-		addToParameterMap(parameters, ageParameter, "age", ageSymbol);
-		addToParameterMap(parameters, postParameter, "post", "=");
-		addToParameterMap(parameters, educationParameter, "education", "=");
-		addToParameterMap(parameters, expirienceParameter, "workExpirience", expirienceSymbol);
+		addToParameterMap(parameters, idParameter, "id", "=", "integer");
+		addToParameterMap(parameters, ageParameter, "age", ageSymbol, "integer");
+		addToParameterMap(parameters, postParameter, "post", "=", "string");
+		addToParameterMap(parameters, educationParameter, "education", "=", "string");
+		addToParameterMap(parameters, expirienceParameter, "workExpirience", expirienceSymbol, "integer");
 	
 		Set<Candidate> candList = null;
 		try {
@@ -159,17 +155,20 @@ public class CandidateControllerServlet extends HttpServlet {
 	}
 	
 	
-	private void addToParameterMap(Map <String, List<String>> map, String parameter, String field, String symbol) {
+	private void addToParameterMap(Map <String, List<String>> map, String parameter, 
+			String field, String symbol, String type) {
 		
 		if (!parameter.equals("")) {
 			List<String> queryParameters = new ArrayList<String>();
 			if (parameter.equals("не указано")) {
 				queryParameters.add(null);
 				queryParameters.add("is");
+				queryParameters.add(type);
 				map.put(field, queryParameters);
 			} else {
 				queryParameters.add(parameter);
 				queryParameters.add(convertCondition(symbol));
+				queryParameters.add(type);
 				map.put(field, queryParameters);
 			}
 		}
@@ -278,11 +277,14 @@ public class CandidateControllerServlet extends HttpServlet {
 			
 				String  candidateID = request.getParameter("candidateID");
 				Candidate cand = candDao.getCandidateById(Integer.parseInt(candidateID));								
-				Employee employee = hrDep.hireEmployee(cand, parsedSalary, cand.getPost(), 
-						parsedDate, parsedDepartment);
+				try {
+					hrDep.hireEmployee(cand, parsedSalary, cand.getPost(), 
+							parsedDate, parsedDepartment);
+				} catch (PersistException e) {
+					throw new ServletException();
+				}
 								
 				try {
-					empDao.createEmployee(employee);
 					candDao.deleteCandidate(cand);
 				} catch (PersistException pe) {
 					throw new ServletException();

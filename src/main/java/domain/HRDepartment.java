@@ -18,6 +18,9 @@ import dao.ApplicationFormDAO;
 import dao.CVFormManagerDAO;
 import dao.CandidateDAO;
 import dao.EmployeeDAO;
+import dao.SkillCandidateDAO;
+import dao.SkillEmployeeDAO;
+import dao.SkillManagerDAO;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
 import domain.exceptions.NoSuchEmployeeException;
@@ -38,6 +41,9 @@ public class HRDepartment extends Department implements HRManager{
 	private EmployeeDAO empDao;
 	private ApplicationFormDAO appDao;
 	private CandidateDAO candDao;
+	private SkillManagerDAO skillManagerDao;
+	private SkillCandidateDAO skillCandidateDao;
+	private SkillEmployeeDAO skillEmployeeDao;
 		
 	private static Logger log = Logger.getLogger(HRDepartment.class);
 	
@@ -48,28 +54,41 @@ public class HRDepartment extends Department implements HRManager{
 		candDao = daoFactory.getCandidateDAO();
 		cvDao = daoFactory.getCVFormManagerDAO();
 		empDao = daoFactory.getEmployeeDAO();
+		skillManagerDao = daoFactory.getSkillManagerDAO();
+		skillCandidateDao = daoFactory.getSkillCandidateDAO();
+		skillEmployeeDao = daoFactory.getSkillEmployeeDAO();
 	}
 		
 
-	public CVFormManager addCVForm(CVFormApplicant form) {
+	public CVFormManager addCVForm(CVFormApplicant form) throws PersistException {
 		if (null == form) {
-			log.error("CVForm is null");
+			log.error("CVFormApplicant is null");
 			throw new IllegalArgumentException();
 		}
-		CVFormManager cvManager = makeCVForHRDepartment(form);
-		return cvDao.createCVForm(cvManager);
-	}
-
-	
-	private CVFormManager makeCVForHRDepartment(CVFormApplicant cv) {
+		CVFormManager cvManager = makeCVFormManager(form);
 		
 		Set<SkillManagerCV> skillsManagerCV = new HashSet<SkillManagerCV>();
-		for(SkillApplicantCV skillApplicantCV : cv.getSkills()) {
+		for(SkillApplicantCV skillApplicantCV : form.getSkills()) {
 			String oneSkillApplicantCV = skillApplicantCV.getSkill();
 			SkillManagerCV skillManagerCV = new SkillManagerCV();
 			skillManagerCV.setSkill(oneSkillApplicantCV);
+			skillManagerCV = skillManagerDao.createSkill(skillManagerCV);
 			skillsManagerCV.add(skillManagerCV);
 		}
+		
+		cvManager = cvDao.createCVForm(cvManager);
+		for (SkillManagerCV skillManagerCV : skillsManagerCV) {
+			skillManagerCV.setCvManager(cvManager);
+		}
+		cvManager.setSkills(skillsManagerCV);
+		
+		cvDao.updateCVForm(cvManager);
+		
+		return cvManager;
+	}
+
+	
+	private CVFormManager makeCVFormManager(CVFormApplicant cv) {
 		
 		CVFormManager cvManager = new CVFormManager();
 		cvManager.setName(cv.getName());
@@ -80,7 +99,6 @@ public class HRDepartment extends Department implements HRManager{
 		cvManager.setEmail(cv.getEmail());
 		cvManager.setPhone(cv.getPhone());
 		cvManager.setPost(cv.getPost());
-		cvManager.setSkills(skillsManagerCV);
 		cvManager.setWorkExpirience(cv.getWorkExpirience());
 		return cvManager;
 	}
@@ -104,6 +122,11 @@ public class HRDepartment extends Department implements HRManager{
 		
 		
 		outer: for (CVFormManager cv : cvs) {
+			
+			Set<String> cvSkillTitles = new HashSet<String>();
+			for(SkillManagerCV skill : cv.getSkills()) {
+				cvSkillTitles.add(skill.getSkill());
+			}
 
 			// set "false" flag to all conditions
 			for (Entry<String, Boolean> condition : conditions.entrySet()) {
@@ -120,7 +143,7 @@ public class HRDepartment extends Department implements HRManager{
 			if (cv.getEducation().equals(app.getEducation())) {		
 				conditions.put("acceptEducation", new Boolean(true));
 			}
-			if (cv.getSkills().containsAll(app.getRequirements())) {
+			if (cvSkillTitles.containsAll(app.getRequirements())) {
 				conditions.put("acceptSkills", new Boolean(true));
 			}
 			if (cv.getPost().equals(app.getPost())) {
@@ -138,13 +161,14 @@ public class HRDepartment extends Department implements HRManager{
 			}
 			
 			Set<SkillCandidate> candidateSkills = new HashSet<SkillCandidate>();
-			for(SkillManagerCV skillManagerCV : cv.getSkills()) {
-				String oneSkillManagerCV = skillManagerCV.getSkill();
-				SkillCandidate skillCandidate = new SkillCandidate();
+			
+			for (String oneSkillManagerCV : cvSkillTitles) {
+				SkillCandidate skillCandidate = new SkillCandidate();		
 				skillCandidate.setSkill(oneSkillManagerCV);
+				skillCandidate = skillCandidateDao.createSkill(skillCandidate);
 				candidateSkills.add(skillCandidate);
 			}
-			
+				
 			log.trace("candidate is found");
 			Candidate candidate = new Candidate();
 			candidate.setName(cv.getName());
@@ -156,8 +180,15 @@ public class HRDepartment extends Department implements HRManager{
 			candidate.setSkills(candidateSkills);
 			candidate.setWorkExpirience(cv.getWorkExpirience());
 			candidates.add(candidate);
-			changeCVStatusToCandidate(candidate, cv); 
+			candidate = changeCVStatusToCandidate(candidate, cv); 
 		
+			for(SkillCandidate oneSkillCandidate : candidateSkills) {
+				oneSkillCandidate.setCandidate(candidate);
+			}
+			
+			candidate.setSkills(candidateSkills);
+			candDao.updateCandidate(candidate);
+			
 			log.trace("add candidate to set");
 		}
 			
@@ -169,10 +200,10 @@ public class HRDepartment extends Department implements HRManager{
 	}
 	
 	
-	public void changeCVStatusToCandidate(Candidate candidate, CVFormManager cv) 
+	public Candidate changeCVStatusToCandidate(Candidate candidate, CVFormManager cv) 
 			throws PersistException {
-			candDao.createCandidate(candidate);
-			cvDao.deleteCVForm(cv);
+		cvDao.deleteCVForm(cv);
+		return candDao.createCandidate(candidate);
 	}
 	
 	
@@ -182,7 +213,7 @@ public class HRDepartment extends Department implements HRManager{
 
 	
 	public Employee hireEmployee(Candidate candidate, int salary, String post, 
-			Date hireDate, Department department) {
+			Date hireDate, Department department) throws PersistException {
 		
 		Employee employee = new Employee();
 		employee.setAge(candidate.getAge());
@@ -194,13 +225,38 @@ public class HRDepartment extends Department implements HRManager{
 		employee.setPost(post);
 		employee.setSalary(salary);
 		employee.setHireDate(hireDate);
+		employee.setWorkExpirience(candidate.getWorkExpirience());
 		log.trace("employee by name " + employee.getName() + " formed");
-
+		
+		employee = createEmployee(employee);
+		
+		Set<SkillEmployee> skills = makeEmployeeSkills(candidate, employee);
+		for(SkillEmployee oneSkillEmployee : skills) {
+			oneSkillEmployee.setEmployee(employee);
+		}
+		
+		employee.setSkills(skills);
+		
+		empDao.updateEmployee(employee);
 		return employee;
 	}
 	
 
-	public Employee createEmployee(Employee employee) throws PersistException {
+	private Set<SkillEmployee> makeEmployeeSkills(Candidate candidate,
+			Employee employee) {
+		Set<SkillEmployee> skills = new HashSet<SkillEmployee>();
+		for (SkillCandidate oneSkillCandidate : candidate.getSkills()){
+			String candidateSkillTitle = oneSkillCandidate.getSkill();
+			SkillEmployee oneSkillEmployee = new SkillEmployee();
+			oneSkillEmployee.setSkill(candidateSkillTitle);
+			oneSkillEmployee = skillEmployeeDao.createSkill(oneSkillEmployee);
+			skills.add(oneSkillEmployee);
+		}
+		return skills;
+	}
+
+
+	public Employee createEmployee(Employee employee) {
 		return empDao.createEmployee(employee);
 	}
 	

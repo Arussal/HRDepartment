@@ -56,7 +56,7 @@ public class DepartmentDAO{
 		return department;
 	}
 	
-	public Department getDepartmentByName(String name) throws PersistException {
+	public Department getDepartmentByName(String name) {
 
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Criteria crit = session.createCriteria(Department.class);
@@ -64,10 +64,6 @@ public class DepartmentDAO{
 		crit.add(crName);
 		@SuppressWarnings("unchecked")
 		List<Department> list = crit.list();
-		if (list.size() != 1) {
-			log.error("get " + list.size() + " " + title + "s");
-			throw new PersistException();
-		}
 		session.close();
 		log.info("get " + title + " with name " + name + ", amount = " + list.size());
  
