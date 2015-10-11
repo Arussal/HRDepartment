@@ -1,6 +1,6 @@
 package ui.util;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.ui.Model;
 
 public class WebAttributes {
 	
@@ -33,8 +33,8 @@ public class WebAttributes {
 	public static final String PASSWORD_SPACE_ERROR = "PASSWORD_SPACE_ERROR";
 	public static final String DIFFERENT_PASSWORDS_ERROR = "DIFFERENT_PASSWORDS_ERROR";
 
-	public static void loadAttribute(HttpServletRequest request, String attribute) {
-		request.setAttribute(attribute, attribute);
+	public static void loadAttribute(Model model, String attribute) {
+		model.addAttribute(attribute, attribute);
 	}
 	
 }

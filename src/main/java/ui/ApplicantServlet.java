@@ -2,14 +2,20 @@ package ui;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import dao.ApplicantDAO;
 import dao.CVFormApplicantDAO;
@@ -23,7 +29,8 @@ import ui.util.*;
 /**
  * Servlet implementation class ApplicantServlet
  */
-@WebServlet("/applicantServlet")
+
+@Controller
 public class ApplicantServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -31,37 +38,15 @@ public class ApplicantServlet extends HttpServlet {
 	private ApplicantDAO aplcntDao;
 	private CVFormApplicantDAO cvAplcntDao;
        
-    /**
-     * @throws ServletException 
-     * @see HttpServlet#HttpServlet()
-     */
-    public ApplicantServlet() throws ServletException {
+	
+    public ApplicantServlet() {
         super();
         daoFactory = DAOFactory.getFactory();
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		performTask(request, response);
-	}
-
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		performTask(request, response);
-	}
-
-
-	private void performTask(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    @RequestMapping("/applicantServlet")
+	private void performTask(@RequestParam Map<String, String> params, Model model, HttpSession session) {
 		
-		HttpSession session = request.getSession(false);
         Properties properties = (Properties) session.getAttribute("properties");
         daoFactory.setLogPath(properties);
 		aplcntDao = daoFactory.getApplicantDAO();
@@ -73,13 +58,13 @@ public class ApplicantServlet extends HttpServlet {
 			throw new ServletException();
 		}
         
-		request.setCharacterEncoding("UTF8");
+		//request.setCharacterEncoding("UTF8");
 		
-		int action = checkAction(request); 
+		int action = checkAction(params); 
 		if (1 == action) {
-			enter(request, response);
+			enter(params.get("login"), params.get("login"), model, session);
 		} else if (2 == action) {
-			changePassword(request, response);
+			changePassword(params, model);
 		} else if (3 == action) {
 			goToDeletePage(request, response);
 		} else if (4 == action) {
@@ -94,93 +79,88 @@ public class ApplicantServlet extends HttpServlet {
 	}	
 
 		
-	private int checkAction(HttpServletRequest request) {
+	private int checkAction(Map<String, String> params) {
 		
-		if (request.getParameter("enter") != null) {
+		if (params.get("enter") != null) {
 			return 1;
-		} else if (request.getParameter("changePassword") != null) {
+		} else if (params.get("changePassword") != null) {
 			return 2;
-		} else if (request.getParameter("delete") != null) {
+		} else if (params.get("delete") != null) {
 			return 3;
-		} else if (request.getParameter("confirmDelete") != null) {
+		} else if (params.get("confirmDelete") != null) {
 			return 4;
-		} else if (request.getParameter("registration") != null) {
+		} else if (params.get("registration") != null) {
 			return 5;	
-		} else if (request.getParameter("completeRegistration") != null) {
+		} else if (params.get("completeRegistration") != null) {
 			return 6;
 		}
 		return 0;
 	}
 
-	
-	private void enter(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-		String login = request.getParameter("login");
-		
+
+	private String enter(String login, String password, Model model, HttpSession session) {
 		Applicant applicant = null;
 		try {
 			applicant = aplcntDao.getApplicantByLogin(login);
 		} catch (PersistException e) {
 			if (null == applicant) {
-				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
-				forward(WebPath.ERROR_JSP, request, response);
+				WebAttributes.loadAttribute(model, WebAttributes.USER_NOT_FOUND);
+				WebAttributes.loadAttribute(model, WebAttributes.INVALID_APPLICANT_LOGIN);
+				return "redirect:/" + WebPath.ERROR_JSP;
 			}
 		}
 		if (applicant != null) {
-			String password = request.getParameter("password");
 			if (applicant.getPassword().equals(password)) {
-				HttpSession currentSession = request.getSession(false);
-				currentSession.setAttribute("applicant", applicant);
-				goToMainPage(request, response);
+				//session.setAttribute("applicant", applicant);
+				return "redirect:/" + WebPath.ERROR_JSP;
 			} else {
-				WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
-				forward(WebPath.ERROR_JSP, request, response);
+				WebAttributes.loadAttribute(model, WebAttributes.WRONG_PASSWORD);
+				WebAttributes.loadAttribute(model, WebAttributes.INVALID_APPLICANT_LOGIN);
+				return "redirect:/" + WebPath.APPLICANT_MAIN_JSP;
 			}
 		}
+		return "redirect:/";
 	}
 	
 
-	private void changePassword(HttpServletRequest request,	HttpServletResponse response) 
-			throws ServletException, IOException {
+	private String changePassword(Map <String, String> params, Model model) {
 		
-		String login = request.getParameter("login");
-		String oldPassword = request.getParameter("oldPassword");
-		String newPassword = request.getParameter("newPassword");
-		String repeatePassword = request.getParameter("repeatePassword");
+		String login = params.get("login");
+		String oldPassword = params.get("oldPassword");
+		String newPassword = params.get("newPassword");
+		String repeatePassword = params.get("repeatePassword");
 		
 		Applicant applicant = null;
 		try {
 			applicant = aplcntDao.getApplicantByLogin(login);
 		} catch (PersistException e) {
 			if (null == applicant) {
-				WebAttributes.loadAttribute(request, WebAttributes.USER_NOT_FOUND);
-				forward(WebPath.ERROR_JSP, request, response);
+				WebAttributes.loadAttribute(model, WebAttributes.USER_NOT_FOUND);
+				return "redirect:/" + WebPath.ERROR_JSP;
 			}
 		}
 		
 		if (oldPassword.equals(applicant.getPassword())) {
-			boolean registrationConditions = isCorrectRegistrationData(login, newPassword, repeatePassword, request);
+			boolean registrationConditions = isCorrectRegistrationData(login, newPassword, 
+					repeatePassword, params);
 			if (registrationConditions) {
 				applicant.setPassword(newPassword);
 				try {
 					aplcntDao.updateApplicant(applicant);
 				} catch (PersistException e) {
-					WebAttributes.loadAttribute(request, WebAttributes.INVALID_CHANGE_PASSWORD);
-					forward(WebPath.ERROR_JSP, request, response);
+					WebAttributes.loadAttribute(model, WebAttributes.INVALID_CHANGE_PASSWORD);
+					return "redirect:/" + WebPath.ERROR_JSP;
 				}
-				WebAttributes.loadAttribute(request, WebAttributes.SUCCESS_CHANGE_PASSWORD);		
-				forward(WebPath.APPLICANT_SUCCESS_JSP, request, response);
+				WebAttributes.loadAttribute(model, WebAttributes.SUCCESS_CHANGE_PASSWORD);
+				return "redirect:/" + WebPath.APPLICANT_SUCCESS_JSP;
 			} else {
-				WebAttributes.loadAttribute(request, WebAttributes.INVALID_CHANGE_PASSWORD);
-				forward(WebPath.ERROR_JSP, request, response);
+				WebAttributes.loadAttribute(model, WebAttributes.INVALID_CHANGE_PASSWORD);
+				return "redirect:/" + WebPath.ERROR_JSP;
 			}
 		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.WRONG_PASSWORD);
-			WebAttributes.loadAttribute(request, WebAttributes.INVALID_APPLICANT_LOGIN);
-			forward(WebPath.ERROR_JSP, request, response);
+			WebAttributes.loadAttribute(model, WebAttributes.WRONG_PASSWORD);
+			WebAttributes.loadAttribute(model, WebAttributes.INVALID_APPLICANT_LOGIN);
+			return "redirect:/" + WebPath.ERROR_JSP;
 		}
 		
 	}
@@ -196,7 +176,7 @@ public class ApplicantServlet extends HttpServlet {
 		String surname = request.getParameter("surname");
 		String secondName = request.getParameter("secondName");
 		
-		boolean registrationConditions = isCorrectRegistrationData(login, password, confirmedPassword, request);
+		boolean registrationConditions = isCorrectRegistrationData(login, password, confirmedPassword, params);
 		
 		if (registrationConditions) {
 			Applicant applicant = new Applicant();
@@ -218,26 +198,24 @@ public class ApplicantServlet extends HttpServlet {
 	}	
 	
 	
-	private void goToMainPage(HttpServletRequest request, HttpServletResponse response) 
+	@RequestMapping(WebPath.APPLICANT_MAIN_JSP)
+	private String goToMainPage(HttpSession session, Model model) 
 			throws ServletException, IOException {
 		
-		HttpSession session = request.getSession(false);
 		Applicant applicant = (Applicant) session.getAttribute("applicant");
 		if (applicant != null) {
 				List<CVFormApplicant> cvList = cvAplcntDao.getCVFormByName(applicant.getName());
-				request.setAttribute("cvList", cvList);
+				model.addAttribute("cvList", cvList);
 
-			forward(WebPath.APPLICANT_MAIN_JSP, request, response);
+			return "redirect:/" + WebPath.APPLICANT_MAIN_JSP;
 		} else {
-			forward(WebPath.APPLICANT_LOGIN_JSP, request, response);
+			return "redirect:/" + WebPath.APPLICANT_LOGIN_JSP;
 		}
 	}
 	
 	
-	private void goToRegistrationForm(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-			forward(WebPath.APPLICANT_REGISTRATE_JSP, request, response);
+	private String goToRegistrationForm() {
+			return "redirect:/" + WebPath.APPLICANT_REGISTRATE_JSP;
 	}
 
 	
@@ -286,11 +264,11 @@ public class ApplicantServlet extends HttpServlet {
 	}
 	
 	private boolean isCorrectRegistrationData(String login, String password,
-			String confirmedPassword, HttpServletRequest request) {
+			String confirmedPassword, Map <String, String> params) {
 		
 		boolean condition = true;
 		
-		if (request.getParameter("changePassword") == null) {
+		if (params.get("changePassword") == null) {
 			List<Applicant> applicants = null;
 			try {
 				applicants = aplcntDao.getAllApplicants();
@@ -349,7 +327,11 @@ public class ApplicantServlet extends HttpServlet {
 	
 
 	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		request.getRequestDispatcher(path).forward(request, response);
+			throws ServletException {
+		try {
+			request.getRequestDispatcher(path).forward(request, response);
+		} catch (IOException e) {
+			throw new ServletException();
+		}
 	}
 }

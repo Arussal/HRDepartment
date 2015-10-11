@@ -7,12 +7,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.web.bind.annotation.SessionAttributes;
+
 /**
  * @author Ruslan
  *
  */
 @Entity
 @Table(name="applicant")
+@SessionAttributes("applicant")
 public class Applicant {
 
 	@Id
