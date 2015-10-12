@@ -51,6 +51,18 @@ public class WebPath {
 	
 	public static final String ERROR_JSP = "error.jsp";
 	
+	public static String getMainPage() {
+		return "main";
+	}
+	public static String getApplicantMainPage() {
+		return "applicant";
+	}
+	public static String getApplicantLoginPage() {
+		return "applicant_login";
+	}
+	public static String getErrorPage() {
+		return "error";
+	}
 	
 	public static void loadPathValues(HttpSession session) {
 		
@@ -98,4 +110,5 @@ public class WebPath {
 		
 		session.setAttribute("ERROR_JSP", ERROR_JSP);
 	}
+
 }

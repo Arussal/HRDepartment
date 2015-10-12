@@ -42,7 +42,6 @@ public class HomePageServlet extends HttpServlet {
 				
 				properties.load(dbStream);
 				properties.load(logStream);
-				System.out.println(properties);
 			} finally {
 				dbStream.close();
 				logStream.close();
@@ -53,7 +52,7 @@ public class HomePageServlet extends HttpServlet {
 	      
 		session.setAttribute("properties", properties);
 		
-		ModelAndView model = new ModelAndView(WebPath.HOME_PAGE_JSP);
+		ModelAndView model = new ModelAndView(WebPath.getMainPage());
 		
 		return model;
 	}
