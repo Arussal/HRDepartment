@@ -36,37 +36,37 @@ public class ApplicantServlet extends HttpServlet {
 	private CVFormApplicantDAO cvAplcntDao;
        
 	
-    public ApplicantServlet() {
+    public ApplicantServlet() throws ServletException {
         super();
         daoFactory = DAOFactory.getFactory();
     }
 
+    
+    public void loadProperties(Properties properties) throws ServletException {
+    	 daoFactory.setLogPath(properties);
+         try {
+ 			DAOFactory.loadConnectProperties(properties);
+ 		} catch (NoSuitableDBPropertiesException e) {
+ 			throw new ServletException();
+ 		}
+    }
+    
+    
     @RequestMapping("/applicantServlet")
 	private ModelAndView performTask(@RequestParam Map<String, String> params, Model model, HttpSession session) 
 			throws ServletException {
-		
-        Properties properties = (Properties) session.getAttribute("properties");
-        daoFactory.setLogPath(properties);
-		aplcntDao = daoFactory.getApplicantDAO();
-		cvAplcntDao = daoFactory.getCVFormApplicantDAO();
-		
-        try {
-			DAOFactory.loadConnectProperties(properties);
-		} catch (NoSuitableDBPropertiesException e) {
-			throw new ServletException();
-		}
-        
+    	
         ModelAndView modelView = null;
 		//request.setCharacterEncoding("UTF8");
 		
 		int action = checkAction(params); 
 		if (1 == action) {
-			Applicant applicant = enter(params, model);
+			Applicant applicant = enter(params, model, session);
 			if (applicant != null) {
-				//goToMainPage(params, model, session);
-				modelView = new ModelAndView(WebPath.getApplicantMainPage());
+				session.setAttribute("applicant", applicant);
+				modelView = goToMainPage(params, model, session);
 			} else {
-				modelView = new ModelAndView("error");
+				modelView = new ModelAndView("error"); //TODO make mapping error servlet
 			}
 		} else if (2 == action) {
 			changePassword(params, model);
@@ -105,11 +105,15 @@ public class ApplicantServlet extends HttpServlet {
 	}
 
 
-	private Applicant enter(Map<String, String> params, Model model) {
+	private Applicant enter(Map<String, String> params, Model model, HttpSession session)
+			throws ServletException {
 		
 		Applicant applicant = null;
 		String login = params.get("login");
 		String password = params.get("password");
+		Properties properties = (Properties) session.getAttribute("properties");
+		loadProperties(properties);
+		aplcntDao = daoFactory.getApplicantDAO();
 		try {
 			applicant = aplcntDao.getApplicantByLogin(login);
 		} catch (PersistException e) {
@@ -207,15 +211,21 @@ public class ApplicantServlet extends HttpServlet {
 	}	
 	
 	
-	@RequestMapping("/applicant")
-	private ModelAndView goToMainPage(@RequestParam Map<String, String> params, Model model, HttpSession session) {
+	@RequestMapping("applicant/main")
+	private ModelAndView goToMainPage(@RequestParam Map<String, String> params, Model model, 
+			HttpSession session) throws ServletException {
 		
 		Applicant applicant = (Applicant) session.getAttribute("applicant");
+		Properties properties = (Properties) session.getAttribute("properties");
+		loadProperties(properties);
+		cvAplcntDao = daoFactory.getCVFormApplicantDAO();
 		ModelAndView modelView = null;
+		
 		if (applicant != null) {
 			List<CVFormApplicant> cvList = cvAplcntDao.getCVFormByName(applicant.getName());
 			model.addAttribute("cvList", cvList);
 			modelView = new ModelAndView(WebPath.getApplicantMainPage());
+			modelView.addObject("cvList", cvList);
 		} else {
 			modelView = new ModelAndView(WebPath.getApplicantLoginPage());
 		}
