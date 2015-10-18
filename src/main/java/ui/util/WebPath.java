@@ -3,7 +3,19 @@ package ui.util;
 
 import javax.servlet.http.HttpSession;
 
+@SuppressWarnings("unused")
 public class WebPath {
+	
+	private String mainPage;
+	private String applicantServlet; 
+	private String applicantMainPage;
+	private String applicantLoginPage;
+	private String applicantCompleteRegistrationPage;
+	private String applicantRegistratePage;
+	private String applicantDeletePage;
+	private String applicantChangePasswordPage;
+	private String errorPage;
+
 
 	public static final String APPLICANT_BASE_PAGE_SERVLET = "applicantServlet";
 	public static final String APPLICANT_CONTROLLER_SERVLET = "applicantCVControllerServlet";
@@ -21,14 +33,18 @@ public class WebPath {
 	
 	public static final String HOME_PAGE_JSP = "main.jsp";
 	
-	public static final String APPLICANT_MAIN_JSP = "applicant.jsp";
-	public static final String APPLICANT_LOGIN_JSP = "applicant_login.jsp";
-	public static final String APPLICANT_REGISTRATE_JSP = "applicant_registration.jsp";
-	public static final String APPLICANT_CREATE_CV_JSP = "applicant_createCV.jsp";
+	public static final String APPLICANT_MAIN_HTML = "applicant/main.html";
+	public static final String APPLICANT_LOGIN_HTML = "applicant/login.html";
+	public static final String APPLICANT_REGISTRATE_HTML = "applicant/registrate.html";
+	public static final String APPLICANT_CREATE_CV_HTML = "applicant/cvform/create.html";
 	public static final String APPLICANT_EDIT_CV_JSP = "applicant_editCV.jsp";
-	public static final String APPLICANT_CHANGE_PASSWORD_JSP = "changeApplicantManager.jsp";
+	public static final String APPLICANT_CHANGE_PASSWORD_HTML = "applicant/change-password.html";
 	public static final String APPLICANT_SUCCESS_JSP = "applicant_success_operation.jsp";
-	public static final String APPLICANT_DELETE_JSP = "delete_applicant.jsp";
+	public static final String APPLICANT_DELETE_HTML = "applicant/delete.html";
+	public static final String APPLICANT_CONFIRM_DELETE_HTML = "applicant/confirm-delete.html";
+	public static final String APPLICANT_COMPLETE_REGISTRATION_HTML = "applicant/complete-registration.html";
+	public static final String APPLICANT_COMPLETE_DELETE_HTML = "applicant/complete-delete.html";
+	public static final String APPLICANT_COMPLETE_CHANGE_PASSWORD_HTML = "applicant/complete-change-password.html";
 	
 	public static final String HR_APPLICAION_FORMS_JSP = "applications.jsp";
 	public static final String HR_CANDIDATES_JSP = "candidates.jsp";
@@ -50,19 +66,49 @@ public class WebPath {
 	public static final String MANAGER_DELETE_JSP = "delete_manager.jsp";
 	
 	public static final String ERROR_JSP = "error.jsp";
+
 	
+
 	public static String getMainPage() {
 		return "main";
 	}
+	public static String getApplicantServlet() {
+		return "applicantServlet";
+	}
 	public static String getApplicantMainPage() {
-		return "applicant";
+		return "applicant/main";
 	}
 	public static String getApplicantLoginPage() {
-		return "applicant_login";
+		return "applicant/login";
+	}
+	public static String getApplicantCompleteRegistrationPage() {
+		return "applicant/complete_registration";
+	}
+	public static String getApplicantRegistratePage() {
+		return "applicant/registrate";
+	}
+	public static String getApplicantDeletePage() {
+		return "applicant/delete";
+	}
+	public static String getApplicantConfirmDeletePage() {
+		return "applicant/confirm_delete";
+	}
+	public static String getApplicantCompleteDeletePage() {
+		return "applicant/complete_delete";
+	}
+	public static String getApplicantCompleteChangePasswordPage() {
+		return "applicant/complete_change_password";
+	}
+	public static String getApplicantChangePasswordPage() {
+		return "applicant/change_password";
+	}
+	public static String getApplicantCreateCVPage() {
+		return "applicant/cvform/create";
 	}
 	public static String getErrorPage() {
 		return "error";
 	}
+	
 	
 	public static void loadPathValues(HttpSession session) {
 		
@@ -80,14 +126,17 @@ public class WebPath {
 		
 		session.setAttribute("HOME_PAGE_JSP", HOME_PAGE_JSP);
 		
-		session.setAttribute("APPLICANT_MAIN_JSP", APPLICANT_MAIN_JSP);
-		session.setAttribute("APPLICANT_LOGIN_JSP", APPLICANT_LOGIN_JSP);
-		session.setAttribute("APPLICANT_REGISTRATE_JSP", APPLICANT_REGISTRATE_JSP);
-		session.setAttribute("APPLICANT_CREATE_CV_JSP", APPLICANT_CREATE_CV_JSP);
+		session.setAttribute("APPLICANT_MAIN_HTML", APPLICANT_MAIN_HTML);
+		session.setAttribute("APPLICANT_LOGIN_HTML", APPLICANT_LOGIN_HTML);
+		session.setAttribute("APPLICANT_REGISTRATE_HTML", APPLICANT_REGISTRATE_HTML);
+		session.setAttribute("APPLICANT_CREATE_CV_HTML", APPLICANT_CREATE_CV_HTML);
 		session.setAttribute("APPLICANT_EDIT_CV_JSP", APPLICANT_EDIT_CV_JSP);
-		session.setAttribute("APPLICANT_CHANGE_PASSWORD_JSP", APPLICANT_CHANGE_PASSWORD_JSP);
+		session.setAttribute("APPLICANT_CHANGE_PASSWORD_HTML", APPLICANT_CHANGE_PASSWORD_HTML);
 		session.setAttribute("APPLICANT_SUCCESS_JSP", APPLICANT_SUCCESS_JSP);
-		session.setAttribute("APPLICANT_DELETE_JSP", APPLICANT_DELETE_JSP);
+		session.setAttribute("APPLICANT_DELETE_HTML", APPLICANT_DELETE_HTML);
+		session.setAttribute("APPLICANT_COMPLETE_REGISTRATION_HTML", APPLICANT_COMPLETE_REGISTRATION_HTML);
+		session.setAttribute("APPLICANT_COMPLETE_DELETE_HTML", APPLICANT_COMPLETE_DELETE_HTML);
+		session.setAttribute("APPLICANT_COMPLETE_CHANGE_PASSWORD_HTML", APPLICANT_COMPLETE_CHANGE_PASSWORD_HTML);
 		
 		session.setAttribute("HR_APPLICAION_FORMS_JSP", HR_APPLICAION_FORMS_JSP);
 		session.setAttribute("HR_CANDIDATES_JSP", HR_CANDIDATES_JSP);
@@ -110,5 +159,6 @@ public class WebPath {
 		
 		session.setAttribute("ERROR_JSP", ERROR_JSP);
 	}
+
 
 }

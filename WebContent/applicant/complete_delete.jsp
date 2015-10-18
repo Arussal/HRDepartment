@@ -4,10 +4,11 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Home Page - HRDepartment</title>
+<title>Delete success - Applicant - HRDepartment</title>
 </head>
 <body>
-	<h2><a href="${MANAGER_LOGIN_JSP}">Раздел менеджера по кадрам</a></h2>
-	<h2><a href="${APPLICANT_BASE_PAGE_SERVLET}">Раздел соискателя</a></h2>
+		<h1>Соискатель успешно удален</h1>
+		<hr />
+		<a href="${pageContext.request.contextPath}/${HOME_PAGE_JSP}">Выйти из раздела</a>	
 </body>
 </html>

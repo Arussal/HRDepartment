@@ -9,7 +9,7 @@
 <body>
 	<h1>Смена пароля</h1>
 	<hr/>
-	<form action="${APPLICANT_BASE_PAGE_SERVLET}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_COMPLETE_CHANGE_PASSWORD_HTML}" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>
@@ -28,11 +28,11 @@
 				<td><input type="password" name="repeatePassword"/></td>
 			</tr>
 			<tr>
-				<td><input type="submit" name="changePassword" value="Cменить пароль"></td>
+				<td><input type="submit" name="confirmChangePassword" value="Cменить пароль"></td>
 			</tr>
 		</table>
 	</form>
 	<br />
-	<a href="${APPLICANT_LOGIN_JSP}">Назад</a> <a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
+	<a href="${pageContext.request.contextPath}/${APPLICANT_LOGIN_JSP}">Назад</a> <a href="${pageContext.request.contextPath}/${HOME_PAGE_JSP}">Выйти из раздела</a>
 </body>
 </html>

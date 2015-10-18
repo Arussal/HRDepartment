@@ -29,8 +29,15 @@ public class Applicant {
 	@Column(name="password")
 	private String password;
 	
+	@Column(name="surname")
+	private String surname;
+	
 	@Column(name="name")
 	private String name;
+	
+	@Column(name="last_name")
+	private String lastName;
+
 
 	public Applicant() {
 		super();
@@ -66,6 +73,22 @@ public class Applicant {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 }

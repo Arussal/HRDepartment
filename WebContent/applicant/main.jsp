@@ -11,7 +11,7 @@
 	<h1>Мои резюме</h1>
 	<hr />
 	
-	<form action="${APPLICANT_CONTROLLER_SERVLET}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_CONTROLLER_SERVLET}" method="post">
 			<input type="submit" name="createCV" value="Создать" />
 			<input type="submit" name="editCV" value="Редактировать" />
 			<input type="submit" name="deleteCV" value="Удалить" />
@@ -52,6 +52,7 @@
 	</form>
 
 	<br />	
-	<a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
+	<a href="${pageContext.request.contextPath}/${HOME_PAGE_JSP}">Выйти из раздела</a>
+	${footer}
 </body>
 </html>

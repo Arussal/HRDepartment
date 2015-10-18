@@ -9,11 +9,11 @@
 <body>
 	<h1>Регистрация нового соискателя</h1>
 	<hr/>
-	<form action="${APPLICANT_BASE_PAGE_SERVLET}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_COMPLETE_REGISTRATION_HTML}" method="post">
 		<table>
 			<tr>
 				<td>Имя</td>
-				<td><input type="text" name="firstName"></td>
+				<td><input type="text" name="name"></td>
 			</tr>
 			<tr>
 				<td>Фамилия</td>
@@ -21,7 +21,7 @@
 			</tr>
 			<tr>
 				<td>Отчество</td>
-				<td><input type="text" name="secondName"></td>
+				<td><input type="text" name="lastName"></td>
 			</tr>
 			<tr>
 				<td>Логин (6-10 смволов)</td>
@@ -41,6 +41,6 @@
 		</table>
 	</form>
 	<br />
-	<a href="${APPLICANT_LOGIN_JSP}">Назад</a> <a href="${HOME_PAGE_JSP}">Выйти из раздела</a>
+	<a href="${pageContext.request.contextPath}/${APPLICANT_LOGIN_JSP}">Назад</a> <a href="${pageContext.request.contextPath}/${HOME_PAGE_JSP}">Выйти из раздела</a>
 </body>
 </html>

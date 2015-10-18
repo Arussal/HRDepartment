@@ -14,6 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import dao.CVFormApplicantDAO;
 import dao.SkillApplicantDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
@@ -28,7 +35,7 @@ import ui.util.*;
 /**
  * Servlet implementation class ApplicantCVControllerServlet
  */
-@WebServlet("/applicantCVControllerServlet")
+@Controller
 public class ApplicantCVControllerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
@@ -46,35 +53,13 @@ public class ApplicantCVControllerServlet extends HttpServlet {
         daoFactory = DAOFactory.getFactory();
     }
 
-	/**
-	 * @throws IOException 
-	 * @throws ServletException 
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		performTask(request, response);
 
-	}
-
-	/**
-	 * @throws IOException 
-	 * @throws ServletException 
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		performTask(request, response);
-	}
-
-	
-	private void performTask(HttpServletRequest request, HttpServletResponse response) 
+    @RequestMapping("applicantCVControllerServlet")
+	private void performTask(@RequestParam Map<String, String> params, HttpSession session) 
 			throws ServletException, IOException {
 		
-		HttpSession session = request.getSession(false);
-        Properties properties = (Properties) session.getAttribute("properties");
-        this.properties = properties;
-        daoFactory.setLogPath(properties);
+		Properties properties = (Properties) session.getAttribute("properties");
+		loadProperties(properties);
         cvApplicantDao = daoFactory.getCVFormApplicantDAO();
         skillDao = daoFactory.getSkillApplicantDAO();
         
@@ -84,52 +69,31 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			throw new ServletException();
 		}
 	    
-		request.setCharacterEncoding("UTF-8");
-			
-		int action = checkActiion(request);
-		if (1 == action) {
-			forward(WebPath.APPLICANT_CREATE_CV_JSP, request, response);
-		} else if (2 == action) {
-			createNewCV(request, response);
-		} else if (3 == action) {
-			editCV(request, response);
-		} else if (4 == action) {
-			saveChangesCV(request, response); 
-		} else if (5 == action) {
-			deleteCV(request, response);
-		} else if (6 == action) {
-			sendCV(request, response);
-		} else {
-			forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
-		}
-	}
+		//request.setCharacterEncoding("UTF-8");
+    }
 
-
-	private int checkActiion(HttpServletRequest request) {
-		if (request.getParameter("createCV") != null) {
-			return 1;
-		} else if (request.getParameter("confirmCreateCV") != null) {
-			return 2;
-		} else if (request.getParameter("editCV") != null) {
-			return 3;
-		} else if (request.getParameter("saveChanges") != null) {
-			return 4;
-		} else if (request.getParameter("deleteCV") != null) {
-			return 5;
-		} else if (request.getParameter("sendCV") != null) {
-			return 6;
+    public void loadProperties(Properties properties) throws ServletException {
+    	daoFactory.setLogPath(properties);
+        try {
+			DAOFactory.loadConnectProperties(properties);
+		} catch (NoSuitableDBPropertiesException e) {
+			throw new ServletException();
 		}
-		return 0;
-	}
-	
-	
-	private void createNewCV(HttpServletRequest request, HttpServletResponse response) 
+    }
+    
+    
+    @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.GET)
+	private ModelAndView getCreateCVFormPage(){
+    	return new ModelAndView(WebPath.getApplicantCreateCVPage());
+    }
+    
+    @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.POST)
+	private ModelAndView createNewCV(@ModelAttribute ("cvform") CVFormApplicant cvform) 
 			throws ServletException, IOException {
 		
-		CVFormApplicant cv = getDataFromForm(request, response);
-		List<SkillApplicantCV> skills = getSkillFromForm(request);
-		cv.setSendStatus("Not sent");
-		CVFormApplicant cvApplicant = cvApplicantDao.createCVForm(cv);
+		cvform.setSendStatus("Not sent");
+		CVFormApplicant cvApplicant = cvApplicantDao.createCVForm(cvform);
+		
 		for (SkillApplicantCV oneSkill : skills) {
 			oneSkill.setCvApplicant(cvApplicant);
 		}

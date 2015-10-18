@@ -9,7 +9,7 @@
 <body>
 	<h1>Вход в раздел</h1>
 	<hr />
-	<form action="${APPLICANT_BASE_PAGE_SERVLET}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_MAIN_HTML}" method="POST">
 		<table>
 			<tr>
 				<td>Логин</td>
@@ -21,11 +21,14 @@
 			</tr>
 			<tr>
 				<td><input type="submit" name="enter" value="Войти"></td>
-				<td><input type="submit" name="registration" value="Зарегестрироваться"></td>
-				<td><input type="submit" name="delete" value="Удалить соискателя"></td>
+			</tr>
+			<tr>
+				<td><a href="${pageContext.request.contextPath}/${APPLICANT_REGISTRATE_HTML}">Зарегестрироваться</a></td>
+				<td><a href="${pageContext.request.contextPath}/${APPLICANT_DELETE_HTML}">Удалить соискателя</a></td>
+				<td><a href="${pageContext.request.contextPath}/${APPLICANT_CHANGE_PASSWORD_HTML}">Сменить пароль</a></td>
 			</tr>
 		</table>
-		<a href="${APPLICANT_CHANGE_PASSWORD_JSP}">Сменить пароль</a>
 	</form>
+	${footer}
 </body>
 </html>

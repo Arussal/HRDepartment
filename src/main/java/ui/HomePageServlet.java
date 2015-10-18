@@ -51,10 +51,8 @@ public class HomePageServlet extends HttpServlet {
 		}
 	      
 		session.setAttribute("properties", properties);
+		session.setAttribute("webPath", new WebPath());
 		
-		ModelAndView model = new ModelAndView(WebPath.getMainPage());
-		
-		return model;
+		return new ModelAndView(WebPath.getMainPage());
 	}
-	
 }

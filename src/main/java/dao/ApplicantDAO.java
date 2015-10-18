@@ -22,7 +22,7 @@ public class ApplicantDAO {
 	}
 
 		
-	public Applicant createApplicant(Applicant applicant) throws PersistException{
+	public Applicant createApplicant(Applicant applicant) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction transaction = session.beginTransaction();
@@ -64,7 +64,7 @@ public class ApplicantDAO {
 	}
 	
 	
-	public List<Applicant> getAllApplicants() throws PersistException {
+	public List<Applicant> getAllApplicants() {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		String selectQuery = "from Applicant a";
@@ -92,24 +92,14 @@ public class ApplicantDAO {
 	}
 	
 	
-	public void deleteApplicant(Applicant applicant) throws PersistException {
+	public void deleteApplicant(Applicant applicant) {
 		
-		boolean applicantPersisted = isApplicantPersisted(applicant);
-				
-		if (applicantPersisted) {
-			Session session = HibernateUtil.getSessionFactory().openSession();
-			Transaction transaction = session.beginTransaction();
-			try {
-				session.delete(applicant);
-				transaction.commit();
-			} finally {
-				session.close();
-			}
-			log.info("delete applicant with id " + applicant.getId());
-		} else {
-			log.error("applicant not persisted yet");
-			throw new PersistException("applicant not persisted yet");
-		}
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+		session.delete(applicant);
+		transaction.commit();
+		log.info("delete applicant with id " + applicant.getId());
+
 	}
 	
 		
