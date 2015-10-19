@@ -55,8 +55,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 
 
     @RequestMapping("applicantCVControllerServlet")
-	private void performTask(@RequestParam Map<String, String> params, HttpSession session) 
-			throws ServletException, IOException {
+	private ModelAndView performTask(HttpSession session) throws ServletException {
 		
 		Properties properties = (Properties) session.getAttribute("properties");
 		loadProperties(properties);
@@ -68,9 +67,11 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		} catch (NoSuitableDBPropertiesException e) {
 			throw new ServletException();
 		}
-	    
+	    	    
 		//request.setCharacterEncoding("UTF-8");
+	    return new ModelAndView(WebPath.getApplicantMainPage());
     }
+    
 
     public void loadProperties(Properties properties) throws ServletException {
     	daoFactory.setLogPath(properties);
@@ -82,10 +83,26 @@ public class ApplicantCVControllerServlet extends HttpServlet {
     }
     
     
+    @RequestMapping("applicantCVDispatcher")
+    public String dispatchRequest(@RequestParam Map<String, String> params) {
+    	
+    	if (params.get("createCV") != null) {
+    		return "redirect:/" + WebPath.APPLICANT_CREATE_CV_HTML;
+    	} else if (params.get("editCV") != null) {
+    		return "redirect:/" + WebPath.APPLICANT_EDIT_CV_HTML;
+    	} else if (params.get("deleteCV") != null) {
+    		return "redirect:/" + WebPath.APPLICANT_DELETE_CV_HTML;
+    	} else {
+    		return "redirect:/" + WebPath.APPLICANT_SEND_CV_HTML;
+    	}
+    }
+    
+    
     @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.GET)
 	private ModelAndView getCreateCVFormPage(){
     	return new ModelAndView(WebPath.getApplicantCreateCVPage());
     }
+    
     
     @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.POST)
 	private ModelAndView createNewCV(@ModelAttribute ("cvform") CVFormApplicant cvform) 
@@ -107,8 +124,15 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
 	}
 	
+    
+    @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.GET)
+    private ModelAndView getEditApplicantCVPage(){
+    	return new ModelAndView(WebPath.getApplicantEditCVPage());
+    }
 
-	private void editCV(HttpServletRequest request, HttpServletResponse response) 
+    
+    @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.POST)
+	private ModelAndView editCV(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException { 
 		
 		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
@@ -158,6 +182,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	}
 
 
+	@RequestMapping("")
 	private void sendCV(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
@@ -185,11 +210,9 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	}
 
 	
-	private void deleteCV(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
-		
+	@RequestMapping (value = "appilcant/cvform/delete.html", method = RequestMethod.POST)
+	private ModelAndView deleteCV(@RequestParam ("cvId") int[] idList) throws ServletException {
+				
 		for (Integer id : idList) {
 			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
 			try {
@@ -199,7 +222,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			}
 		}
 		
-		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
+		return new ModelAndView(WebPath.getApplicantMainPage());
 	}
 	
 
@@ -286,12 +309,14 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	}
 
 
-	private List<Integer> getSelectedCVFormsId(HttpServletRequest request,
-			String parameter) {
+	private List<Integer> getSelectedCVFormsId(Map<String, String> params) {
+
+//	(HttpServletRequest request,
+//			String parameter) {
 		
 		List<Integer> idList = new ArrayList<Integer>();
 		Map<String, String[]> parameters = request.getParameterMap();
-		for (String key : parameters.keySet()) {
+		for (String key : params.keySet()) {
 			if (key.equals(parameter)){
 				for (String values : parameters.get(key)) {
 					idList.add(Integer.parseInt(values));

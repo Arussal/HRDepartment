@@ -10,7 +10,7 @@
 <body>
 	<h1>Удалить пользователя</h1>
 	<hr />
-	<form action="${pageContext.request.contextPath}/${APPLICANT_CONFIRM_DELETE_HTML}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_DELETE_HTML}" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>

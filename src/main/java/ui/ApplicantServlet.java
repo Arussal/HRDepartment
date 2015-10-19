@@ -108,7 +108,7 @@ public class ApplicantServlet extends HttpServlet {
 			if (foundedApplicant.getPassword().equals(applicant.getPassword())) {
 				session.setAttribute("applicant", foundedApplicant);
 				List<CVFormApplicant> cvList = cvAplcntDao.getCVFormByName(foundedApplicant.getName());
-				modelView = new ModelAndView(WebPath.getApplicantMainPage());
+				modelView = new ModelAndView(WebPath.getApplicantCVControllerServlet());
 				modelView.addObject("cvList", cvList);
 			} else {
 				modelView = new ModelAndView(WebPath.getErrorPage());
@@ -125,13 +125,13 @@ public class ApplicantServlet extends HttpServlet {
 	}
 	
 	
-	@RequestMapping("applicant/change-password.html")
+	@RequestMapping(value = "applicant/change-password.html", method = RequestMethod.GET)
 	private ModelAndView goToChangePasswordPage() {
 		return new ModelAndView(WebPath.getApplicantChangePasswordPage());
 	}
 	
 	
-	@RequestMapping("applicant/complete-change-password.html")
+	@RequestMapping(value = "applicant/change-password.html", method = RequestMethod.POST)
 	private ModelAndView changePassword(@RequestParam Map <String, String> params) 
 			throws ServletException {
 		
@@ -165,7 +165,6 @@ public class ApplicantServlet extends HttpServlet {
 					WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_CHANGE_PASSWORD);
 				}
 				modelView.setViewName(WebPath.getApplicantCompleteChangePasswordPage());
-				WebAttributes.loadAttribute(modelView, WebAttributes.SUCCESS_CHANGE_PASSWORD);
 			} else {
 				modelView.setViewName(WebPath.getErrorPage());
 				WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_CHANGE_PASSWORD);
@@ -179,13 +178,13 @@ public class ApplicantServlet extends HttpServlet {
 	}
 
 	
-    @RequestMapping("applicant/registrate.html")
+    @RequestMapping(value = "applicant/registrate.html", method = RequestMethod.GET)
     private ModelAndView getRegistrationPage() {
     	return new ModelAndView(WebPath.getApplicantRegistratePage());
 	}
     
 	
-    @RequestMapping(value="applicant/complete-registration.html", method=RequestMethod.POST)
+    @RequestMapping(value = "applicant/registrate.html", method=RequestMethod.POST)
 	private ModelAndView registrateApplicant(@ModelAttribute("applicant") Applicant applicant, 
 			@RequestParam("confirmPassword") String confirmPassword) {
 						
@@ -206,13 +205,13 @@ public class ApplicantServlet extends HttpServlet {
 	}	
 	
 	
-	@RequestMapping("applicant/delete.html")
+	@RequestMapping(value = "applicant/delete.html", method = RequestMethod.GET)
 	private ModelAndView getDeletePage() {
 		return new ModelAndView(WebPath.getApplicantDeletePage());
 	}
 	
 	
-	@RequestMapping("applicant/confirm-delete.html")
+	@RequestMapping(value = "applicant/delete.html", method = RequestMethod.POST)
 	private ModelAndView deleteApplicant(@ModelAttribute("applicant") Applicant applicant, 
 			HttpSession session) {
 		
@@ -241,7 +240,7 @@ public class ApplicantServlet extends HttpServlet {
 	}
 	
 	
-	@RequestMapping("applicant/complete-delete.html")
+	@RequestMapping("applicant/success-delete.html")
 	private ModelAndView confirmDeleteApplicant(@RequestParam Map<String, String> params, 
 			HttpSession session) {
 		

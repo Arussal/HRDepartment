@@ -11,7 +11,7 @@
 	<h1>Мои резюме</h1>
 	<hr />
 	
-	<form action="${pageContext.request.contextPath}/${APPLICANT_CONTROLLER_SERVLET}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_CONTROLLER_SERVLET_DISPATCHER}" method="post">
 			<input type="submit" name="createCV" value="Создать" />
 			<input type="submit" name="editCV" value="Редактировать" />
 			<input type="submit" name="deleteCV" value="Удалить" />

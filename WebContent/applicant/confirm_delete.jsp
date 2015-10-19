@@ -9,7 +9,7 @@
 <body>
 	<h1>Подтвердить удаление пользователя</h1>
 	<hr />
-	<form action="${pageContext.request.contextPath}/${APPLICANT_COMPLETE_DELETE_HTML}" method="POST">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_SUCCESS_DELETE_HTML}" method="post">
 		Удалить соискателя: ${applicantToDelete.login} <br/>
 		<input type="submit" name="apply" value="OK">
 		<input type="submit" name="cancel" value="ОТМЕНА">

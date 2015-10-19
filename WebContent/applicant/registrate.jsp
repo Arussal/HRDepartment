@@ -9,7 +9,7 @@
 <body>
 	<h1>Регистрация нового соискателя</h1>
 	<hr/>
-	<form action="${pageContext.request.contextPath}/${APPLICANT_COMPLETE_REGISTRATION_HTML}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_REGISTRATE_HTML}" method="post">
 		<table>
 			<tr>
 				<td>Имя</td>

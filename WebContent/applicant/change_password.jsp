@@ -9,7 +9,7 @@
 <body>
 	<h1>Смена пароля</h1>
 	<hr/>
-	<form action="${pageContext.request.contextPath}/${APPLICANT_COMPLETE_CHANGE_PASSWORD_HTML}" method="post">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_CHANGE_PASSWORD_HTML}" method="post">
 		<table>
 			<tr>
 				<td>Логин</td>
