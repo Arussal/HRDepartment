@@ -105,8 +105,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
     
     
     @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.POST)
-	private ModelAndView createNewCV(@ModelAttribute ("cvform") CVFormApplicant cvform) 
-			throws ServletException, IOException {
+	private ModelAndView createNewCV(@ModelAttribute ("cvform") CVFormApplicant cvform) {
 		
 		cvform.setSendStatus("Not sent");
 		CVFormApplicant cvApplicant = cvApplicantDao.createCVForm(cvform);
@@ -126,28 +125,26 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
     
     @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.GET)
-    private ModelAndView getEditApplicantCVPage(){
-    	return new ModelAndView(WebPath.getApplicantEditCVPage());
-    }
+	private ModelAndView editCV(@RequestParam ("cvId") int[] idList) { 
+		
+    	ModelAndView modelView = null;
+    	modelView = makeErrorNoOneSelectedItem(idList);
+    	if (modelView != null) {
+    		return modelView;
+    	}
+		modelView = makeErrorTooManySelectedItem(idList);
+		if (modelView != null) {
+    		return modelView;
+    	}
+		CVFormApplicant cv = cvApplicantDao.getCVFormById(idList[0]);
 
-    
-    @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.POST)
-	private ModelAndView editCV(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException { 
-		
-		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
-		
-		makeErrorNoOneSelectedItem(idList, request, response);
-		makeErrorTooManySelectedItem(idList,request, response);
-		
-		CVFormApplicant cv = cvApplicantDao.getCVFormById(idList.get(0));
-
-		request.setAttribute("cv", cv);
-		forward(WebPath.APPLICANT_EDIT_CV_JSP, request, response);
-		
+		modelView = new ModelAndView(WebPath.getApplicantEditCVPage());
+		modelView.addObject("cv", cv);
+		return modelView;
 	}
 
 
+    @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.POST)
 	private void saveChangesCV(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
@@ -212,7 +209,12 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
 	@RequestMapping (value = "appilcant/cvform/delete.html", method = RequestMethod.POST)
 	private ModelAndView deleteCV(@RequestParam ("cvId") int[] idList) throws ServletException {
-				
+		
+		ModelAndView modelView = makeErrorNoOneSelectedItem(idList);
+    	if (modelView != null) {
+    		return modelView;
+    	}
+		
 		for (Integer id : idList) {
 			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
 			try {
@@ -225,63 +227,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		return new ModelAndView(WebPath.getApplicantMainPage());
 	}
 	
-
-	private CVFormApplicant getDataFromForm(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
 		
-		CVFormApplicant newCV = new CVFormApplicant();
-		boolean emptyFields = isEmptyFields(request);
-
-		if (!emptyFields) {
-			String age = request.getParameter("age");
-			String education = request.getParameter("education");
-			String email = request.getParameter("email");
-			String phone = request.getParameter("phone");
-			String post = request.getParameter("post");
-			String workExpirience = request.getParameter("expirience");
-			String salary = request.getParameter("desiredSalary");
-			String addInfo = request.getParameter("addInfo");
-		
-			
-			//check fields with numbers
-			Map<String, String> intData = new HashMap<String, String>();
-			intData.put("age", age);
-			intData.put("salary", salary);
-			intData.put("workExpirience", workExpirience);
-			
-			boolean wrongFields = isWrongDataFields(intData, request);
-			
-			if (!wrongFields) {
-					
-				int parsedAge = Integer.parseInt(age);
-				int parsedSalary = Integer.parseInt(salary);
-				int parsedWorkExpirience = Integer.parseInt(workExpirience);
-				
-				HttpSession session = request.getSession(false);
-				Applicant applicant = (Applicant)session.getAttribute("applicant"); 
-				newCV.setName(applicant.getName());
-				newCV.setAge(parsedAge);
-				newCV.setEducation(education);
-				newCV.setEmail(email);
-				newCV.setPhone(phone);
-				newCV.setPost(post);
-				newCV.setAdditionalInfo(addInfo);
-				newCV.setWorkExpirience(parsedWorkExpirience);
-				newCV.setDesiredSalary(parsedSalary);
-				
-			} else {
-				WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA);
-				forward(WebPath.ERROR_JSP, request, response);
-			}
-		} else {
-			WebAttributes.loadAttribute(request, WebAttributes.WRONG_DATA);
-			forward(WebPath.ERROR_JSP, request, response);
-		}
-		
-		return newCV; 
-		
-	}
-	
 	private List<SkillApplicantCV> getSkillFromForm(HttpServletRequest request){
 		
 		String skills = request.getParameter("skills");
@@ -308,86 +254,23 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		return applicantSkills;
 	}
 
-
-	private List<Integer> getSelectedCVFormsId(Map<String, String> params) {
-
-//	(HttpServletRequest request,
-//			String parameter) {
-		
-		List<Integer> idList = new ArrayList<Integer>();
-		Map<String, String[]> parameters = request.getParameterMap();
-		for (String key : params.keySet()) {
-			if (key.equals(parameter)){
-				for (String values : parameters.get(key)) {
-					idList.add(Integer.parseInt(values));
-				}
-			}
-		}
-		return idList;
-	}
-
 	
-	private boolean isEmptyFields(HttpServletRequest request) {
-		
-		Map<String, String[]> parameters = request.getParameterMap();
-		List<String> emptyFieldsList = new ArrayList<String>();
-		for (String key : parameters.keySet()) {
-			String val = request.getParameter(key);
-			if (val.equals("")) {
-				emptyFieldsList.add(key);
-			}
+	private ModelAndView makeErrorNoOneSelectedItem(int[] idList) {
+		if (0 == idList.length) {
+			ModelAndView modelView = new ModelAndView(WebPath.getErrorPage());
+			WebAttributes.loadAttribute(modelView, WebAttributes.NO_ONE_ITEM_SELECTED);
+			return modelView;
 		}
-		if (emptyFieldsList.size() > 0) {
-			WebAttributes.loadAttribute(request,  WebAttributes.EMPTY_FIELDS_LIST);
-			request.setAttribute("emptyFieldsList", emptyFieldsList);
-			return true;
-		}
-		return false;
-	}
-
-	
-	private boolean isWrongDataFields(Map<String, String> map, HttpServletRequest request) {
-		
-		List<String> wrongFieldsList = new ArrayList<String>();
-		for (String data : map.keySet()) {
-			try {
-				int value = Integer.parseInt(map.get(data));
-				if (value < 0) {
-					wrongFieldsList.add(data);	
-				}
-			} catch (NumberFormatException e){
-				wrongFieldsList.add(data);
-			}
-		}
-		
-		if (wrongFieldsList.size() > 0) {
-			WebAttributes.loadAttribute(request,  WebAttributes.WRONG_DATA_FIELDS_LIST);
-			request.setAttribute("wrongFieldsList", wrongFieldsList);
-			return true;
-		}
-		return false;
+		return null;
 	}
 	
 	
-	private void makeErrorNoOneSelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException, IOException {
-		if (0 == idList.size()) {
-			WebAttributes.loadAttribute(request, WebAttributes.NO_ONE_ITEM_SELECTED);
-			forward(WebPath.ERROR_JSP, request, response);
+	private ModelAndView makeErrorTooManySelectedItem(int[] idList) {
+		if (idList.length > 1) {
+			ModelAndView modelView = new ModelAndView(WebPath.getErrorPage());
+			WebAttributes.loadAttribute(modelView, WebAttributes.TOO_MANY_ITEMS_SELECTED);
+			return modelView;
 		}
-	}
-	
-	
-	private void makeErrorTooManySelectedItem(List<Integer> idList, HttpServletRequest request, 
-			HttpServletResponse response) throws ServletException, IOException {
-		if (idList.size() > 1) {
-			WebAttributes.loadAttribute(request, WebAttributes.TOO_MANY_ITEMS_SELECTED);
-			forward(WebPath.ERROR_JSP, request, response);
-		}
-	}
-	
-	private void forward(String path, HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-			request.getRequestDispatcher(path).forward(request, response);
+		return null;
 	}
 }
