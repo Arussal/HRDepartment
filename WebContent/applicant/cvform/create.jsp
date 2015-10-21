@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -9,7 +12,7 @@
 <body>
 	<h1>Создать новое резюме</h1>
 	<hr/>
-	<form action="${APPLICANT_CONTROLLER_SERVLET}" method="post">
+	<form:form id="appCVform" action="${APPLICANT_CONTROLLER_SERVLET}" method="POST" modelAttribute="appilcantCV">
 		<table>
 			<tr>
 				<td>Возраст</td>
@@ -33,7 +36,11 @@
 			</tr>
 			<tr>
 				<td>Навыки</td>
-				<td><input type="text" name="skills" /></td>
+				<td>
+					<c:forEach var="skill" items="${appilcantCV.skills}" varStatus="i">
+						<form:input path="skill[${i.index}].name" type="text"/>
+					</c:forEach>
+				</td>
 			</tr>
 			<tr>
 				<td>Опыт работы</td>
@@ -50,6 +57,6 @@
 		</table>
 		<input type="submit" name="confirmCreateCV" value="Создать"/>
 		<input type="submit" name="cancel" value="Отмена"/>
-	</form>
+	</form:form>
 </body>
 </html>

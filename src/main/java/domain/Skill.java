@@ -15,7 +15,7 @@ public class Skill {
 	protected Integer id;
 
 	@Column(name="skill")
-	protected String skill;
+	protected String name;
 	
 	public Skill() {
 	}
@@ -28,11 +28,11 @@ public class Skill {
 		this.id = id;
 	}
 
-	public String getSkill() {
-		return skill;
+	public String getName() {
+		return name;
 	}
 
-	public void setSkill(String skill) {
-		this.skill = skill;
+	public void setName(String name) {
+		this.name = name;
 	}
 }

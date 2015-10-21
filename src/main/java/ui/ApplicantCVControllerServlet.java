@@ -2,16 +2,12 @@ package ui;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -22,11 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import dao.CVFormApplicantDAO;
-import dao.SkillApplicantDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
 import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
-import domain.Applicant;
 import domain.CVFormApplicant;
 import domain.HRDepartment;
 import domain.SkillApplicantCV;
@@ -42,7 +36,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	private CVFormApplicantDAO cvApplicantDao;
 	private DAOFactory daoFactory;
 	private Properties properties;
-	private SkillApplicantDAO skillDao;
+	//private SkillApplicantDAO skillDao;
 	
     /**
      * @throws ServletException 
@@ -60,7 +54,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		Properties properties = (Properties) session.getAttribute("properties");
 		loadProperties(properties);
         cvApplicantDao = daoFactory.getCVFormApplicantDAO();
-        skillDao = daoFactory.getSkillApplicantDAO();
+        //skillDao = daoFactory.getSkillApplicantDAO();
         
 	    try {
 			DAOFactory.loadConnectProperties(properties);
@@ -100,27 +94,29 @@ public class ApplicantCVControllerServlet extends HttpServlet {
     
     @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.GET)
 	private ModelAndView getCreateCVFormPage(){
-    	return new ModelAndView(WebPath.getApplicantCreateCVPage());
+    	List<SkillApplicantCV> applicantSkills = new ArrayList<SkillApplicantCV>(10);
+    	ModelAndView modelView = new ModelAndView(WebPath.getApplicantCreateCVPage());
+    	modelView.addObject("applicantSkills", applicantSkills);
+    	return modelView;
     }
     
     
     @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.POST)
-	private ModelAndView createNewCV(@ModelAttribute ("cvform") CVFormApplicant cvform) {
+	private ModelAndView createNewCV(@ModelAttribute ("appilcantCV") CVFormApplicant cvform) {
 		
-		cvform.setSendStatus("Not sent");
-		CVFormApplicant cvApplicant = cvApplicantDao.createCVForm(cvform);
+		cvform.setSendStatus("Not sent");	
+		cvApplicantDao.createCVForm(cvform);
 		
-		for (SkillApplicantCV oneSkill : skills) {
-			oneSkill.setCvApplicant(cvApplicant);
-		}
-		cvApplicant.setSkills(skills);
-		try {
-			cvApplicantDao.updateCVForm(cvApplicant);
-		} catch (PersistException e) {
-			throw new ServletException();
-		}
-		
-		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
+//		for (SkillApplicantCV oneSkill : skills) {
+//			oneSkill.setCvApplicant(cvApplicant);
+//		}
+//		cvApplicant.setSkills(skills);
+//		try {
+//			cvApplicantDao.updateCVForm(cvApplicant);
+//		} catch (PersistException e) {
+//			throw new ServletException();
+//		}
+		return new ModelAndView(WebPath.getApplicantMainPage());
 	}
 	
     
@@ -136,38 +132,17 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		if (modelView != null) {
     		return modelView;
     	}
-		CVFormApplicant cv = cvApplicantDao.getCVFormById(idList[0]);
+		CVFormApplicant applicantCV = cvApplicantDao.getCVFormById(idList[0]);
 
 		modelView = new ModelAndView(WebPath.getApplicantEditCVPage());
-		modelView.addObject("cv", cv);
+		modelView.addObject("applicantCV", applicantCV);
 		return modelView;
 	}
 
 
     @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.POST)
-	private void saveChangesCV(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-		CVFormApplicant cvApplicant = getDataFromForm(request, response);
-		Integer id = Integer.parseInt(request.getParameter("id"));
-		cvApplicant.setId(id);
-		cvApplicant.setSendStatus("Not Sent");
-		
-		List<SkillApplicantCV> applicantSkills = skillDao.getSkillsByApplicantCV(cvApplicant);
-		for (SkillApplicantCV oneApplicantSkill : applicantSkills) {
-			try {
-				skillDao.deleteSkill(oneApplicantSkill);
-			} catch (PersistException e) {
-				throw new ServletException();
-			}
-		}
-
-		applicantSkills = getSkillFromForm(request);
-		for (SkillApplicantCV oneSkill : applicantSkills) {
-			oneSkill.setCvApplicant(cvApplicant);
-		}
-		
-		cvApplicant.setSkills(applicantSkills);
+	private ModelAndView saveChangesCV(@ModelAttribute ("appilcantCV") CVFormApplicant cvApplicant)
+			throws ServletException {
 		
 		try {
 			cvApplicantDao.updateCVForm(cvApplicant);
@@ -175,16 +150,13 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			throw new ServletException();
 		}
 		
-		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);		
+		return new ModelAndView(WebPath.getApplicantMainPage());		
 	}
 
 
-	@RequestMapping("")
-	private void sendCV(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {
-		
-		List<Integer> idList = getSelectedCVFormsId(request, "cvId");
-		
+	@RequestMapping(value = "applicant/cvform/send.html", method = RequestMethod.POST)
+	private ModelAndView sendCV(@RequestParam ("cvId") int[] idList) throws ServletException, IOException {
+				
 		HRDepartment hr = new HRDepartment(properties);
 		for (Integer id : idList) {
 			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
@@ -202,7 +174,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 			
 		}
 		
-		forward(WebPath.APPLICANT_BASE_PAGE_SERVLET, request, response);
+		return new ModelAndView(WebPath.getApplicantMainPage());
 
 	}
 
@@ -227,34 +199,7 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 		return new ModelAndView(WebPath.getApplicantMainPage());
 	}
 	
-		
-	private List<SkillApplicantCV> getSkillFromForm(HttpServletRequest request){
-		
-		String skills = request.getParameter("skills");
-		//delete '[' and ']' symbols from skills to avoid double symbols
-		String formattedSkills = skills;
-		if (skills.startsWith("[")) {
-			formattedSkills = skills.substring(1, skills.length());
-			skills = formattedSkills;
-		} 
-		if (skills.endsWith("]")) {
-			formattedSkills = skills.substring(0, skills.length()-1);
-			skills = formattedSkills;
-		}
-		
-		String[] skillsArray = skills.split(", ");
-		List<SkillApplicantCV> applicantSkills = new ArrayList<SkillApplicantCV>();
-		for (int i = 0; i < skillsArray.length; i++) {
-			SkillApplicantCV oneSkillApplicant = new SkillApplicantCV();
-			oneSkillApplicant.setSkill(skillsArray[i]);
-			SkillApplicantCV createdSkill = (SkillApplicantCV) skillDao.createSkill(oneSkillApplicant);
-			applicantSkills.add(createdSkill);
-		}
-		
-		return applicantSkills;
-	}
 
-	
 	private ModelAndView makeErrorNoOneSelectedItem(int[] idList) {
 		if (0 == idList.length) {
 			ModelAndView modelView = new ModelAndView(WebPath.getErrorPage());
