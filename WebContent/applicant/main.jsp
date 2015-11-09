@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>    
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -8,49 +9,68 @@
 <title>My CVForms - Applicant - HRDepartment</title>
 </head>
 <body>
-	<h1>Мои резюме</h1>
+	<h1>Моя страница</h1>
 	<hr />
-	
-	<form action="${pageContext.request.contextPath}/${APPLICANT_CONTROLLER_SERVLET_DISPATCHER}" method="post">
-			<input type="submit" name="createCV" value="Создать" />
-			<input type="submit" name="editCV" value="Редактировать" />
-			<input type="submit" name="deleteCV" value="Удалить" />
-			<input type="submit" name="sendCV" value="Отослать" />
-	
-		<table border="1">
-		<tr>
-				<th></th>
-				<th>ID</th>
-				<th>Статус отправки</th>
-				<th>Возраст</th>
-				<th>Образование</th>
-				<th>E-mail</th>
-				<th>Телефон</th>
-				<th>Должность</th>
-				<th>Навыки</th>
-				<th>Опыт работы</th>
-				<th>Желаемая зарплата</th>
-				<th>Дополнительная информация</th>
-			</tr>
-			<c:forEach var="cv" items="${cvList}">
+	<br />
+	<h2>Личная информация</h2>
+	<hr />	
+	<table>
 			<tr>
-				<td><input type="checkbox" name="cvId" value="${cv.id}"></td>
-				<td><c:out value="${cv.id}" /></td>
-				<td><c:out value="${cv.sendStatus}" /></td>
-				<td><c:out value="${cv.age}" /></td>
-				<td><c:out value="${cv.education}" /></td>
-				<td><c:out value="${cv.email}" /></td>
-				<td><c:out value="${cv.phone}" /></td>
-				<td><c:out value="${cv.post}" /></td>
-				<td><c:out value="${cv.skills}" /></td>
-				<td><c:out value="${cv.workExpirience}" /></td>
-				<td><c:out value="${cv.desiredSalary}" /></td>
-				<td><c:out value="${cv.additionalInfo}" /></td>
+				<th>ФИО</th>
+				<th>Телефон</th>
+				<th>E-mail</th>
+				<th></th>
 			</tr>
-			</c:forEach>
-		</table>
-	</form>
+			<tr>
+				<td>${applicant.surname} ${applicant.name} ${applicant.lastName}</td>
+				<td>${applicant.phone}</td>
+				<td>${applicant.email}</td>
+				<td>
+					<spring:url value="/applicant/${applicant.id}/edit.html" var="updateApplicant" />
+					<button onclick="location.href='${updateApplicant}'">Редактировать</button>
+				</td>
+			</tr>
+	</table>
+	<h2>Мои резюме</h2>
+	<hr />
+	<table border="1">
+		<tr>
+			<th>#ID</th>
+			<th>Статус отправки</th>
+			<th>Должность</th>
+			<th>Навыки</th>
+			<th>Желаемая зарплата</th>
+			<th></th>
+		</tr>
+		<c:forEach var="cv" items="${cvList}">
+			<tr>
+				<td>
+					<spring:url value="/applicant/cvform/${cv.id}/view.html" var="cvformUrl" />
+					<button onclick="location.href='${cvformUrl}'">${cv.id}</button>
+				<td>${cv.sendStatus}</td>
+				<td>${cv.post}</td>
+				<td>
+					<c:forEach var="skill" items="${cv.skills}" varStatus="i">
+						${skill.name}
+						<c:if test="${not i.last}">, </c:if>
+					</c:forEach>
+				<td>${cv.desiredSalary}</td>
+				<td>
+					<spring:url value="/applicant/cvform/${cv.id}/delete.html" var="deleteUrl" /> 
+					<spring:url value="/applicant/cvform/${cv.id}/edit.html" var="updateUrl" />
+					<spring:url value="/applicant/cvform/${cv.id}/send.html" var="sendUrl" />
+					<button onclick="location.href='${updateUrl}'">Update</button>
+				  	<button onclick="location.href='${deleteUrl}'">Delete</button>
+				  	<button onclick="location.href='${sendUrl}'">Send</button>
+                </td>
+			</tr>
+		</c:forEach>
+	</table>
 
+	<div>
+		<spring:url value="/applicant/cvform/create.html" var="createUrl" />
+		<button onclick="location.href='${createUrl}'">Создать</button>
+	</div>
 	<br />	
 	<a href="${pageContext.request.contextPath}/${HOME_PAGE_JSP}">Выйти из раздела</a>
 	${footer}

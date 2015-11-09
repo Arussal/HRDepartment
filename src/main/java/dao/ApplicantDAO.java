@@ -8,7 +8,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import dao.exceptions.PersistException;
 import dao.util.HibernateUtil;
 import domain.Applicant;
 import domain.util.LogConfig;
@@ -45,7 +44,7 @@ public class ApplicantDAO {
 	}
 	
 	
-	public Applicant getApplicantByLogin(String login) throws PersistException {
+	public Applicant getApplicantByLogin(String login) {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Query query = session.createQuery("FROM Applicant a where a.login =:login")
@@ -54,13 +53,13 @@ public class ApplicantDAO {
 		@SuppressWarnings("unchecked")
 		List<Applicant> list = query.list();
 		session.close();
-		if (list.size() != 1) {
-			log.error(list.size() + " applicant persists with login " + login);
-			throw new PersistException(list.size() + " persists with login " + login);		
-		}
-		log.info("get applicant with login " + list.get(0));
 		
-		return list.get(0);
+		
+		if (list.size() == 1) {
+			log.info("get applicant with login " + list.get(0));
+			return list.get(0);
+		}
+		return null;
 	}
 	
 	
@@ -78,17 +77,13 @@ public class ApplicantDAO {
 	}
 
 	
-	public void updateApplicant(Applicant applicant) throws PersistException {
+	public void updateApplicant(Applicant applicant) {
 		
-		boolean applicantPersisted = isApplicantPersisted(applicant);
-		
-		if (applicantPersisted) {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			Transaction t = session.beginTransaction();
 			session.update(applicant);
 			t.commit();
 			session.close();
-		}
 	}
 	
 	
@@ -101,18 +96,4 @@ public class ApplicantDAO {
 		log.info("delete applicant with id " + applicant.getId());
 
 	}
-	
-		
-	private boolean isApplicantPersisted(Applicant applicant) throws PersistException {
-		
-		if (applicant.getId() == null) {
-			return false;
-		}	
-		Applicant persistedApplicant = getApplicantByID(applicant.getId());
-		if (persistedApplicant == null) {
-			return false;
-			
-		}
-		return true;
-	}		
 }

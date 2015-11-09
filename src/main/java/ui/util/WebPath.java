@@ -34,17 +34,18 @@ public class WebPath {
 	
 	public static final String HOME_PAGE_JSP = "main.jsp";
 	
-	public static final String APPLICANT_MAIN_HTML = "applicant/main.html";
-	public static final String APPLICANT_LOGIN_HTML = "applicant/login.html";
-	public static final String APPLICANT_REGISTRATE_HTML = "applicant/registrate.html";
-	public static final String APPLICANT_CREATE_CV_HTML = "applicant/cvform/create.html";
-	public static final String APPLICANT_EDIT_CV_HTML = "applicant/cvform/edit.html";
-	public static final String APPLICANT_DELETE_CV_HTML = "applicant/cvform/delete.html";
-	public static final String APPLICANT_SEND_CV_HTML = "applicant/cvform/send.html";
-	public static final String APPLICANT_CHANGE_PASSWORD_HTML = "applicant/change-password.html";
+	public static final String APPLICANT_MAIN_HTML = "applicant/main";
+	public static final String APPLICANT_LOGIN_HTML = "applicant/login";
+	public static final String APPLICANT_REGISTRATE_HTML = "applicant/registrate";
+	public static final String APPLICANT_EDIT_HTML = "applicant/edit";
+	public static final String APPLICANT_CREATE_CV_HTML = "applicant/cvform/create";
+	public static final String APPLICANT_EDIT_CV_HTML = "applicant/cvform/edit";
+	public static final String APPLICANT_DELETE_CV_HTML = "applicant/cvform/delete";
+	public static final String APPLICANT_SEND_CV_HTML = "applicant/cvform/send";
+	public static final String APPLICANT_CHANGE_PASSWORD_HTML = "applicant/change-password";
 	public static final String APPLICANT_SUCCESS_JSP = "applicant_success_operation.jsp";
-	public static final String APPLICANT_DELETE_HTML = "applicant/delete.html";
-	public static final String APPLICANT_SUCCESS_DELETE_HTML = "applicant/success-delete.html";
+	public static final String APPLICANT_DELETE_HTML = "applicant/delete";
+	public static final String APPLICANT_SUCCESS_DELETE_HTML = "applicant/success-delete";
 	
 	public static final String HR_APPLICAION_FORMS_JSP = "applications.jsp";
 	public static final String HR_CANDIDATES_JSP = "candidates.jsp";
@@ -91,6 +92,9 @@ public class WebPath {
 	public static String getApplicantRegistratePage() {
 		return "applicant/registrate";
 	}
+	public static String getApplicantEditPage() {
+		return "applicant/edit";
+	}
 	public static String getApplicantDeletePage() {
 		return "applicant/delete";
 	}
@@ -105,6 +109,9 @@ public class WebPath {
 	}
 	public static String getApplicantChangePasswordPage() {
 		return "applicant/change_password";
+	}
+	public static String getApplicantViewCVPage() {
+		return "applicant/cvform/view";
 	}
 	public static String getApplicantCreateCVPage() {
 		return "applicant/cvform/create";
@@ -124,7 +131,7 @@ public class WebPath {
 		
 		session.setAttribute("APPLICANT_BASE_PAGE_SERVLET", APPLICANT_BASE_PAGE_SERVLET);
 		session.setAttribute("APPLICANT_CONTROLLER_SERVLET", APPLICANT_CONTROLLER_SERVLET);
-		session.setAttribute("APPLICANT_CONTROLLER_SERVLET", APPLICANT_CONTROLLER_SERVLET_DISPATCHER);
+		session.setAttribute("APPLICANT_CONTROLLER_SERVLET_DISPATCHER", APPLICANT_CONTROLLER_SERVLET_DISPATCHER);
 		session.setAttribute("APPLICATION_BASE_PAGE_SERVLET", APPLICATION_BASE_PAGE_SERVLET);
 		session.setAttribute("APPLICATION_CONTROLLER_SERVLET", APPLICATION_CONTROLLER_SERVLET);
 		session.setAttribute("CANDIDATE_BASE_PAGE_SERVLET", CANDIDATE_BASE_PAGE_SERVLET);
@@ -140,6 +147,7 @@ public class WebPath {
 		session.setAttribute("APPLICANT_MAIN_HTML", APPLICANT_MAIN_HTML);
 		session.setAttribute("APPLICANT_LOGIN_HTML", APPLICANT_LOGIN_HTML);
 		session.setAttribute("APPLICANT_REGISTRATE_HTML", APPLICANT_REGISTRATE_HTML);
+		session.setAttribute("APPLICANT_EDIT_HTML", APPLICANT_EDIT_HTML);
 		session.setAttribute("APPLICANT_CREATE_CV_HTML", APPLICANT_CREATE_CV_HTML);
 		session.setAttribute("APPLICANT_EDIT_CV_HTML", APPLICANT_EDIT_CV_HTML);
 		session.setAttribute("APPLICANT_DELETE_CV_HTML", APPLICANT_DELETE_CV_HTML);
@@ -170,8 +178,4 @@ public class WebPath {
 		
 		session.setAttribute("ERROR_JSP", ERROR_JSP);
 	}
-
-
-
-
 }

@@ -1,17 +1,24 @@
 package ui;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,11 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import dao.ApplicantDAO;
 import dao.CVFormApplicantDAO;
+import dao.SkillApplicantDAO;
 import dao.exceptions.NoSuitableDBPropertiesException;
-import dao.exceptions.PersistException;
 import dao.util.DAOFactory;
 import domain.Applicant;
-import domain.CVFormApplicant;
 import ui.util.*;
 
 /**
@@ -37,6 +43,7 @@ public class ApplicantServlet extends HttpServlet {
 	private DAOFactory daoFactory;
 	private ApplicantDAO aplcntDao;
 	private CVFormApplicantDAO cvAplcntDao;
+	private SkillApplicantDAO skillAppDao;
 	
     public ApplicantServlet() throws ServletException {
         super();
@@ -53,6 +60,11 @@ public class ApplicantServlet extends HttpServlet {
  		}
     }
     
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+    	binder.registerCustomEditor(String.class, "login", new LoginCheckEditor());
+    	binder.registerCustomEditor(Date.class, "birthDay", new DateCheckEditor());
+    }
     
     @ModelAttribute
     private void addFooter(Model model) {
@@ -69,69 +81,55 @@ public class ApplicantServlet extends HttpServlet {
 		loadProperties(properties);
 		aplcntDao = daoFactory.getApplicantDAO();
 		cvAplcntDao = daoFactory.getCVFormApplicantDAO();
+		skillAppDao = daoFactory.getSkillApplicantDAO();
+		session.setAttribute("cvAplcntDao", cvAplcntDao);
+		session.setAttribute("skillAppDao", skillAppDao);
 		return new ModelAndView(WebPath.getApplicantLoginPage());
-		//request.setCharacterEncoding("UTF8");
 	}	
 
 
 	
-    @RequestMapping("applicant/login.html")
-    private ModelAndView login(){
+    @RequestMapping(value = "applicant/login", method = RequestMethod.GET)
+    private ModelAndView getLoginPage(){
     	return new ModelAndView(WebPath.getApplicantLoginPage());
     }
-
-
-	@RequestMapping("applicant/main.html")
-	private ModelAndView enter(@ModelAttribute("applicant") Applicant applicant, HttpSession session)
-			throws ServletException {
-		
-		ModelAndView modelView = null;
-
-		Applicant foundedApplicant = (Applicant) session.getAttribute("applicant");
-		if (foundedApplicant != null) {
-			List<CVFormApplicant> cvList = cvAplcntDao.getCVFormByName(foundedApplicant.getName());
-			modelView = new ModelAndView(WebPath.getApplicantMainPage());
-			modelView.addObject("cvList", cvList);
-			return modelView;
-		}
-		
-		if (applicant.getLogin() != null) {
-			try {
-				foundedApplicant = aplcntDao.getApplicantByLogin(applicant.getLogin());
-			} catch (PersistException e) {
-				if (null == foundedApplicant) {
-					modelView = new ModelAndView(WebPath.getErrorPage());
-					WebAttributes.loadAttribute(modelView, WebAttributes.USER_NOT_FOUND);
-					WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_APPLICANT_LOGIN);
-				}
-			}
-			if (foundedApplicant.getPassword().equals(applicant.getPassword())) {
-				session.setAttribute("applicant", foundedApplicant);
-				List<CVFormApplicant> cvList = cvAplcntDao.getCVFormByName(foundedApplicant.getName());
-				modelView = new ModelAndView(WebPath.getApplicantCVControllerServlet());
-				modelView.addObject("cvList", cvList);
-			} else {
+    
+    
+    @RequestMapping(value = "applicant/login", method = RequestMethod.POST)
+    private Object login(@RequestParam("login") String login, 
+    		@RequestParam("password") String password, HttpSession session) {
+    	Applicant foundedApplicant = null;
+    	ModelAndView modelView = null;
+    	if (login != null) {
+			foundedApplicant = aplcntDao.getApplicantByLogin(login);
+			if (null == foundedApplicant) {
 				modelView = new ModelAndView(WebPath.getErrorPage());
-				WebAttributes.loadAttribute(modelView, WebAttributes.WRONG_PASSWORD);
+				WebAttributes.loadAttribute(modelView, WebAttributes.USER_NOT_FOUND);
 				WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_APPLICANT_LOGIN);
 			}
-		} else {
-			modelView = new ModelAndView();
-			modelView.clear();
-			modelView.setViewName("applicant/login");
-		}
-		
+    		if (foundedApplicant.getPassword().equals(password)) {
+				session.setAttribute("applicant", foundedApplicant);
+				return "redirect:/" + WebPath.APPLICANT_MAIN_HTML;
+    		} else {
+    			modelView = new ModelAndView(WebPath.getErrorPage());
+				WebAttributes.loadAttribute(modelView, WebAttributes.WRONG_PASSWORD);
+				WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_APPLICANT_LOGIN);
+    		}
+    	} else {
+    		modelView = new ModelAndView(WebPath.getErrorPage());
+			WebAttributes.loadAttribute(modelView, WebAttributes.USER_NOT_FOUND);
+			WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_APPLICANT_LOGIN);
+    	}
 		return modelView;
-	}
-	
-	
-	@RequestMapping(value = "applicant/change-password.html", method = RequestMethod.GET)
+    }
+
+	@RequestMapping(value = "applicant/change-password", method = RequestMethod.GET)
 	private ModelAndView goToChangePasswordPage() {
 		return new ModelAndView(WebPath.getApplicantChangePasswordPage());
 	}
 	
 	
-	@RequestMapping(value = "applicant/change-password.html", method = RequestMethod.POST)
+	@RequestMapping(value = "applicant/change-password", method = RequestMethod.POST)
 	private ModelAndView changePassword(@RequestParam Map <String, String> params) 
 			throws ServletException {
 		
@@ -143,32 +141,20 @@ public class ApplicantServlet extends HttpServlet {
 		String repeatePassword = params.get("repeatePassword");
 		
 		Applicant applicant = null;
-		try {
-			applicant = aplcntDao.getApplicantByLogin(login);
-		} catch (PersistException e) {
-			if (null == applicant) {
-				modelView = new ModelAndView(WebPath.getErrorPage());
-				WebAttributes.loadAttribute(modelView, WebAttributes.USER_NOT_FOUND);
-				return modelView;
-			}
+		applicant = aplcntDao.getApplicantByLogin(login);
+		if (null == applicant) {
+			modelView = new ModelAndView(WebPath.getErrorPage());
+			WebAttributes.loadAttribute(modelView, WebAttributes.USER_NOT_FOUND);
+			return modelView;
 		}
 		
 		if (oldPassword.equals(applicant.getPassword())) {
-			boolean registrationConditions = isCorrectChangePasswordData(newPassword, repeatePassword, modelView);
 			
-			if (registrationConditions) {
+			
 				applicant.setPassword(newPassword);
-				try {
-					aplcntDao.updateApplicant(applicant);
-				} catch (PersistException e) {
-					modelView.setViewName(WebPath.getErrorPage());
-					WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_CHANGE_PASSWORD);
-				}
+				aplcntDao.updateApplicant(applicant);
 				modelView.setViewName(WebPath.getApplicantCompleteChangePasswordPage());
-			} else {
-				modelView.setViewName(WebPath.getErrorPage());
-				WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_CHANGE_PASSWORD);
-			}
+			
 		} else {
 			modelView.setViewName(WebPath.getErrorPage());
 			WebAttributes.loadAttribute(modelView, WebAttributes.WRONG_PASSWORD);
@@ -178,54 +164,70 @@ public class ApplicantServlet extends HttpServlet {
 	}
 
 	
-    @RequestMapping(value = "applicant/registrate.html", method = RequestMethod.GET)
+    @RequestMapping(value = "applicant/registrate", method = RequestMethod.GET)
     private ModelAndView getRegistrationPage() {
     	return new ModelAndView(WebPath.getApplicantRegistratePage());
 	}
     
 	
-    @RequestMapping(value = "applicant/registrate.html", method=RequestMethod.POST)
-	private ModelAndView registrateApplicant(@ModelAttribute("applicant") Applicant applicant, 
-			@RequestParam("confirmPassword") String confirmPassword) {
+    @RequestMapping(value = "applicant/registrate", method=RequestMethod.POST)
+	private ModelAndView registrateApplicant(@Valid @ModelAttribute("applicant") Applicant applicant, 
+			BindingResult result, @RequestParam("confirmPassword") String confirmPassword ) {
 						
 		ModelAndView modelView = new ModelAndView();
+		Applicant persistedApplicant = aplcntDao.getApplicantByLogin(applicant.getLogin());
 		
-		boolean registrationConditions = isCorrectRegistrationData(applicant.getLogin(), 
-				applicant.getPassword(), applicant.getSurname(), applicant.getName(), 
-				applicant.getLastName(), confirmPassword, modelView);
-		
-		if (registrationConditions) {
+		if (result.hasErrors()) {
+			modelView.setViewName(WebPath.getApplicantRegistratePage());
+		} else if (applicant.getLogin() == null) {
+			modelView.setViewName(WebPath.getErrorPage());
+			WebAttributes.loadAttribute(modelView, WebAttributes.USER_ALREADY_EXIST_ERROR);
+		} else if (!applicant.getPassword().equals(confirmPassword)) {
+			modelView.setViewName(WebPath.getApplicantRegistratePage());
+		} else if (persistedApplicant != null) {
+			modelView.setViewName(WebPath.getApplicantRegistratePage());
+		} else {
 			applicant = aplcntDao.createApplicant(applicant);
 			modelView.setViewName(WebPath.getApplicantCompleteRegistrationPage());
-		} else {
-			modelView.setViewName(WebPath.getErrorPage());
-			WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_REGISTRATION);
 		}
 		return modelView;
 	}	
 	
 	
-	@RequestMapping(value = "applicant/delete.html", method = RequestMethod.GET)
+    @RequestMapping(value = "/applicant/{id}/edit", method = RequestMethod.GET)
+    private ModelAndView updateApplicantInfo(@PathVariable("id") int id) {
+    	Applicant applicant = aplcntDao.getApplicantByID(id);
+    	ModelAndView modelView = new ModelAndView(WebPath.getApplicantEditPage());
+    	modelView.addObject(applicant);
+    	return modelView;
+    }
+    
+    
+    @RequestMapping(value = "/applicant/edit", method = RequestMethod.POST)
+    private ModelAndView updateApplicantInfo(@ModelAttribute("applicant") Applicant applicant) {
+		aplcntDao.updateApplicant(applicant);
+    	return new ModelAndView(WebPath.getApplicantMainPage());
+    }
+    
+    
+	@RequestMapping(value = "applicant/delete", method = RequestMethod.GET)
 	private ModelAndView getDeletePage() {
 		return new ModelAndView(WebPath.getApplicantDeletePage());
 	}
 	
 	
-	@RequestMapping(value = "applicant/delete.html", method = RequestMethod.POST)
+	@RequestMapping(value = "applicant/delete", method = RequestMethod.POST)
 	private ModelAndView deleteApplicant(@ModelAttribute("applicant") Applicant applicant, 
 			HttpSession session) {
 		
 		Applicant foundedApplicant = null;
 		ModelAndView modelView = null;
 		if (applicant.getLogin() != null) {
-			try {
-				foundedApplicant = aplcntDao.getApplicantByLogin(applicant.getLogin());
-			} catch (PersistException e) {
-				if (null == foundedApplicant) {
+			foundedApplicant = aplcntDao.getApplicantByLogin(applicant.getLogin());
+			if (null == foundedApplicant) {
 					modelView = new ModelAndView(WebPath.getErrorPage());
 					WebAttributes.loadAttribute(modelView, WebAttributes.USER_NOT_FOUND);
 					WebAttributes.loadAttribute(modelView, WebAttributes.INVALID_APPLICANT_LOGIN);
-				}
 			}
 			if (foundedApplicant.getPassword().equals(applicant.getPassword())) {
 				session.setAttribute("applicantToDelete", foundedApplicant);
@@ -240,7 +242,7 @@ public class ApplicantServlet extends HttpServlet {
 	}
 	
 	
-	@RequestMapping("applicant/success-delete.html")
+	@RequestMapping("applicant/success-delete")
 	private ModelAndView confirmDeleteApplicant(@RequestParam Map<String, String> params, 
 			HttpSession session) {
 		
@@ -257,82 +259,7 @@ public class ApplicantServlet extends HttpServlet {
 		}
 	}
 	
-	
-	private boolean isCorrectChangePasswordData(String newPassword, String confirmPassword, 
-			ModelAndView modelView) {
 		
-		if (newPassword.equals("")) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.EMPTY_LOGIN_FIELDS);
-			return false;
-		} 
-		if (newPassword.length() < 8 || newPassword.length() > 14) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.LOGIN_LENGTH_ERROR);
-			return false;
-		} 
-		if (!newPassword.equals(confirmPassword)) {
-			return false;
-		}
-		return true;
-	}
-	
-	
-	private boolean isCorrectRegistrationData(String login, String password, String surname, 
-			String name, String lastName, String confirmedPassword, ModelAndView modelView) {
-		
-		boolean condition = true;
-		
-		List<Applicant> applicants = null;
-
-		applicants = aplcntDao.getAllApplicants();
-
-
-		for (Applicant searchedApplicant : applicants) {
-			if (searchedApplicant.getLogin().equalsIgnoreCase(login)) {
-				WebAttributes.loadAttribute(modelView, WebAttributes.USER_ALREADY_EXIST_ERROR);
-				condition = false;
-			}
-		}
-		
-		if (surname.equals("")) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.EMPTY_NAME_FIELDS);
-			condition = false;
-		}
-		if (name.equals("")) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.EMPTY_NAME_FIELDS);
-			condition = false;
-		}
-		if (lastName.equals("")) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.EMPTY_NAME_FIELDS);
-			condition = false;
-		}
-		
-		if (login.equals("") || password.equals("")) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.EMPTY_LOGIN_FIELDS);
-			condition = false;
-		} 
-		if (login.length() < 6 || login.length() > 10) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.LOGIN_LENGTH_ERROR);
-			condition = false;
-		} 
-		if (login.contains(" ")) {	
-			WebAttributes.loadAttribute(modelView, WebAttributes.LOGIN_SPACE_ERROR);
-			condition = false;
-		}
-		if (password.contains(" ")) {	
-			WebAttributes.loadAttribute(modelView, WebAttributes.PASSWORD_SPACE_ERROR);
-			condition = false;
-		}
-		if (password.length() < 8 || password.length() > 14) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.PASSWORD_LENGTH_ERROR);
-			condition = false;
-		}
-		if (!password.equals(confirmedPassword)) {
-			WebAttributes.loadAttribute(modelView, WebAttributes.DIFFERENT_PASSWORDS_ERROR);
-			condition = false;
-		}
-		return condition;
-	}
-	
 	private String getFooterMessage(){
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		return "<hr/><h2>" + year + ". All rights are reserved</h2>";

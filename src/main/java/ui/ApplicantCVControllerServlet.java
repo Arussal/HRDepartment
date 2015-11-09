@@ -1,9 +1,8 @@
 package ui;
 
-import java.io.IOException;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -11,16 +10,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import dao.CVFormApplicantDAO;
-import dao.exceptions.NoSuitableDBPropertiesException;
+import dao.SkillApplicantDAO;
 import dao.exceptions.PersistException;
-import dao.util.DAOFactory;
+import domain.Applicant;
 import domain.CVFormApplicant;
 import domain.HRDepartment;
 import domain.SkillApplicantCV;
@@ -34,9 +34,8 @@ public class ApplicantCVControllerServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private CVFormApplicantDAO cvApplicantDao;
-	private DAOFactory daoFactory;
+	private SkillApplicantDAO skillAppDao;
 	private Properties properties;
-	//private SkillApplicantDAO skillDao;
 	
     /**
      * @throws ServletException 
@@ -44,178 +43,180 @@ public class ApplicantCVControllerServlet extends HttpServlet {
      */
     public ApplicantCVControllerServlet() throws ServletException {
         super();
-        daoFactory = DAOFactory.getFactory();
     }
 
+    
+    private void setSessionAttributes(HttpSession session) {
+    	this.cvApplicantDao = (CVFormApplicantDAO) session.getAttribute("cvAplcntDao");
+    	this.skillAppDao = (SkillApplicantDAO) session.getAttribute("skillAppDao");
+    	this.properties = (Properties) session.getAttribute("properties");
+    }
+      
 
-    @RequestMapping("applicantCVControllerServlet")
-	private ModelAndView performTask(HttpSession session) throws ServletException {
+	@RequestMapping(value = "applicant/main", method = RequestMethod.GET)
+	private ModelAndView enter(@ModelAttribute("applicant") Applicant applicant, HttpSession session)
+			throws ServletException {
 		
-		Properties properties = (Properties) session.getAttribute("properties");
-		loadProperties(properties);
-        cvApplicantDao = daoFactory.getCVFormApplicantDAO();
-        //skillDao = daoFactory.getSkillApplicantDAO();
-        
-	    try {
-			DAOFactory.loadConnectProperties(properties);
-		} catch (NoSuitableDBPropertiesException e) {
-			throw new ServletException();
+		if (cvApplicantDao == null) {
+			setSessionAttributes(session);
 		}
-	    	    
-		//request.setCharacterEncoding("UTF-8");
-	    return new ModelAndView(WebPath.getApplicantMainPage());
-    }
-    
+		
+		ModelAndView modelView = null;
 
-    public void loadProperties(Properties properties) throws ServletException {
-    	daoFactory.setLogPath(properties);
-        try {
-			DAOFactory.loadConnectProperties(properties);
-		} catch (NoSuitableDBPropertiesException e) {
-			throw new ServletException();
+		Applicant foundedApplicant = (Applicant) session.getAttribute("applicant");
+		if (foundedApplicant != null) {
+			List<CVFormApplicant> cvList = cvApplicantDao.getCVFormByName(foundedApplicant.getName());
+			modelView = new ModelAndView(WebPath.getApplicantMainPage());
+			modelView.addObject("cvList", cvList);
+		} else {
+			modelView = new ModelAndView(WebPath.getApplicantLoginPage());
 		}
+		modelView.addObject("applicant", foundedApplicant);
+		return modelView;
+	}
+	
+        
+    @RequestMapping("applicant/cvform/{id}/view")
+    private ModelAndView getCVViewPage(@PathVariable("id") int id){
+    	CVFormApplicant applicantCV = cvApplicantDao.getCVFormById(id);
+    	ModelAndView modelView = new ModelAndView(WebPath.getApplicantViewCVPage());
+    	modelView.addObject("cv", applicantCV);
+    	return modelView;
     }
     
     
-    @RequestMapping("applicantCVDispatcher")
-    public String dispatchRequest(@RequestParam Map<String, String> params) {
-    	
-    	if (params.get("createCV") != null) {
-    		return "redirect:/" + WebPath.APPLICANT_CREATE_CV_HTML;
-    	} else if (params.get("editCV") != null) {
-    		return "redirect:/" + WebPath.APPLICANT_EDIT_CV_HTML;
-    	} else if (params.get("deleteCV") != null) {
-    		return "redirect:/" + WebPath.APPLICANT_DELETE_CV_HTML;
-    	} else {
-    		return "redirect:/" + WebPath.APPLICANT_SEND_CV_HTML;
-    	}
-    }
-    
-    
-    @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.GET)
+    @RequestMapping(value = "applicant/cvform/create", method=RequestMethod.GET)
 	private ModelAndView getCreateCVFormPage(){
-    	List<SkillApplicantCV> applicantSkills = new ArrayList<SkillApplicantCV>(10);
+    	List<SkillApplicantCV> applicantSkills = new ArrayList<SkillApplicantCV>();
+    	for(int i = 0; i < 10; i++) {
+    		SkillApplicantCV skill = new SkillApplicantCV();
+    		skill.setName("Skill " + i);
+    		applicantSkills.add(skill);
+    	}
+    	CVFormApplicant applicantCV = new CVFormApplicant();
+    	applicantCV.setSkills(applicantSkills);
     	ModelAndView modelView = new ModelAndView(WebPath.getApplicantCreateCVPage());
+    	modelView.addObject("applicantCV", applicantCV);
     	modelView.addObject("applicantSkills", applicantSkills);
     	return modelView;
     }
     
     
-    @RequestMapping(value = "applicant/cvform/create.html", method=RequestMethod.POST)
-	private ModelAndView createNewCV(@ModelAttribute ("appilcantCV") CVFormApplicant cvform) {
+    @RequestMapping(value = "applicant/cvform/create", method=RequestMethod.POST)
+	private String createNewCV(@ModelAttribute ("appilcantCV") CVFormApplicant cvform, 
+			BindingResult result, HttpSession session) {
 		
-		cvform.setSendStatus("Not sent");	
+    	Applicant applicant = (Applicant) session.getAttribute("applicant");
+    	String surname = applicant.getSurname();
+    	String name = applicant.getName();
+    	String lastName = applicant.getLastName();
+    	String phone = applicant.getPhone();
+    	String email = applicant.getEmail();
+    	String education = applicant.getEducation();
+    	Date birthday = applicant.getBirthDay();
+    	cvform.setSurname(surname);
+    	cvform.setName(name);
+    	cvform.setLastName(lastName);
+    	cvform.setBirthday(birthday);
+    	cvform.setPhone(phone);
+    	cvform.setEmail(email);
+    	cvform.setEducation(education);
+		cvform.setSendStatus("Not sent");
+		List<SkillApplicantCV> skills = new ArrayList<SkillApplicantCV>();
+		for (int i = 0; i < cvform.getSkills().size(); i++) {
+			if (!cvform.getSkills().get(i).getName().equals("Skill " + i)) {
+				SkillApplicantCV skill = cvform.getSkills().get(i);
+				skill.setCvApplicant(cvform);
+				skills.add(skill);
+			}
+		}
+		cvform.setSkills(skills);
 		cvApplicantDao.createCVForm(cvform);
 		
-//		for (SkillApplicantCV oneSkill : skills) {
-//			oneSkill.setCvApplicant(cvApplicant);
-//		}
-//		cvApplicant.setSkills(skills);
-//		try {
-//			cvApplicantDao.updateCVForm(cvApplicant);
-//		} catch (PersistException e) {
-//			throw new ServletException();
-//		}
-		return new ModelAndView(WebPath.getApplicantMainPage());
+		return "redirect:/" + WebPath.APPLICANT_MAIN_HTML;
 	}
 	
     
-    @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.GET)
-	private ModelAndView editCV(@RequestParam ("cvId") int[] idList) { 
+    @RequestMapping(value = "applicant/cvform/{id}/edit", method = RequestMethod.GET)
+	private ModelAndView editCV(@PathVariable("id") int id) { 
 		
-    	ModelAndView modelView = null;
-    	modelView = makeErrorNoOneSelectedItem(idList);
-    	if (modelView != null) {
-    		return modelView;
+    	CVFormApplicant applicantCV = cvApplicantDao.getCVFormById(id);
+    	List<SkillApplicantCV> skills = applicantCV.getSkills();
+    	if (skills.size() < 10) {
+    		for(int i = skills.size(); i < 10; i++) {
+    			SkillApplicantCV skill = new SkillApplicantCV();
+    			skill.setName("Skill " + i);
+    			skills.add(i, skill);
+    		}
     	}
-		modelView = makeErrorTooManySelectedItem(idList);
-		if (modelView != null) {
-    		return modelView;
-    	}
-		CVFormApplicant applicantCV = cvApplicantDao.getCVFormById(idList[0]);
-
-		modelView = new ModelAndView(WebPath.getApplicantEditCVPage());
+    	applicantCV.setSkills(skills);
+		ModelAndView modelView = new ModelAndView(WebPath.getApplicantEditCVPage());
 		modelView.addObject("applicantCV", applicantCV);
 		return modelView;
 	}
 
 
-    @RequestMapping(value = "applicant/cvform/edit.html", method = RequestMethod.POST)
-	private ModelAndView saveChangesCV(@ModelAttribute ("appilcantCV") CVFormApplicant cvApplicant)
+    @RequestMapping(value = "applicant/cvform/edit", method = RequestMethod.POST)
+	private String saveChangesCV(@ModelAttribute ("applicantCV") CVFormApplicant applicantCV)
 			throws ServletException {
+    	
+    	applicantCV.setSendStatus("Not sent");
+    	List<SkillApplicantCV> persistedSkills = skillAppDao.getSkillsByApplicantCV(applicantCV);
+    	for (SkillApplicantCV skill : persistedSkills) {
+    		skillAppDao.deleteSkill(skill);
+    	}
+    	List<SkillApplicantCV> inputedSkills = applicantCV.getSkills();
+		for (int i = inputedSkills.size()-1; i >= 0; i--) {
+			SkillApplicantCV skill = inputedSkills.get(i);
+			if (!skill.getName().equals("Skill " + i)) {
+				skill.setCvApplicant(applicantCV);
+			} else {
+				inputedSkills.remove(skill);
+			}
+		}
 		
+		applicantCV.setSkills(inputedSkills);
 		try {
-			cvApplicantDao.updateCVForm(cvApplicant);
+			cvApplicantDao.updateCVForm(applicantCV);
 		} catch (PersistException e) {
 			throw new ServletException();
 		}
 		
-		return new ModelAndView(WebPath.getApplicantMainPage());		
+		return "redirect:/" + WebPath.APPLICANT_MAIN_HTML;	
 	}
 
 
-	@RequestMapping(value = "applicant/cvform/send.html", method = RequestMethod.POST)
-	private ModelAndView sendCV(@RequestParam ("cvId") int[] idList) throws ServletException, IOException {
-				
+	@RequestMapping(value = "applicant/cvform/{id}/send", method = RequestMethod.GET)
+	private String sendCV(@PathVariable ("id") int id) throws ServletException {
+
 		HRDepartment hr = new HRDepartment(properties);
-		for (Integer id : idList) {
-			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
-			cv.setSendStatus("Sent");
-			try {
-				hr.addCVForm(cv);
-			} catch (PersistException e) {
-				throw new ServletException();
-			}
-			try {
-				cvApplicantDao.updateCVForm(cv);
-			} catch (PersistException p){
-				throw new ServletException();
-			}
-			
+		CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
+		cv.setSendStatus("Sent");
+		try {
+			hr.addCVForm(cv);
+		} catch (PersistException e) {
+			throw new ServletException();
+		}
+		try {
+			cvApplicantDao.updateCVForm(cv);
+		} catch (PersistException p){
+			throw new ServletException();
 		}
 		
-		return new ModelAndView(WebPath.getApplicantMainPage());
-
+		return "redirect:/" + WebPath.APPLICANT_MAIN_HTML;
 	}
 
 	
-	@RequestMapping (value = "appilcant/cvform/delete.html", method = RequestMethod.POST)
-	private ModelAndView deleteCV(@RequestParam ("cvId") int[] idList) throws ServletException {
+	@RequestMapping (value = "applicant/cvform/{id}/delete", method = RequestMethod.GET)
+	private String deleteCV(@PathVariable ("id") int id) throws ServletException {
 		
-		ModelAndView modelView = makeErrorNoOneSelectedItem(idList);
-    	if (modelView != null) {
-    		return modelView;
-    	}
-		
-		for (Integer id : idList) {
-			CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
-			try {
-				cvApplicantDao.deleteCVForm(cv);
-			} catch (PersistException e) {
-				throw new ServletException();
-			}
+		CVFormApplicant cv = cvApplicantDao.getCVFormById(id);
+		try {
+			cvApplicantDao.deleteCVForm(cv);
+		} catch (PersistException e) {
+			throw new ServletException();
 		}
-		
-		return new ModelAndView(WebPath.getApplicantMainPage());
-	}
-	
 
-	private ModelAndView makeErrorNoOneSelectedItem(int[] idList) {
-		if (0 == idList.length) {
-			ModelAndView modelView = new ModelAndView(WebPath.getErrorPage());
-			WebAttributes.loadAttribute(modelView, WebAttributes.NO_ONE_ITEM_SELECTED);
-			return modelView;
-		}
-		return null;
-	}
-	
-	
-	private ModelAndView makeErrorTooManySelectedItem(int[] idList) {
-		if (idList.length > 1) {
-			ModelAndView modelView = new ModelAndView(WebPath.getErrorPage());
-			WebAttributes.loadAttribute(modelView, WebAttributes.TOO_MANY_ITEMS_SELECTED);
-			return modelView;
-		}
-		return null;
+		return "redirect:/" + WebPath.APPLICANT_MAIN_HTML;	
 	}
 }

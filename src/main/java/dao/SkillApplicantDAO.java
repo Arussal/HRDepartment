@@ -101,24 +101,17 @@ public class SkillApplicantDAO {
 	}
 	
 	
-	public void deleteSkill(Skill skill) throws PersistException {
+	public void deleteSkill(Skill skill) {
 		
-		boolean skillPersisted = isSkillPersisted(skill);
-		
-		if (skillPersisted) {
-			Session session = HibernateUtil.getSessionFactory().openSession();
-			Transaction transaction = session.beginTransaction();
-			try {
-				session.delete(skill);
-				transaction.commit();
-			} finally {
-				session.close();
-			}
-			log.info("delete " + title + " with id " + skill.getId());
-		} else {
-			log.error(title + " not persisted yet");
-			throw new PersistException(title + " not persisted yet");
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction transaction = session.beginTransaction();
+		try {
+			session.delete(skill);
+			transaction.commit();
+		} finally {
+			session.close();
 		}
+			log.info("delete " + title + " with id " + skill.getId());
 	}
 	
 	
@@ -135,6 +128,7 @@ public class SkillApplicantDAO {
 		return list;
 	}
 
+	
 	
 	private String getSelectQuery() {
 		String sql = "from SkillApplicantCV s";

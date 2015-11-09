@@ -44,8 +44,14 @@ public class CVFormManager {
 	@Column(name="post")
 	protected String post;
 	
+	@Column(name="surname")
+	private String surname;
+	
 	@Column(name="name")
 	private String name;
+	
+	@Column(name="last_name")
+	private String lastName;
 	
 	@Column(name="phone")
 	private String phone;
@@ -129,6 +135,25 @@ public class CVFormManager {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getPhone() {

@@ -13,47 +13,50 @@
 <h1>Редактировать резюме</h1>
 	<hr/>
 
-	<form:form id="appCVform" action="${APPLICANT_CONTROLLER_SERVLET}" method="POST" modelAttribute="appilcantCV">
-	<input type="hidden" name="id"  value="${applicantCV.id}"/>
+	<spring:url value="/${APPLICANT_EDIT_CV_HTML}" var="editUrl" />
+	<form:form action="${editUrl}" method="POST" modelAttribute="applicantCV">
+	<form:hidden path="id" />
+	<form:hidden path="surname" />
+	<form:hidden path="name" />
+	<form:hidden path="lastName" />
+	<form:hidden path="age" />
+	<form:hidden path="education" />
+	<form:hidden path="email" />
+	<form:hidden path="phone" />
 	<table>
 			<tr>
-				<td>Возраст</td>
-				<td><input type="text" name="age"  value="${applicantCV.age}"/></td>
-			<tr>
-				<td>Образование</td>
-				<td><input type="text" name="education" value="${applicantCV.education}"/></td>
-			</tr>
-			<tr>
-				<td>E-mail</td>
-				<td><input type="text" name="email" value="${applicantCV.email}"/></td>
-			</tr>
-			<tr>
-				<td>Телефон</td>
-				<td><input type="text" name="phone" value="${applicantCV.phone}"/></td>
-			</tr>
-			<tr>
-				<td>Должность</td>
-				<td><input type="text" name="post" value="${applicantCV.post}"/></td>
-			</tr>
-			<tr>
-				<td>Навыки</td>
-				<td>
-					<c:forEach var="skill" items="${appilcantCV.skills}" varStatus="i">
-						<form:input path="skill[${i.index}].name" type="text" value="${applicantCV.skills[${i.index}]}" />
-					</c:forEach>
-				</td>
+					<td>
+						<label>Должность</label>
+					</td>
+					<td>
+						<div>
+							<input type="text" value="${applicantCV.post}" name="post" />
+						</div>
+					</td>
 			</tr>
 			<tr>
 				<td>Опыт работы</td>
-				<td><input type="text" name="expirience" value="${applicantCV.workExpirience}"/></td>
+				<td><input type="text" name="workExpirience" value="${applicantCV.workExpirience}"/></td>
 			</tr>
+			<spring:bind path="skills">
+				<tr>
+					<td><label>Навыки</label></td>
+					<td>
+					<div>
+					<c:forEach items="${applicantCV.skills}" var="skill" varStatus="i">
+						<form:input path="skills[${i.index}].name" type="text" placeholder="skills[${i.index}].name" />
+					</c:forEach>
+					</div>
+					</td>
+				</tr>
+				</spring:bind>
 			<tr>
 				<td>Желаемая зарплата</td>
 				<td><input type="text" name="desiredSalary"  value="${applicantCV.desiredSalary}"/></td>
 			</tr>
 			<tr>
 				<td>Дополнительная информация</td>
-				<td><input type="text" style="height:200px" name="addInfo" value="${applicantCV.additionalInfo}"/></td>
+				<td><input type="text" style="height:200px" name="additionalInfo" value="${applicantCV.additionalInfo}"/></td>
 			</tr>
 		</table>
 	<input type="submit" name="saveChanges" value="Сохранить" />

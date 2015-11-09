@@ -69,9 +69,9 @@ public class HRDepartment extends Department implements HRManager{
 		
 		Set<SkillManagerCV> skillsManagerCV = new HashSet<SkillManagerCV>();
 		for(SkillApplicantCV skillApplicantCV : form.getSkills()) {
-			String oneSkillApplicantCV = skillApplicantCV.getSkill();
+			String oneSkillApplicantCVName = skillApplicantCV.getName();
 			SkillManagerCV skillManagerCV = new SkillManagerCV();
-			skillManagerCV.setSkill(oneSkillApplicantCV);
+			skillManagerCV.setName(oneSkillApplicantCVName);
 			skillManagerCV = skillManagerDao.createSkill(skillManagerCV);
 			skillsManagerCV.add(skillManagerCV);
 		}
@@ -91,7 +91,9 @@ public class HRDepartment extends Department implements HRManager{
 	private CVFormManager makeCVFormManager(CVFormApplicant cv) {
 		
 		CVFormManager cvManager = new CVFormManager();
+		cvManager.setSurname(cv.getSurname());
 		cvManager.setName(cv.getName());
+		cvManager.setLastName(cv.getLastName());
 		cvManager.setAge(cv.getAge());
 		cvManager.setAdditionalInfo(cv.getAdditionalInfo());
 		cvManager.setDesiredSalary(cv.getDesiredSalary());
@@ -125,7 +127,7 @@ public class HRDepartment extends Department implements HRManager{
 			
 			Set<String> cvSkillTitles = new HashSet<String>();
 			for(SkillManagerCV skill : cv.getSkills()) {
-				cvSkillTitles.add(skill.getSkill());
+				cvSkillTitles.add(skill.getName());
 			}
 
 			// set "false" flag to all conditions
@@ -164,7 +166,7 @@ public class HRDepartment extends Department implements HRManager{
 			
 			for (String oneSkillManagerCV : cvSkillTitles) {
 				SkillCandidate skillCandidate = new SkillCandidate();		
-				skillCandidate.setSkill(oneSkillManagerCV);
+				skillCandidate.setName(oneSkillManagerCV);
 				skillCandidate = skillCandidateDao.createSkill(skillCandidate);
 				candidateSkills.add(skillCandidate);
 			}
@@ -246,9 +248,9 @@ public class HRDepartment extends Department implements HRManager{
 			Employee employee) {
 		Set<SkillEmployee> skills = new HashSet<SkillEmployee>();
 		for (SkillCandidate oneSkillCandidate : candidate.getSkills()){
-			String candidateSkillTitle = oneSkillCandidate.getSkill();
+			String candidateSkillTitle = oneSkillCandidate.getName();
 			SkillEmployee oneSkillEmployee = new SkillEmployee();
-			oneSkillEmployee.setSkill(candidateSkillTitle);
+			oneSkillEmployee.setName(candidateSkillTitle);
 			oneSkillEmployee = skillEmployeeDao.createSkill(oneSkillEmployee);
 			skills.add(oneSkillEmployee);
 		}

@@ -3,6 +3,7 @@
  */
 package domain;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -35,8 +36,8 @@ public class CVFormApplicant {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	protected Integer id;
 
-	@Column(name="age")
-	protected Integer age;
+	@Column(name="birthday")
+	protected Date birthday;
 	
 	@Column(name="work_expirience")
 	protected Integer workExpirience;
@@ -54,8 +55,14 @@ public class CVFormApplicant {
     cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<SkillApplicantCV> skills;
 	
+	@Column(name="surname")
+	private String surname;
+	
 	@Column(name="name")
 	private String name;
+	
+	@Column(name="last_name")
+	private String lastName;
 	
 	@Column(name="phone")
 	private String phone;
@@ -90,13 +97,16 @@ public class CVFormApplicant {
 		this.post = post;
 	}
 	
-	public Integer getAge() {
-		return age;
+
+	public Date getBirthday() {
+		return birthday;
 	}
 
-	public void setAge(Integer age) {
-		this.age = age;
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
+
 
 	public Integer getWorkExpirience() {
 		return workExpirience;
@@ -139,6 +149,26 @@ public class CVFormApplicant {
 		this.name = name;
 	}
 
+	public String getSurname() {
+		return surname;
+	}
+
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+
 	public String getPhone() {
 		return phone;
 	}
@@ -175,8 +205,8 @@ public class CVFormApplicant {
 	@Override
 	public String toString() {
 		return "CVForm [desiredSalary=" + getDesiredSalary() + ", additionalInfo="
-				+ getAdditionalInfo() + ", id=" + id + ", name=" + getName() + ", age="
-				+ getAge() + ", workExpirience=" + getWorkExpirience() + ", skills="
+				+ getAdditionalInfo() + ", id=" + id + ", name=" + getName() + ", birthday="
+				+ getBirthday() + ", workExpirience=" + getWorkExpirience() + ", skills="
 				+ getSkills() + ", education=" + getEducation() + ", phone=" + getPhone()
 				+ ", email=" + getEmail() + ", post=" + getPost() + "]";
 	}

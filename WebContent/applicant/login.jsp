@@ -9,7 +9,7 @@
 <body>
 	<h1>Вход в раздел</h1>
 	<hr />
-	<form action="${pageContext.request.contextPath}/${APPLICANT_MAIN_HTML}" method="POST">
+	<form action="${pageContext.request.contextPath}/${APPLICANT_LOGIN_HTML}" method="POST">
 		<table>
 			<tr>
 				<td>Логин</td>

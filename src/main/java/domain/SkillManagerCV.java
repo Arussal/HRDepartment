@@ -38,7 +38,7 @@ public class SkillManagerCV extends Skill{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getSkill() == null) ? 0 : getSkill().hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
 		return result;
 	}
 
@@ -52,10 +52,10 @@ public class SkillManagerCV extends Skill{
 		if (getClass() != obj.getClass())
 			return false;
 		SkillApplicantCV other = (SkillApplicantCV) obj;
-		if (getSkill() == null) {
-			if (other.getSkill() != null)
+		if (getName() == null) {
+			if (other.getName() != null)
 				return false;
-		} else if (!getSkill().equals(other.getSkill()))
+		} else if (!getName().equals(other.getName()))
 			return false;
 		return true;
 	}
@@ -63,7 +63,7 @@ public class SkillManagerCV extends Skill{
 
 	@Override
 	public String toString() {
-		return getSkill();
+		return getName();
 	}
 
 	
